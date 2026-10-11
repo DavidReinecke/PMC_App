@@ -226,5 +226,5 @@ Screens:
                   Height: =168
                   TemplateSize: =420
                   TemplatePadding: =6
-                  Items: =SortByColumns(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID', 'Approval round' = Max(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID'), 'Approval round')), "wfp_sequence", SortOrder.Ascending)
+                  Items: =Sort(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID', 'Approval round' = Max(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID'), 'Approval round')), Sequence, SortOrder.Ascending)
                   Fill: =RGBA(23, 28, 34, 1)

@@ -204,10 +204,10 @@ Screens:
             TemplateSize: =72
             TemplatePadding: =6
             Items: |-
-              =SortByColumns(Filter(FirstN('Role Assignments', 2000),
+              =Sort(Filter(FirstN('Role Assignments', 2000),
                   'Geographic area'.Name = varArea.Name || (varIsDAAll && 'All areas'),
                   tglEnded.Value || Text('Assignment status') = "Active",
-                  IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Text(Role)), "wfp_name", SortOrder.Ascending)
+                  IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Text(Role)), Person, SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctRoleRow:

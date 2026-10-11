@@ -189,13 +189,13 @@ Screens:
             TemplateSize: =96
             TemplatePadding: =6
             Items: |-
-              =SortByColumns(
+              =Sort(
                   Filter(FirstN(Positions, 2000),
                       'Geographic area'.Name = varArea.Name,
                       ddStatus.Selected.Value = "All" || Text('Position status') = ddStatus.Selected.Value,
                       ddUnit.Selected.Name = "All units" || Unit.Name = ddUnit.Selected.Name,
                       IsBlank(txtSearch.Text) || txtSearch.Text in 'Position ID' || txtSearch.Text in Title || txtSearch.Text in Incumbent),
-                  "wfp_name", SortOrder.Ascending)
+                  'Position ID', SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctTORow:

@@ -159,7 +159,7 @@ Screens:
             Height: =Parent.Height - 140
             TemplateSize: =128
             TemplatePadding: =6
-            Items: =SortByColumns(Filter(FirstN('Hiring Actions', 2000), 'Geographic area'.Name = varArea.Name), "wfp_name", SortOrder.Ascending)
+            Items: =Sort(Filter(FirstN('Hiring Actions', 2000), 'Geographic area'.Name = varArea.Name), 'Action ID', SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctVacRow:
@@ -213,7 +213,7 @@ Screens:
                   Width: =240
                   Height: =34
                   Items: =["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
-                  Default: =Text(ThisItem.Stage)
+                  Default: =IfError(Text(ThisItem.Stage), "")
                   Visible: =varCanEditHiring && Text(ThisItem.Stage) in ["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
                   OnChange: |-
                     =Patch('Hiring Actions', ThisItem, {Stage: Switch(Self.Selected.Value, "Draft", 'Stage (Hiring Actions)'.Draft, "PMC review", 'Stage (Hiring Actions)'.'PMC review', "Cleared to advertise", 'Stage (Hiring Actions)'.'Cleared to advertise', "Announced", 'Stage (Hiring Actions)'.Announced, "Certificate issued", 'Stage (Hiring Actions)'.'Certificate issued', "Interviews", 'Stage (Hiring Actions)'.Interviews, "Selection approval", 'Stage (Hiring Actions)'.'Selection approval', "Selection approved", 'Stage (Hiring Actions)'.'Selection approved', "Offer", 'Stage (Hiring Actions)'.Offer)});
