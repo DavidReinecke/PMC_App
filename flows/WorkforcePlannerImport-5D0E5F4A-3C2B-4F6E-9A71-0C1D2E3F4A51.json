@@ -1,0 +1,1353 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "wfp_sharedcommondataserviceforapps_a1f3c"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      },
+      "shared_excelonlinebusiness": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "wfp_sharedexcelonlinebusiness_b7d2e"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "c81d7ffa-dece-47df-bce7-53b5b056f08e"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Excel file path in OneDrive",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "For example /WorkforcePlanner_Import.xlsx",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Read_areas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblAreas",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {}
+        },
+        "Existing_areas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_geographicareas",
+              "$select": "wfp_geographicareaid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_areas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_areas": {
+          "type": "Foreach",
+          "foreach": "@body('Read_areas')?['value']",
+          "actions": {
+            "Self_areas": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_areas')?['Name'])"
+              },
+              "runAfter": {}
+            },
+            "Upsert_areas": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_areas'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_areas": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_areas')?['Name']",
+                      "item/wfp_code": "@items('Each_areas')?['Code']",
+                      "entityName": "wfp_geographicareas"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_areas": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_areas')?['Name']",
+                        "item/wfp_code": "@items('Each_areas')?['Code']",
+                        "entityName": "wfp_geographicareas",
+                        "recordId": "@first(body('Self_areas'))?['wfp_geographicareaid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Self_areas": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_areas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_areas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_geographicareas",
+              "$select": "wfp_geographicareaid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_areas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_units": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblUnits",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "After_areas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_units": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_units",
+              "$select": "wfp_unitid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_units": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_units": {
+          "type": "Foreach",
+          "foreach": "@body('Read_units')?['value']",
+          "actions": {
+            "Self_units": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_units')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_units')?['Name'])"
+              },
+              "runAfter": {}
+            },
+            "Look_units_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_units')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Self_units": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_units": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_units'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_units": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_units')?['Name']",
+                      "item/wfp_unitcode": "@items('Each_units')?['Unit code']",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_units_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_units_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "entityName": "wfp_units"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_units": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_units')?['Name']",
+                        "item/wfp_unitcode": "@items('Each_units')?['Unit code']",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_units_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_units_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "entityName": "wfp_units",
+                        "recordId": "@first(body('Self_units'))?['wfp_unitid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_units_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_units": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_units": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_units",
+              "$select": "wfp_unitid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_units": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_positions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblPositions",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "After_units": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_positions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_positions",
+              "$select": "wfp_positionid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_positions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_positions": {
+          "type": "Foreach",
+          "foreach": "@body('Read_positions')?['value']",
+          "actions": {
+            "Self_positions": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_positions')?['Position ID'])"
+              },
+              "runAfter": {}
+            },
+            "Look_positions_wfp_unit": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_units')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_positions')?['Unit'])"
+              },
+              "runAfter": {
+                "Self_positions": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Look_positions_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_positions')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Look_positions_wfp_unit": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_positions": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_positions'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_positions": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_positions')?['Position ID']",
+                      "item/wfp_title": "@items('Each_positions')?['Title']",
+                      "item/wfp_unit@odata.bind": "@if(empty(body('Look_positions_wfp_unit')), null, concat('/wfp_units(', first(body('Look_positions_wfp_unit'))?['wfp_unitid'], ')'))",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_positions_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_positions_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "item/wfp_payplan": "@if(equals(items('Each_positions')?['Pay plan'],'GS'), 100000000, if(equals(items('Each_positions')?['Pay plan'],'GW'), 100000001, if(equals(items('Each_positions')?['Pay plan'],'WG'), 100000002, null)))",
+                      "item/wfp_grade": "@items('Each_positions')?['Grade range']",
+                      "item/wfp_topgrade": "@if(empty(string(items('Each_positions')?['Full performance grade'])), null, int(items('Each_positions')?['Full performance grade']))",
+                      "item/wfp_employmenttype": "@if(equals(items('Each_positions')?['Employment type'],'Full time'), 100000000, if(equals(items('Each_positions')?['Employment type'],'Career seasonal'), 100000001, if(equals(items('Each_positions')?['Employment type'],'Seasonal'), 100000002, null)))",
+                      "item/wfp_status": "@if(equals(items('Each_positions')?['Position status'],'Filled'), 100000000, if(equals(items('Each_positions')?['Position status'],'Vacant'), 100000001, null))",
+                      "item/wfp_incumbent": "@items('Each_positions')?['Incumbent']",
+                      "item/wfp_incumbentemail": "@items('Each_positions')?['Incumbent email']",
+                      "item/wfp_previousincumbent": "@items('Each_positions')?['Previous incumbent']",
+                      "item/wfp_fundingstatus": "@if(equals(items('Each_positions')?['Funding status'],'Approved'), 100000000, if(equals(items('Each_positions')?['Funding status'],'Pending'), 100000001, if(equals(items('Each_positions')?['Funding status'],'Not approved'), 100000002, null)))",
+                      "entityName": "wfp_positions"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_positions": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_positions')?['Position ID']",
+                        "item/wfp_title": "@items('Each_positions')?['Title']",
+                        "item/wfp_unit@odata.bind": "@if(empty(body('Look_positions_wfp_unit')), null, concat('/wfp_units(', first(body('Look_positions_wfp_unit'))?['wfp_unitid'], ')'))",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_positions_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_positions_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "item/wfp_payplan": "@if(equals(items('Each_positions')?['Pay plan'],'GS'), 100000000, if(equals(items('Each_positions')?['Pay plan'],'GW'), 100000001, if(equals(items('Each_positions')?['Pay plan'],'WG'), 100000002, null)))",
+                        "item/wfp_grade": "@items('Each_positions')?['Grade range']",
+                        "item/wfp_topgrade": "@if(empty(string(items('Each_positions')?['Full performance grade'])), null, int(items('Each_positions')?['Full performance grade']))",
+                        "item/wfp_employmenttype": "@if(equals(items('Each_positions')?['Employment type'],'Full time'), 100000000, if(equals(items('Each_positions')?['Employment type'],'Career seasonal'), 100000001, if(equals(items('Each_positions')?['Employment type'],'Seasonal'), 100000002, null)))",
+                        "item/wfp_status": "@if(equals(items('Each_positions')?['Position status'],'Filled'), 100000000, if(equals(items('Each_positions')?['Position status'],'Vacant'), 100000001, null))",
+                        "item/wfp_incumbent": "@items('Each_positions')?['Incumbent']",
+                        "item/wfp_incumbentemail": "@items('Each_positions')?['Incumbent email']",
+                        "item/wfp_previousincumbent": "@items('Each_positions')?['Previous incumbent']",
+                        "item/wfp_fundingstatus": "@if(equals(items('Each_positions')?['Funding status'],'Approved'), 100000000, if(equals(items('Each_positions')?['Funding status'],'Pending'), 100000001, if(equals(items('Each_positions')?['Funding status'],'Not approved'), 100000002, null)))",
+                        "entityName": "wfp_positions",
+                        "recordId": "@first(body('Self_positions'))?['wfp_positionid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_positions_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_positions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_positions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_positions",
+              "$select": "wfp_positionid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_positions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_supervisors": {
+          "type": "Foreach",
+          "foreach": "@body('Read_positions')?['value']",
+          "actions": {
+            "SelfRow": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_supervisors')?['Position ID'])"
+              },
+              "runAfter": {}
+            },
+            "SupRow": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_supervisors')?['Supervisor position'])"
+              },
+              "runAfter": {
+                "SelfRow": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "SetSup": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "greater": [
+                      "@length(body('SelfRow'))",
+                      0
+                    ]
+                  },
+                  {
+                    "greater": [
+                      "@length(body('SupRow'))",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "actions": {
+                "UpdateSup": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "wfp_positions",
+                      "recordId": "@first(body('SelfRow'))?['wfp_positionid']",
+                      "item/wfp_supervisor@odata.bind": "@concat('/wfp_positions(', first(body('SupRow'))?['wfp_positionid'], ')')"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "runAfter": {
+                "SupRow": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "After_positions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_actions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblHiringActions",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_supervisors": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_actions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_hiringactions",
+              "$select": "wfp_hiringactionid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_actions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_actions": {
+          "type": "Foreach",
+          "foreach": "@body('Read_actions')?['value']",
+          "actions": {
+            "Self_actions": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_actions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_actions')?['Action ID'])"
+              },
+              "runAfter": {}
+            },
+            "Look_actions_wfp_position": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_actions')?['Position'])"
+              },
+              "runAfter": {
+                "Self_actions": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Look_actions_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_actions')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Look_actions_wfp_position": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_actions": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_actions'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_actions": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_actions')?['Action ID']",
+                      "item/wfp_position@odata.bind": "@if(empty(body('Look_actions_wfp_position')), null, concat('/wfp_positions(', first(body('Look_actions_wfp_position'))?['wfp_positionid'], ')'))",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_actions_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_actions_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "item/wfp_stage": "@if(equals(items('Each_actions')?['Stage'],'Draft'), 100000000, if(equals(items('Each_actions')?['Stage'],'PMC review'), 100000001, if(equals(items('Each_actions')?['Stage'],'Cleared to advertise'), 100000002, if(equals(items('Each_actions')?['Stage'],'Announced'), 100000003, if(equals(items('Each_actions')?['Stage'],'Certificate issued'), 100000004, if(equals(items('Each_actions')?['Stage'],'Interviews'), 100000005, if(equals(items('Each_actions')?['Stage'],'Selection approval'), 100000006, if(equals(items('Each_actions')?['Stage'],'Selection approved'), 100000007, if(equals(items('Each_actions')?['Stage'],'Offer'), 100000008, null)))))))))",
+                      "item/wfp_candidate": "@items('Each_actions')?['Selected candidate']",
+                      "item/wfp_proposedgrade": "@items('Each_actions')?['Proposed grade and step']",
+                      "item/wfp_entryonduty": "@if(empty(string(items('Each_actions')?['Entry on duty'])), null, formatDateTime(items('Each_actions')?['Entry on duty'], 'yyyy-MM-dd'))",
+                      "entityName": "wfp_hiringactions"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_actions": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_actions')?['Action ID']",
+                        "item/wfp_position@odata.bind": "@if(empty(body('Look_actions_wfp_position')), null, concat('/wfp_positions(', first(body('Look_actions_wfp_position'))?['wfp_positionid'], ')'))",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_actions_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_actions_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "item/wfp_stage": "@if(equals(items('Each_actions')?['Stage'],'Draft'), 100000000, if(equals(items('Each_actions')?['Stage'],'PMC review'), 100000001, if(equals(items('Each_actions')?['Stage'],'Cleared to advertise'), 100000002, if(equals(items('Each_actions')?['Stage'],'Announced'), 100000003, if(equals(items('Each_actions')?['Stage'],'Certificate issued'), 100000004, if(equals(items('Each_actions')?['Stage'],'Interviews'), 100000005, if(equals(items('Each_actions')?['Stage'],'Selection approval'), 100000006, if(equals(items('Each_actions')?['Stage'],'Selection approved'), 100000007, if(equals(items('Each_actions')?['Stage'],'Offer'), 100000008, null)))))))))",
+                        "item/wfp_candidate": "@items('Each_actions')?['Selected candidate']",
+                        "item/wfp_proposedgrade": "@items('Each_actions')?['Proposed grade and step']",
+                        "item/wfp_entryonduty": "@if(empty(string(items('Each_actions')?['Entry on duty'])), null, formatDateTime(items('Each_actions')?['Entry on duty'], 'yyyy-MM-dd'))",
+                        "entityName": "wfp_hiringactions",
+                        "recordId": "@first(body('Self_actions'))?['wfp_hiringactionid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_actions_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_actions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_actions": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_hiringactions",
+              "$select": "wfp_hiringactionid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_actions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_steps": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblApprovalSteps",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "After_actions": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_steps": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_selectionsteps",
+              "$select": "wfp_selectionstepid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_steps": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_steps": {
+          "type": "Foreach",
+          "foreach": "@body('Read_steps')?['value']",
+          "actions": {
+            "Self_steps": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_steps')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_steps')?['Step'])"
+              },
+              "runAfter": {}
+            },
+            "Look_steps_wfp_hiringaction": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_actions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_steps')?['Hiring action'])"
+              },
+              "runAfter": {
+                "Self_steps": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Look_steps_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_steps')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Look_steps_wfp_hiringaction": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_steps": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_steps'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_steps": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_steps')?['Step']",
+                      "item/wfp_hiringaction@odata.bind": "@if(empty(body('Look_steps_wfp_hiringaction')), null, concat('/wfp_hiringactions(', first(body('Look_steps_wfp_hiringaction'))?['wfp_hiringactionid'], ')'))",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_steps_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_steps_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "item/wfp_sequence": "@if(empty(string(items('Each_steps')?['Sequence'])), null, int(items('Each_steps')?['Sequence']))",
+                      "item/wfp_approvergroup": "@if(equals(items('Each_steps')?['Approver group'],'Supervisor'), 100000000, if(equals(items('Each_steps')?['Approver group'],'Budget'), 100000001, if(equals(items('Each_steps')?['Approver group'],'Assistant Chief Operations'), 100000002, if(equals(items('Each_steps')?['Approver group'],'Assistant Chief Support Services'), 100000003, if(equals(items('Each_steps')?['Approver group'],'Area chief or deputy'), 100000004, null)))))",
+                      "item/wfp_decision": "@if(equals(items('Each_steps')?['Decision'],'Waiting'), 100000000, if(equals(items('Each_steps')?['Decision'],'Pending'), 100000001, if(equals(items('Each_steps')?['Decision'],'Approved'), 100000002, if(equals(items('Each_steps')?['Decision'],'Returned'), 100000003, null))))",
+                      "item/wfp_decidedby": "@items('Each_steps')?['Decided by']",
+                      "item/wfp_decidedon": "@if(empty(string(items('Each_steps')?['Decided on'])), null, formatDateTime(items('Each_steps')?['Decided on'], 'yyyy-MM-dd'))",
+                      "item/wfp_comment": "@items('Each_steps')?['Comment']",
+                      "item/wfp_round": "@if(empty(string(items('Each_steps')?['Approval round'])), null, int(items('Each_steps')?['Approval round']))",
+                      "item/wfp_supervisoremail": "@items('Each_steps')?['Supervisor email']",
+                      "item/wfp_positiontext": "@items('Each_steps')?['Position text']",
+                      "entityName": "wfp_selectionsteps"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_steps": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_steps')?['Step']",
+                        "item/wfp_hiringaction@odata.bind": "@if(empty(body('Look_steps_wfp_hiringaction')), null, concat('/wfp_hiringactions(', first(body('Look_steps_wfp_hiringaction'))?['wfp_hiringactionid'], ')'))",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_steps_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_steps_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "item/wfp_sequence": "@if(empty(string(items('Each_steps')?['Sequence'])), null, int(items('Each_steps')?['Sequence']))",
+                        "item/wfp_approvergroup": "@if(equals(items('Each_steps')?['Approver group'],'Supervisor'), 100000000, if(equals(items('Each_steps')?['Approver group'],'Budget'), 100000001, if(equals(items('Each_steps')?['Approver group'],'Assistant Chief Operations'), 100000002, if(equals(items('Each_steps')?['Approver group'],'Assistant Chief Support Services'), 100000003, if(equals(items('Each_steps')?['Approver group'],'Area chief or deputy'), 100000004, null)))))",
+                        "item/wfp_decision": "@if(equals(items('Each_steps')?['Decision'],'Waiting'), 100000000, if(equals(items('Each_steps')?['Decision'],'Pending'), 100000001, if(equals(items('Each_steps')?['Decision'],'Approved'), 100000002, if(equals(items('Each_steps')?['Decision'],'Returned'), 100000003, null))))",
+                        "item/wfp_decidedby": "@items('Each_steps')?['Decided by']",
+                        "item/wfp_decidedon": "@if(empty(string(items('Each_steps')?['Decided on'])), null, formatDateTime(items('Each_steps')?['Decided on'], 'yyyy-MM-dd'))",
+                        "item/wfp_comment": "@items('Each_steps')?['Comment']",
+                        "item/wfp_round": "@if(empty(string(items('Each_steps')?['Approval round'])), null, int(items('Each_steps')?['Approval round']))",
+                        "item/wfp_supervisoremail": "@items('Each_steps')?['Supervisor email']",
+                        "item/wfp_positiontext": "@items('Each_steps')?['Position text']",
+                        "entityName": "wfp_selectionsteps",
+                        "recordId": "@first(body('Self_steps'))?['wfp_selectionstepid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_steps_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_steps": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_steps": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_selectionsteps",
+              "$select": "wfp_selectionstepid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_steps": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_details": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblDetails",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "After_steps": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_details": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_details",
+              "$select": "wfp_detailid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_details": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_details": {
+          "type": "Foreach",
+          "foreach": "@body('Read_details')?['value']",
+          "actions": {
+            "Self_details": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_details')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_details')?['Detail ID'])"
+              },
+              "runAfter": {}
+            },
+            "Look_details_wfp_homeposition": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_details')?['Home position'])"
+              },
+              "runAfter": {
+                "Self_details": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Look_details_wfp_detailedto": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_positions')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_details')?['Detailed to'])"
+              },
+              "runAfter": {
+                "Look_details_wfp_homeposition": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Look_details_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_details')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Look_details_wfp_detailedto": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_details": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_details'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_details": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_details')?['Detail ID']",
+                      "item/wfp_homeposition@odata.bind": "@if(empty(body('Look_details_wfp_homeposition')), null, concat('/wfp_positions(', first(body('Look_details_wfp_homeposition'))?['wfp_positionid'], ')'))",
+                      "item/wfp_detailedto@odata.bind": "@if(empty(body('Look_details_wfp_detailedto')), null, concat('/wfp_positions(', first(body('Look_details_wfp_detailedto'))?['wfp_positionid'], ')'))",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_details_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_details_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "item/wfp_enteredby": "@items('Each_details')?['Entered by']",
+                      "entityName": "wfp_details"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_details": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_details')?['Detail ID']",
+                        "item/wfp_homeposition@odata.bind": "@if(empty(body('Look_details_wfp_homeposition')), null, concat('/wfp_positions(', first(body('Look_details_wfp_homeposition'))?['wfp_positionid'], ')'))",
+                        "item/wfp_detailedto@odata.bind": "@if(empty(body('Look_details_wfp_detailedto')), null, concat('/wfp_positions(', first(body('Look_details_wfp_detailedto'))?['wfp_positionid'], ')'))",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_details_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_details_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "item/wfp_enteredby": "@items('Each_details')?['Entered by']",
+                        "entityName": "wfp_details",
+                        "recordId": "@first(body('Self_details'))?['wfp_detailid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_details_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_details": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_details": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_details",
+              "$select": "wfp_detailid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_details": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Read_roles": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "me",
+              "file": "@triggerBody()?['text']",
+              "table": "tblRoles",
+              "dateTimeFormat": "ISO 8601"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "After_details": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Existing_roles": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_roleassignments",
+              "$select": "wfp_roleassignmentid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Read_roles": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Each_roles": {
+          "type": "Foreach",
+          "foreach": "@body('Read_roles')?['value']",
+          "actions": {
+            "Self_roles": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Existing_roles')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_roles')?['Person'])"
+              },
+              "runAfter": {}
+            },
+            "Look_roles_wfp_geographicarea": {
+              "type": "Query",
+              "inputs": {
+                "from": "@body('After_areas')?['value']",
+                "where": "@equals(item()?['wfp_name'], items('Each_roles')?['Geographic area'])"
+              },
+              "runAfter": {
+                "Self_roles": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Upsert_roles": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(body('Self_roles'))",
+                  0
+                ]
+              },
+              "actions": {
+                "Create_roles": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "item/wfp_name": "@items('Each_roles')?['Person']",
+                      "item/wfp_useremail": "@items('Each_roles')?['User email']",
+                      "item/wfp_role": "@if(equals(items('Each_roles')?['Role'],'Budget'), 100000000, if(equals(items('Each_roles')?['Role'],'Area fire chief'), 100000001, if(equals(items('Each_roles')?['Role'],'Deputy chief'), 100000002, if(equals(items('Each_roles')?['Role'],'Assistant Chief Operations'), 100000003, if(equals(items('Each_roles')?['Role'],'Assistant Chief Support Services'), 100000004, if(equals(items('Each_roles')?['Role'],'PMC member'), 100000005, if(equals(items('Each_roles')?['Role'],'Data administrator'), 100000006, null)))))))",
+                      "item/wfp_status": "@if(equals(items('Each_roles')?['Assignment status'],'Active'), 100000000, if(equals(items('Each_roles')?['Assignment status'],'Ended'), 100000001, null))",
+                      "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_roles_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_roles_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                      "item/wfp_allareas": "@or(equals(toLower(string(items('Each_roles')?['All areas'])),'true'), equals(toLower(string(items('Each_roles')?['All areas'])),'yes'), equals(toLower(string(items('Each_roles')?['All areas'])),'1'))",
+                      "item/wfp_startdate": "@if(empty(string(items('Each_roles')?['Start date'])), null, formatDateTime(items('Each_roles')?['Start date'], 'yyyy-MM-dd'))",
+                      "entityName": "wfp_roleassignments"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  },
+                  "runAfter": {}
+                }
+              },
+              "else": {
+                "actions": {
+                  "Update_roles": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "item/wfp_name": "@items('Each_roles')?['Person']",
+                        "item/wfp_useremail": "@items('Each_roles')?['User email']",
+                        "item/wfp_role": "@if(equals(items('Each_roles')?['Role'],'Budget'), 100000000, if(equals(items('Each_roles')?['Role'],'Area fire chief'), 100000001, if(equals(items('Each_roles')?['Role'],'Deputy chief'), 100000002, if(equals(items('Each_roles')?['Role'],'Assistant Chief Operations'), 100000003, if(equals(items('Each_roles')?['Role'],'Assistant Chief Support Services'), 100000004, if(equals(items('Each_roles')?['Role'],'PMC member'), 100000005, if(equals(items('Each_roles')?['Role'],'Data administrator'), 100000006, null)))))))",
+                        "item/wfp_status": "@if(equals(items('Each_roles')?['Assignment status'],'Active'), 100000000, if(equals(items('Each_roles')?['Assignment status'],'Ended'), 100000001, null))",
+                        "item/wfp_geographicarea@odata.bind": "@if(empty(body('Look_roles_wfp_geographicarea')), null, concat('/wfp_geographicareas(', first(body('Look_roles_wfp_geographicarea'))?['wfp_geographicareaid'], ')'))",
+                        "item/wfp_allareas": "@or(equals(toLower(string(items('Each_roles')?['All areas'])),'true'), equals(toLower(string(items('Each_roles')?['All areas'])),'yes'), equals(toLower(string(items('Each_roles')?['All areas'])),'1'))",
+                        "item/wfp_startdate": "@if(empty(string(items('Each_roles')?['Start date'])), null, formatDateTime(items('Each_roles')?['Start date'], 'yyyy-MM-dd'))",
+                        "entityName": "wfp_roleassignments",
+                        "recordId": "@first(body('Self_roles'))?['wfp_roleassignmentid']"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              },
+              "runAfter": {
+                "Look_roles_wfp_geographicarea": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "repetitions": 1
+            }
+          },
+          "runAfter": {
+            "Existing_roles": [
+              "Succeeded"
+            ]
+          }
+        },
+        "After_roles": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "wfp_roleassignments",
+              "$select": "wfp_roleassignmentid,wfp_name",
+              "$top": 5000
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {
+            "Each_roles": [
+              "Succeeded"
+            ]
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}
