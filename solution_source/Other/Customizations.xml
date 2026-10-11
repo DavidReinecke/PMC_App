@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Entities>
-    <Entity><Name LocalizedName="Geographic Area" OriginalName="Geographic Area">wfp_geographicarea</Name></Entity>
-    <Entity><Name LocalizedName="Unit" OriginalName="Unit">wfp_unit</Name></Entity>
-    <Entity><Name LocalizedName="Position" OriginalName="Position">wfp_position</Name></Entity>
-    <Entity><Name LocalizedName="Hiring Action" OriginalName="Hiring Action">wfp_hiringaction</Name></Entity>
-    <Entity><Name LocalizedName="Selection Approval Step" OriginalName="Selection Approval Step">wfp_selectionstep</Name></Entity>
-    <Entity><Name LocalizedName="Role Assignment" OriginalName="Role Assignment">wfp_roleassignment</Name></Entity>
-    <Entity><Name LocalizedName="Detail" OriginalName="Detail">wfp_detail</Name></Entity>
-    <Entity><Name LocalizedName="Hiring Event" OriginalName="Hiring Event">wfp_hiringevent</Name></Entity>
-  </Entities>
+  <Entities />
   <Roles />
   <Workflows />
   <FieldSecurityProfiles />

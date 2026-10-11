@@ -3,7 +3,7 @@ New-Item -ItemType Directory -Force -Path out | Out-Null
 $log = 'out/build-log.txt'
 function Log($t) { $t | Tee-Object -FilePath $log -Append }
 Log "pac version:"
-Log (pac --version 2>&1 | Out-String)
+Log (pac help 2>&1 | Select-Object -First 3 | Out-String)
 
 # 1. Tables solution
 Log "=== pac solution pack (tables) ==="
@@ -19,3 +19,5 @@ if (Test-Path canvas/CanvasManifest.json) {
   Log "canvas/CanvasManifest.json not present yet"
 }
 Get-ChildItem out | ForEach-Object { Log ($_.Name + "  " + $_.Length) }
+
+./ci/explore.ps1
