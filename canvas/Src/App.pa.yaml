@@ -13,7 +13,7 @@ App:
       ClearCollect(colChAssign, ["Active", "Ended"]);
       ClearCollect(colChEvent, ["Stage change", "Selection routed", "Approval", "Detail", "Incumbent change", "Role assigned"]);
       // Who am I
-      ClearCollect(colMyRoles, ForAll(Filter('Role Assignments', Lower('User email') = varEmail && Text('Assignment status') = "Active"), {role: Text(ThisRecord.Role), allAreas: ThisRecord.'All areas', area: ThisRecord.'Geographic area'.Name}));
+      ClearCollect(colMyRoles, ForAll(Filter(FirstN('Role Assignments', 2000), Lower('User email') = varEmail && IfError(Text('Assignment status'), "") = "Active"), {role: IfError(Text(ThisRecord.Role), ""), allAreas: IfError(ThisRecord.'All areas', false), area: IfError(ThisRecord.'Geographic area'.Name, "")}));
       ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail));
       ClearCollect(colAreaNames, ForAll('Geographic Areas', {Name: ThisRecord.Name}));
       Set(varIsDAAll, CountRows(Filter(colMyRoles, role = "Data administrator" && allAreas)) > 0);
