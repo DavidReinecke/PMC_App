@@ -21,3 +21,4 @@ if (Test-Path canvas/CanvasManifest.json) {
 Get-ChildItem out | ForEach-Object { Log ($_.Name + "  " + $_.Length) }
 
 ./ci/explore.ps1
+exit 0

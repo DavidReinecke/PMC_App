@@ -25,5 +25,6 @@ jobs:
         run: ./ci/build.ps1
 
       - name: Publish build output to the build-output branch
+        if: always()
         shell: pwsh
         run: ./ci/publish.ps1
