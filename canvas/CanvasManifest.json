@@ -1,0 +1,47 @@
+{
+  "FormatVersion": "0.24",
+  "Header": {
+    "DocVersion": "1.338",
+    "MinVersionToLoad": "1.338",
+    "MSAppStructureVersion": "2.4.0"
+  },
+  "Properties": {
+    "AppCreationSource": "AppFromScratch",
+    "AppDescription": "",
+    "Author": "",
+    "ContainsThirdPartyPcfControls": false,
+    "DefaultConnectedDataSourceMaxGetRowsCount": 500,
+    "DocumentAppType": "DesktopOrTablet",
+    "DocumentLayoutHeight": 768,
+    "DocumentLayoutLockOrientation": false,
+    "DocumentLayoutMaintainAspectRatio": true,
+    "DocumentLayoutOrientation": "landscape",
+    "DocumentLayoutScaleToFit": true,
+    "DocumentLayoutWidth": 1366,
+    "DocumentType": "App",
+    "EnableInstrumentation": false,
+    "FileID": "7b7491a9-62c7-4350-8120-ebb77e92823f",
+    "Id": "aa6aead0-c8ef-4f07-8e96-0815ffa94073",
+    "InstrumentationKey": "",
+    "LocalDatabaseReferences": "{}",
+    "Name": "Workforce Planner",
+    "OriginatingVersion": "1.338"
+  },
+  "PublishInfo": {
+    "AppName": "Workforce Planner",
+    "BackgroundColor": "RGBA(0,176,240,1)",
+    "IconColor": "RGBA(255,255,255,1)",
+    "IconName": "Edit",
+    "LogoFileName": "",
+    "PublishDataLocally": false,
+    "PublishResourcesLocally": false,
+    "PublishTarget": "player",
+    "UserLocale": "en-US"
+  },
+  "ScreenOrder": [
+    "scrTO",
+    "scrVac",
+    "scrAppr",
+    "scrRoles"
+  ]
+}

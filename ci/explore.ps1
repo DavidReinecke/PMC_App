@@ -6,7 +6,6 @@ Log "=== pac canvas pack help ==="
 Log (pac canvas pack help 2>&1 | Out-String)
 Log "=== pac canvas unpack help ==="
 Log (pac canvas unpack help 2>&1 | Out-String)
-Log (pac canvas create --msapp out/blank.msapp --name WorkforcePlanner 2>&1 | Out-String)
 git clone --depth 1 https://github.com/microsoft/PowerApps-Language-Tooling.git ../plt 2>&1 | Out-Null
 $blank = Get-ChildItem ../plt -Recurse -Filter AppWithLabel.msapp | Select-Object -First 1
 Remove-Item -Recurse -Force ../blank -ErrorAction SilentlyContinue

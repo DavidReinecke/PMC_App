@@ -13,7 +13,7 @@ Log ("exit code: " + $LASTEXITCODE)
 # 2. Canvas app pack attempt
 Log "=== pac canvas pack ==="
 if (Test-Path canvas/CanvasManifest.json) {
-  Log (pac canvas pack --sources canvas --msapp out/WorkforcePlanner.msapp 2>&1 | Out-String)
+  Log (pac canvas pack --sources canvas --msapp out/WorkforcePlanner.msapp --layout SourceCode 2>&1 | Out-String)
   Log ("exit code: " + $LASTEXITCODE)
 } else {
   Log "canvas/CanvasManifest.json not present yet"
