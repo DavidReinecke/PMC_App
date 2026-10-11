@@ -99,8 +99,8 @@ Screens:
             Y: =10
             Width: =230
             Height: =44
-            Items: =colAreas
-            Default: =varArea.Name
+            Items: ='Geographic Areas'
+            Default: =varArea
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))

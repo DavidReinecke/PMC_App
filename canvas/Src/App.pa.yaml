@@ -15,7 +15,7 @@ App:
       // Who am I
       ClearCollect(colMyRoles, ForAll(Filter('Role Assignments', Lower('User email') = varEmail && 'Assignment status'.Value = "Active"), {role: ThisRecord.Role.Value, allAreas: ThisRecord.'All areas', area: ThisRecord.'Geographic area'.Code}));
       ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail));
-      ClearCollect(colAreas, 'Geographic Areas');
+      ClearCollect(colAreaNames, ForAll('Geographic Areas', {Name: ThisRecord.Name}));
       Set(varIsDAAll, CountRows(Filter(colMyRoles, role = "Data administrator" && allAreas)) > 0);
       Set(varIsDA, CountRows(Filter(colMyRoles, role = "Data administrator")) > 0);
       Set(varIsChief, CountRows(Filter(colMyRoles, role in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"])) > 0);
@@ -27,11 +27,12 @@ App:
       Set(varCanEditHiring, varIsSup || varIsDA);
       Set(varCanFund, varIsBudget || varIsDA);
       // Starting area: my role's area, else my position's area
-      Set(varArea, Coalesce(LookUp(colAreas, Code = First(Filter(colMyRoles, !IsBlank(area))).area), First(colMyPos).'Geographic area', First(colAreas)));
+      Set(varArea, Coalesce(LookUp('Geographic Areas', Code = First(Filter(colMyRoles, !IsBlank(area))).area), LookUp('Geographic Areas', Code = First(colMyPos).'Geographic area'.Code), First('Geographic Areas')));
       Set(varPanel, "");
       Set(varNotice, "");
       Set(varErr, "");
-      Set(varSel, Blank());
+      Set(varSelPos, LookUp(Positions, false));
+      Set(varSelAct, LookUp('Hiring Actions', false));
       ClearCollect(colDetails, Details);
       ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
     StartScreen: =scrTO
