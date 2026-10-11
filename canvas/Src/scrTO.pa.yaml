@@ -4,7 +4,7 @@ Screens:
       Fill: =RGBA(15, 18, 22, 1)
       OnVisible: |-
         =ClearCollect(colDetails, Details);
-        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}));
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}));
         Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
     Children:
       - rctHeaderTO:
@@ -105,7 +105,7 @@ Screens:
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
-              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}))
       - lblAreaFixedTO:
           Control: Label@2.5.1
           Properties:
@@ -191,7 +191,7 @@ Screens:
             Items: |-
               =SortByColumns(
                   Filter(Positions,
-                      'Geographic area' = varArea,
+                      'Geographic area'.Code = varArea.Code,
                       ddStatus.Selected.Value = "All" || Text('Position status') = ddStatus.Selected.Value,
                       ddUnit.Selected.Name = "All units" || Unit.Name = ddUnit.Selected.Name,
                       IsBlank(txtSearch.Text) || txtSearch.Text in 'Position ID' || txtSearch.Text in Title || txtSearch.Text in Incumbent),
@@ -389,7 +389,7 @@ Screens:
             Width: =426
             Height: =44
             Visible: =varPanel = "detail"
-            Items: =AddColumns(Filter(Positions, 'Geographic area' = varArea, Text('Position status') = "Filled", 'Position ID' <> varSelPos.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
+            Items: =AddColumns(Filter(Positions, 'Geographic area'.Code = varArea.Code, Text('Position status') = "Filled", 'Position ID' <> varSelPos.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
       - btnDetailSave:
           Control: Classic/Button@2.2.0
           Properties:

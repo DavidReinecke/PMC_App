@@ -103,7 +103,7 @@ Screens:
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
-              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}))
       - lblAreaFixedRoles:
           Control: Label@2.5.1
           Properties:
@@ -205,7 +205,7 @@ Screens:
             TemplatePadding: =6
             Items: |-
               =SortByColumns(Filter('Role Assignments',
-                  'Geographic area' = varArea || (varIsDAAll && 'All areas'),
+                  'Geographic area'.Code = varArea.Code || (varIsDAAll && 'All areas'),
                   tglEnded.Value || Text('Assignment status') = "Active",
                   IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Text(Role)), "wfp_name", SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)

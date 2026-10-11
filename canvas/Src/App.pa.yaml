@@ -34,5 +34,5 @@ App:
       Set(varSelPos, LookUp(Positions, false));
       Set(varSelAct, LookUp('Hiring Actions', false));
       ClearCollect(colDetails, Details);
-      ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+      ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}))
     StartScreen: =scrTO

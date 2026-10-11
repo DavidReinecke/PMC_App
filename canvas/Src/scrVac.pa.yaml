@@ -103,7 +103,7 @@ Screens:
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
-              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}))
       - lblAreaFixedVac:
           Control: Label@2.5.1
           Properties:
@@ -159,7 +159,7 @@ Screens:
             Height: =Parent.Height - 140
             TemplateSize: =128
             TemplatePadding: =6
-            Items: =SortByColumns(Filter('Hiring Actions', 'Geographic area' = varArea), "wfp_name", SortOrder.Ascending)
+            Items: =SortByColumns(Filter('Hiring Actions', 'Geographic area'.Code = varArea.Code), "wfp_name", SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctVacRow:
@@ -192,7 +192,7 @@ Screens:
                   Height: =22
                   Color: =RGBA(154, 164, 178, 1)
                   Size: =12
-                  Text: =ThisItem.Position.Text('Pay plan') & " · " & ThisItem.Position.'Grade range' & " · " & ThisItem.Position.Text('Employment type') & If(!IsBlank(ThisItem.Position.'Previous incumbent'), " · was " & ThisItem.Position.'Previous incumbent', "")
+                  Text: =Text(ThisItem.Position.'Pay plan') & " · " & ThisItem.Position.'Grade range' & " · " & Text(ThisItem.Position.'Employment type') & If(!IsBlank(ThisItem.Position.'Previous incumbent'), " · was " & ThisItem.Position.'Previous incumbent', "")
             - lblVacStage:
                 Control: Label@2.5.1
                 Properties:
@@ -240,8 +240,8 @@ Screens:
                   Width: =190
                   Height: =34
                   Items: =["Approved", "Pending", "Not approved"]
-                  Default: =ThisItem.Position.Text('Funding status')
-                  Visible: =varCanFund && ThisItem.Position.Text('Position status') = "Vacant"
+                  Default: =Text(ThisItem.Position.'Funding status')
+                  Visible: =varCanFund && Text(ThisItem.Position.'Position status') = "Vacant"
                   OnChange: |-
                     =Patch(Positions, ThisItem.Position, {'Funding status': Switch(Self.Selected.Value, "Approved", 'Funding status (Positions)'.Approved, "Pending", 'Funding status (Positions)'.Pending, "Not approved", 'Funding status (Positions)'.'Not approved')});
                     Set(varNotice, "Funding for " & ThisItem.Position.'Position ID' & " set to " & Self.Selected.Value & ".")
@@ -335,7 +335,7 @@ Screens:
               =With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
                   "Final approval routes to: " & If(
                       Coalesce(Value(m.g), varSelAct.Position.'Full performance grade') >= 10, "Area fire chief or deputy chief",
-                      Coalesce(m.plan, varSelAct.Position.Text('Pay plan')) = "GW", "Assistant Chief, Operations",
+                      Coalesce(m.plan, Text(varSelAct.Position.'Pay plan')) = "GW", "Assistant Chief, Operations",
                       "Assistant Chief, Support Services"))
       - btnSelSubmit:
           Control: Classic/Button@2.2.0
@@ -353,7 +353,7 @@ Screens:
               =If(IsBlank(txtSelCand.Text) || IsBlank(txtSelGrade.Text),
                   Set(varErr, "Add the selected candidate and the proposed grade and step."),
                   With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
-                      With({vG: Coalesce(Value(m.g), varSelAct.Position.'Full performance grade'), vPlan: Coalesce(m.plan, varSelAct.Position.Text('Pay plan')),
+                      With({vG: Coalesce(Value(m.g), varSelAct.Position.'Full performance grade'), vPlan: Coalesce(m.plan, Text(varSelAct.Position.'Pay plan')),
                             vRound: CountRows(Filter('Selection Approval Steps', 'Hiring action'.'Action ID' = varSelAct.'Action ID', Sequence = 1)) + 1,
                             vSupEmail: LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').'Supervisor position'.'Incumbent email'},
                           With({vGroup: If(vG >= 10, "Area chief or deputy", If(vPlan = "GW", "Assistant Chief Operations", "Assistant Chief Support Services"))},
