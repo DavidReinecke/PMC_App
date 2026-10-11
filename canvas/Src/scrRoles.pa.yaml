@@ -5,7 +5,7 @@ Screens:
       OnVisible: |-
         =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
     Children:
-      - rctHeader:
+      - rctHeaderRoles:
           Control: Rectangle@2.3.0
           Properties:
             X: =0
@@ -13,8 +13,8 @@ Screens:
             Width: =Parent.Width
             Height: =64
             Fill: =RGBA(23, 28, 34, 1)
-      - lblApp:
-          Control: Classic/Label@2.5.1
+      - lblAppRoles:
+          Control: Label@2.5.1
           Properties:
             X: =16
             Y: =16
@@ -24,7 +24,7 @@ Screens:
             Color: =RGBA(230, 233, 238, 1)
             Size: =18
             FontWeight: =FontWeight.Bold
-      - btnNavTO:
+      - btnNavTORoles:
           Control: Classic/Button@2.2.0
           Properties:
             X: =270
@@ -41,7 +41,7 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
-      - btnNavVac:
+      - btnNavVacRoles:
           Control: Classic/Button@2.2.0
           Properties:
             X: =468
@@ -58,7 +58,7 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
-      - btnNavAppr:
+      - btnNavApprRoles:
           Control: Classic/Button@2.2.0
           Properties:
             X: =646
@@ -75,7 +75,7 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
-      - btnNavRoles:
+      - btnNavRolesRoles:
           Control: Classic/Button@2.2.0
           Properties:
             X: =824
@@ -92,21 +92,20 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
-      - ddArea:
-          Control: Classic/DropDown@2.4.1
+      - ddAreaRoles:
+          Control: Classic/DropDown@2.3.1
           Properties:
             X: =1000
             Y: =10
             Width: =230
             Height: =44
             Items: =colAreas
-            Value: =Name
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
-      - lblAreaFixed:
-          Control: Classic/Label@2.5.1
+      - lblAreaFixedRoles:
+          Control: Label@2.5.1
           Properties:
             X: =1000
             Y: =10
@@ -117,8 +116,8 @@ Screens:
             Color: =RGBA(154, 164, 178, 1)
             Size: =14
             VerticalAlign: =VerticalAlign.Middle
-      - lblMe:
-          Control: Classic/Label@2.5.1
+      - lblMeRoles:
+          Control: Label@2.5.1
           Properties:
             X: =1240
             Y: =10
@@ -129,7 +128,7 @@ Screens:
             Size: =12
             VerticalAlign: =VerticalAlign.Middle
       - lblRoleTitle:
-          Control: Classic/Label@2.5.1
+          Control: Label@2.5.1
           Properties:
             X: =16
             Y: =76
@@ -140,7 +139,7 @@ Screens:
             Size: =24
             FontWeight: =FontWeight.Bold
       - lblRoleHelp:
-          Control: Classic/Label@2.5.1
+          Control: Label@2.5.1
           Properties:
             X: =16
             Y: =114
@@ -150,7 +149,7 @@ Screens:
             Size: =12
             Text: =If(varIsDAAll, "You assign roles in any area and can appoint data administrators for one area or all areas.", "You assign roles for " & varArea.Name & " only.") & " Supervisors come from the position hierarchy and are not assigned here."
       - lblRoleNotice:
-          Control: Classic/Label@2.5.1
+          Control: Label@2.5.1
           Properties:
             X: =640
             Y: =76
@@ -172,7 +171,7 @@ Screens:
             Fill: =RGBA(29, 37, 46, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
       - tglEnded:
-          Control: Classic/Toggle@1.1.5
+          Control: Classic/Toggle@2.1.0
           Properties:
             X: =450
             Y: =160
@@ -222,7 +221,7 @@ Screens:
                   BorderColor: =RGBA(56, 66, 78, 1)
                   BorderThickness: =1
             - lblRoleName:
-                Control: Classic/Label@2.5.1
+                Control: Label@2.5.1
                 Properties:
                   X: =12
                   Y: =6
@@ -233,7 +232,7 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Text: =ThisItem.Person & " · " & ThisItem.Role.Value
             - lblRoleMeta:
-                Control: Classic/Label@2.5.1
+                Control: Label@2.5.1
                 Properties:
                   X: =12
                   Y: =34
@@ -243,7 +242,7 @@ Screens:
                   Size: =12
                   Text: =If(ThisItem.'All areas', "All areas", ThisItem.'Geographic area'.Name) & " · " & ThisItem.'User email' & " · " & ThisItem.'Assignment status'.Value & " · since " & Text(ThisItem.'Start date', "mmm d, yyyy")
             - lblRoleSees:
-                Control: Classic/Label@2.5.1
+                Control: Label@2.5.1
                 Properties:
                   X: =540
                   Y: =34
@@ -280,7 +279,7 @@ Screens:
             BorderThickness: =1
             Visible: =varPanel = "role"
       - lblRolePanelTitle:
-          Control: Classic/Label@2.5.1
+          Control: Label@2.5.1
           Properties:
             X: =908
             Y: =226
@@ -316,7 +315,7 @@ Screens:
             Fill: =RGBA(29, 37, 46, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
       - ddRRole:
-          Control: Classic/DropDown@2.4.1
+          Control: Classic/DropDown@2.3.1
           Properties:
             X: =908
             Y: =370
@@ -324,16 +323,14 @@ Screens:
             Height: =44
             Visible: =varPanel = "role"
             Items: =colChRole
-            Value: =Value
       - ddRArea:
-          Control: Classic/DropDown@2.4.1
+          Control: Classic/DropDown@2.3.1
           Properties:
             X: =908
             Y: =422
             Width: =426
             Height: =44
             Visible: =varPanel = "role" && varIsDAAll
-            Value: =Name
             Items: |-
               =If(ddRRole.Selected.Value = "Data administrator", Ungroup(Table({t: Table({Name: "All areas"})}, {t: ShowColumns(colAreas, "Name")}), t), ShowColumns(colAreas, "Name"))
       - btnRoleSave:
@@ -374,7 +371,7 @@ Screens:
             BorderColor: =RGBA(56, 66, 78, 1)
             OnSelect: =Set(varPanel, ""); Set(varErr, "")
       - lblRoleErr:
-          Control: Classic/Label@2.5.1
+          Control: Label@2.5.1
           Properties:
             X: =908
             Y: =528
