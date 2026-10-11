@@ -38,21 +38,6 @@ Usage: pac canvas unpack --msapp [--sources] [--layout] [--overwrite]
   --overwrite                 Allow file overwrite
 
 
-Microsoft PowerPlatform CLI
-Version: 2.13.1+g251dee1 (.NET 10.0.12)
-Online documentation: https://aka.ms/PowerPlatformCLI
-Feedback, Suggestions, Issues: https://github.com/microsoft/powerplatform-build-tools/discussions
-
-Error: An unknown argument --name was passed.
-
-Usage: pac canvas create --msapp [--connector-id] [--connector-display-name] [--environment]
-
-  --msapp                     Path to .msapp file to be generated
-  --connector-id              The ID of the Connector to generate the Power App from.
-  --connector-display-name    The display name of the Connector to generate the Power App from.
-  --environment               The target Environment ID or URL. The default value is the environment of your currently active Dataverse Auth Profile.
-
-
 Unpack from D:\a\PMC_App\plt\src\PAModelTests\Apps\AppWithLabel.msapp --> D:\a\PMC_App\blank
 Microsoft PowerPlatform CLI
 Version: 2.13.1+g251dee1 (.NET 10.0.12)
