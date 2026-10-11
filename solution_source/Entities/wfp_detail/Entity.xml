@@ -12,7 +12,7 @@
           <Name>wfp_detailid</Name>
           <LogicalName>wfp_detailid</LogicalName>
           <RequiredLevel>systemrequired</RequiredLevel>
-          <DisplayMask>PrimaryKey|ValidForGrid</DisplayMask>
+          <DisplayMask>ValidForAdvancedFind|ValidForGrid</DisplayMask>
           <ValidForUpdateApi>1</ValidForUpdateApi>
           <ValidForReadApi>1</ValidForReadApi>
           <ValidForCreateApi>1</ValidForCreateApi>
