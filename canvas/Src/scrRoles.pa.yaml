@@ -103,7 +103,7 @@ Screens:
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
-              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area'.Code = varArea.Code), {Name: ThisRecord.Name}))
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
       - lblAreaFixedRoles:
           Control: Label@2.5.1
           Properties:
@@ -204,8 +204,8 @@ Screens:
             TemplateSize: =72
             TemplatePadding: =6
             Items: |-
-              =SortByColumns(Filter('Role Assignments',
-                  'Geographic area'.Code = varArea.Code || (varIsDAAll && 'All areas'),
+              =SortByColumns(Filter(FirstN('Role Assignments', 2000),
+                  'Geographic area'.Name = varArea.Name || (varIsDAAll && 'All areas'),
                   tglEnded.Value || Text('Assignment status') = "Active",
                   IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Text(Role)), "wfp_name", SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
@@ -351,7 +351,7 @@ Screens:
                       Set(varErr, "Enter the person's name and sign-in email."),
                       !vAll && IsBlank(vAreaRec),
                       Set(varErr, "Choose a geographic area."),
-                      !vAll && ddRRole.Selected.Value in ["Area fire chief", "Assistant Chief Support Services", "Data administrator"] && !IsBlank(LookUp('Role Assignments', Text('Assignment status') = "Active" && Text(Role) = ddRRole.Selected.Value && 'Geographic area'.Code = vAreaRec.Code)),
+                      !vAll && ddRRole.Selected.Value in ["Area fire chief", "Assistant Chief Support Services", "Data administrator"] && !IsBlank(LookUp(FirstN('Role Assignments', 2000), Text('Assignment status') = "Active" && Text(Role) = ddRRole.Selected.Value && 'Geographic area'.Name = vAreaRec.Name)),
                       Set(varErr, "That role is already held in the area. End that assignment first."),
                       Patch('Role Assignments', Defaults('Role Assignments'), {Person: txtRName.Text, 'User email': Lower(txtREmail.Text), Role: Switch(ddRRole.Selected.Value, "Budget", 'Role (Role Assignments)'.Budget, "Area fire chief", 'Role (Role Assignments)'.'Area fire chief', "Deputy chief", 'Role (Role Assignments)'.'Deputy chief', "Assistant Chief Operations", 'Role (Role Assignments)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Role (Role Assignments)'.'Assistant Chief Support Services', "PMC member", 'Role (Role Assignments)'.'PMC member', "Data administrator", 'Role (Role Assignments)'.'Data administrator'), 'Assignment status': Switch("Active", "Active", 'Assignment status (Role Assignments)'.Active, "Ended", 'Assignment status (Role Assignments)'.Ended), 'All areas': vAll, 'Geographic area': If(vAll, Blank(), vAreaRec), 'Start date': Today()});
                       Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Assigned " & ddRRole.Selected.Value & " to " & txtRName.Text, 'Event type': Switch("Role assigned", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
