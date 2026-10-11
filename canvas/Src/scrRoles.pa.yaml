@@ -100,7 +100,7 @@ Screens:
             Width: =230
             Height: =44
             Items: ='Geographic Areas'
-            Default: =varArea
+            Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
@@ -206,8 +206,8 @@ Screens:
             Items: |-
               =SortByColumns(Filter('Role Assignments',
                   'Geographic area' = varArea || (varIsDAAll && 'All areas'),
-                  tglEnded.Value || 'Assignment status'.Value = "Active",
-                  IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Role.Value), "wfp_name", SortOrder.Ascending)
+                  tglEnded.Value || Text('Assignment status') = "Active",
+                  IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in 'Person' || txtRoleSearch.Text in Text(Role)), "wfp_name", SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctRoleRow:
@@ -230,7 +230,7 @@ Screens:
                   Color: =RGBA(230, 233, 238, 1)
                   Size: =15
                   FontWeight: =FontWeight.Semibold
-                  Text: =ThisItem.Person & " · " & ThisItem.Role.Value
+                  Text: =ThisItem.Person & " · " & Text(ThisItem.Role)
             - lblRoleMeta:
                 Control: Label@2.5.1
                 Properties:
@@ -240,7 +240,7 @@ Screens:
                   Height: =22
                   Color: =RGBA(154, 164, 178, 1)
                   Size: =12
-                  Text: =If(ThisItem.'All areas', "All areas", ThisItem.'Geographic area'.Name) & " · " & ThisItem.'User email' & " · " & ThisItem.'Assignment status'.Value & " · since " & Text(ThisItem.'Start date', "mmm d, yyyy")
+                  Text: =If(ThisItem.'All areas', "All areas", ThisItem.'Geographic area'.Name) & " · " & ThisItem.'User email' & " · " & Text(ThisItem.'Assignment status') & " · since " & Text(ThisItem.'Start date', "mmm d, yyyy")
             - lblRoleSees:
                 Control: Label@2.5.1
                 Properties:
@@ -250,7 +250,7 @@ Screens:
                   Height: =22
                   Color: =RGBA(224, 164, 58, 1)
                   Size: =12
-                  Text: =If(ThisItem.Role.Value in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"], "All areas, view", If(ThisItem.'All areas', "All areas, administer", "Own area only"))
+                  Text: =If(Text(ThisItem.Role) in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"], "All areas, view", If(ThisItem.'All areas', "All areas, administer", "Own area only"))
             - btnRoleEnd:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -259,14 +259,14 @@ Screens:
                   Width: =110
                   Height: =40
                   Text: ="End"
-                  Visible: =ThisItem.'Assignment status'.Value = "Active"
+                  Visible: =Text(ThisItem.'Assignment status') = "Active"
                   Fill: =RGBA(29, 37, 46, 1)
                   Color: =RGBA(230, 233, 238, 1)
                   BorderColor: =RGBA(56, 66, 78, 1)
                   OnSelect: |-
-                    =Patch('Role Assignments', ThisItem, {'Assignment status': LookUp(colChAssign, Value = "Ended")});
-                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Ended " & ThisItem.Role.Value & " for " & ThisItem.Person, 'Event type': LookUp(colChEvent, Value = "Role assigned"), 'Geographic area': varArea, By: varMe, Note: ""});
-                    Set(varNotice, "Ended " & ThisItem.Person & "'s " & ThisItem.Role.Value & " assignment.")
+                    =Patch('Role Assignments', ThisItem, {'Assignment status': Switch("Ended", "Active", 'Assignment status (Role Assignments)'.Active, "Ended", 'Assignment status (Role Assignments)'.Ended)});
+                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Ended " & Text(ThisItem.Role) & " for " & ThisItem.Person, 'Event type': Switch("Role assigned", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                    Set(varNotice, "Ended " & ThisItem.Person & "'s " & Text(ThisItem.Role) & " assignment.")
       - rctRolePanel:
           Control: Rectangle@2.3.0
           Properties:
@@ -351,10 +351,10 @@ Screens:
                       Set(varErr, "Enter the person's name and sign-in email."),
                       !vAll && IsBlank(vAreaRec),
                       Set(varErr, "Choose a geographic area."),
-                      !vAll && ddRRole.Selected.Value in ["Area fire chief", "Assistant Chief Support Services", "Data administrator"] && !IsBlank(LookUp('Role Assignments', 'Assignment status'.Value = "Active" && Role.Value = ddRRole.Selected.Value && 'Geographic area'.Code = vAreaRec.Code)),
+                      !vAll && ddRRole.Selected.Value in ["Area fire chief", "Assistant Chief Support Services", "Data administrator"] && !IsBlank(LookUp('Role Assignments', Text('Assignment status') = "Active" && Text(Role) = ddRRole.Selected.Value && 'Geographic area'.Code = vAreaRec.Code)),
                       Set(varErr, "That role is already held in the area. End that assignment first."),
-                      Patch('Role Assignments', Defaults('Role Assignments'), {Person: txtRName.Text, 'User email': Lower(txtREmail.Text), Role: LookUp(colChRole, Value = ddRRole.Selected.Value), 'Assignment status': LookUp(colChAssign, Value = "Active"), 'All areas': vAll, 'Geographic area': If(vAll, Blank(), vAreaRec), 'Start date': Today()});
-                      Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Assigned " & ddRRole.Selected.Value & " to " & txtRName.Text, 'Event type': LookUp(colChEvent, Value = "Role assigned"), 'Geographic area': varArea, By: varMe, Note: ""});
+                      Patch('Role Assignments', Defaults('Role Assignments'), {Person: txtRName.Text, 'User email': Lower(txtREmail.Text), Role: Switch(ddRRole.Selected.Value, "Budget", 'Role (Role Assignments)'.Budget, "Area fire chief", 'Role (Role Assignments)'.'Area fire chief', "Deputy chief", 'Role (Role Assignments)'.'Deputy chief', "Assistant Chief Operations", 'Role (Role Assignments)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Role (Role Assignments)'.'Assistant Chief Support Services', "PMC member", 'Role (Role Assignments)'.'PMC member', "Data administrator", 'Role (Role Assignments)'.'Data administrator'), 'Assignment status': Switch("Active", "Active", 'Assignment status (Role Assignments)'.Active, "Ended", 'Assignment status (Role Assignments)'.Ended), 'All areas': vAll, 'Geographic area': If(vAll, Blank(), vAreaRec), 'Start date': Today()});
+                      Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Assigned " & ddRRole.Selected.Value & " to " & txtRName.Text, 'Event type': Switch("Role assigned", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
                       Set(varNotice, txtRName.Text & " is now " & ddRRole.Selected.Value & ".");
                       Set(varPanel, "")))
       - btnRoleClose:

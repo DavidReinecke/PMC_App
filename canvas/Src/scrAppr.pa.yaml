@@ -100,7 +100,7 @@ Screens:
             Width: =230
             Height: =44
             Items: ='Geographic Areas'
-            Default: =varArea
+            Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
@@ -181,7 +181,7 @@ Screens:
             Height: =Parent.Height - 220
             TemplateSize: =250
             TemplatePadding: =8
-            Items: =Filter('Hiring Actions', 'Geographic area' = varArea, Stage.Value = "Selection approval")
+            Items: =Filter('Hiring Actions', 'Geographic area' = varArea, Text(Stage) = "Selection approval")
             Fill: =RGBA(15, 18, 22, 1)
           Children:
             - rctApprRow:

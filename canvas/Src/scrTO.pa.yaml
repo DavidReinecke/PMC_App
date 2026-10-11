@@ -102,7 +102,7 @@ Screens:
             Width: =230
             Height: =44
             Items: ='Geographic Areas'
-            Default: =varArea
+            Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
@@ -192,7 +192,7 @@ Screens:
               =SortByColumns(
                   Filter(Positions,
                       'Geographic area' = varArea,
-                      ddStatus.Selected.Value = "All" || 'Position status'.Value = ddStatus.Selected.Value,
+                      ddStatus.Selected.Value = "All" || Text('Position status') = ddStatus.Selected.Value,
                       ddUnit.Selected.Name = "All units" || Unit.Name = ddUnit.Selected.Name,
                       IsBlank(txtSearch.Text) || txtSearch.Text in 'Position ID' || txtSearch.Text in Title || txtSearch.Text in Incumbent),
                   "wfp_name", SortOrder.Ascending)
@@ -227,7 +227,7 @@ Screens:
                   Width: =520
                   Height: =22
                   Text: |-
-                    =ThisItem.'Pay plan'.Value & " · " & ThisItem.'Grade range' & " · " & ThisItem.'Employment type'.Value & If(ThisItem.'Position status'.Value = "Vacant", " · Funding: " & ThisItem.'Funding status'.Value, "")
+                    =Text(ThisItem.'Pay plan') & " · " & ThisItem.'Grade range' & " · " & Text(ThisItem.'Employment type') & If(Text(ThisItem.'Position status') = "Vacant", " · Funding: " & Text(ThisItem.'Funding status'), "")
                   Color: =RGBA(154, 164, 178, 1)
                   Size: =12
             - lblTOInc:
@@ -237,8 +237,8 @@ Screens:
                   Y: =58
                   Width: =360
                   Height: =26
-                  Text: =If(ThisItem.'Position status'.Value = "Filled", ThisItem.Incumbent, "Vacant" & If(!IsBlank(ThisItem.'Previous incumbent'), " · was " & ThisItem.'Previous incumbent', ""))
-                  Color: =If(ThisItem.'Position status'.Value = "Filled", RGBA(230, 233, 238, 1), RGBA(224, 164, 58, 1))
+                  Text: =If(Text(ThisItem.'Position status') = "Filled", ThisItem.Incumbent, "Vacant" & If(!IsBlank(ThisItem.'Previous incumbent'), " · was " & ThisItem.'Previous incumbent', ""))
+                  Color: =If(Text(ThisItem.'Position status') = "Filled", RGBA(230, 233, 238, 1), RGBA(224, 164, 58, 1))
                   Size: =14
                   FontWeight: =FontWeight.Semibold
             - lblTODetail:
@@ -345,8 +345,8 @@ Screens:
             OnSelect: |-
               =If(IsBlank(txtIncName.Text),
                   Set(varErr, "Enter the incumbent's name."),
-                  Patch(Positions, varSelPos, {Incumbent: txtIncName.Text, 'Incumbent email': Lower(txtIncEmail.Text), 'Position status': LookUp(colChPosStatus, Value = "Filled"), 'Previous incumbent': ""});
-                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Set incumbent of " & varSelPos.'Position ID' & " to " & txtIncName.Text, 'Event type': LookUp(colChEvent, Value = "Incumbent change"), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Patch(Positions, varSelPos, {Incumbent: txtIncName.Text, 'Incumbent email': Lower(txtIncEmail.Text), 'Position status': Switch("Filled", "Filled", 'Position status (Positions)'.Filled, "Vacant", 'Position status (Positions)'.Vacant), 'Previous incumbent': ""});
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Set incumbent of " & varSelPos.'Position ID' & " to " & txtIncName.Text, 'Event type': Switch("Incumbent change", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
                   Set(varNotice, "Incumbent updated for " & varSelPos.'Position ID' & ".");
                   Set(varPanel, "");
                   ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail)))
@@ -358,16 +358,16 @@ Screens:
             Width: =208
             Height: =44
             Text: ="Vacate position"
-            Visible: =varPanel = "inc" && varSelPos.'Position status'.Value = "Filled"
+            Visible: =varPanel = "inc" && Text(varSelPos.'Position status') = "Filled"
             Fill: =RGBA(29, 37, 46, 1)
             Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
             OnSelect: |-
-              =Patch(Positions, varSelPos, {Incumbent: "", 'Incumbent email': "", 'Position status': LookUp(colChPosStatus, Value = "Vacant"), 'Previous incumbent': varSelPos.Incumbent});
+              =Patch(Positions, varSelPos, {Incumbent: "", 'Incumbent email': "", 'Position status': Switch("Vacant", "Filled", 'Position status (Positions)'.Filled, "Vacant", 'Position status (Positions)'.Vacant), 'Previous incumbent': varSelPos.Incumbent});
               // a vacated home position drops its own details
               RemoveIf(Details, 'Home position'.'Position ID' = varSelPos.'Position ID');
               ClearCollect(colDetails, Details);
-              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Vacated " & varSelPos.'Position ID' & " (was " & varSelPos.Incumbent & ")", 'Event type': LookUp(colChEvent, Value = "Incumbent change"), 'Geographic area': varArea, By: varMe, Note: ""});
+              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Vacated " & varSelPos.'Position ID' & " (was " & varSelPos.Incumbent & ")", 'Event type': Switch("Incumbent change", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
               Set(varNotice, varSelPos.'Position ID' & " is now vacant.");
               Set(varPanel, "")
       - lblDetailHelp:
@@ -389,7 +389,7 @@ Screens:
             Width: =426
             Height: =44
             Visible: =varPanel = "detail"
-            Items: =AddColumns(Filter(Positions, 'Geographic area' = varArea, 'Position status'.Value = "Filled", 'Position ID' <> varSelPos.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
+            Items: =AddColumns(Filter(Positions, 'Geographic area' = varArea, Text('Position status') = "Filled", 'Position ID' <> varSelPos.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
       - btnDetailSave:
           Control: Classic/Button@2.2.0
           Properties:
@@ -407,7 +407,7 @@ Screens:
                   Set(varErr, ddDetailEmp.Selected.Incumbent & " is already detailed. Remove that detail first."),
                   Patch(Details, Defaults(Details), {'Detail ID': "DT-" & Text(Now(), "yymmdd-hhmmss"), 'Home position': ddDetailEmp.Selected, 'Detailed to': varSelPos, 'Geographic area': varArea, 'Entered by': varMe});
                   ClearCollect(colDetails, Details);
-                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Detailed " & ddDetailEmp.Selected.Incumbent & " (" & ddDetailEmp.Selected.'Position ID' & ") to " & varSelPos.'Position ID', 'Event type': LookUp(colChEvent, Value = "Detail"), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Detailed " & ddDetailEmp.Selected.Incumbent & " (" & ddDetailEmp.Selected.'Position ID' & ") to " & varSelPos.'Position ID', 'Event type': Switch("Detail", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
                   Set(varErr, "");
                   Set(varNotice, ddDetailEmp.Selected.Incumbent & " is detailed to " & varSelPos.'Position ID' & ". " & ddDetailEmp.Selected.'Position ID' & " still shows them as its incumbent."))
       - lblDetailsHere:
