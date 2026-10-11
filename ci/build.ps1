@@ -15,6 +15,8 @@ Log "=== pac canvas pack ==="
 if (Test-Path canvas/CanvasManifest.json) {
   Log (pac canvas pack --sources canvas --msapp out/WorkforcePlanner.msapp --layout SourceCode 2>&1 | Out-String)
   Log ("exit code: " + $LASTEXITCODE)
+  $pl="$env:USERPROFILE\.dotnet\tools\.store\microsoft.powerapps.cli.tool\2.13.1\microsoft.powerapps.cli.tool\2.13.1\tools\net10.0\any\logs\pac-log.txt"
+  if (Test-Path $pl) { Copy-Item $pl out/pac-log.txt }
 } else {
   Log "canvas/CanvasManifest.json not present yet"
 }
