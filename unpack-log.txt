@@ -1,0 +1,94 @@
+msapp: D:\a\PMC_App\PMC_App\work\sol\CanvasApps\wfp_workforceplannerapp_07958_DocumentUri.msapp
+Unpack from D:\a\PMC_App\PMC_App\work\sol\CanvasApps\wfp_workforceplannerapp_07958_DocumentUri.msapp --> D:\a\PMC_App\PMC_App\work\src
+Unpacking succeeded.
+
+exit 0
+\wfp_workforceplannerapp_07958_DocumentUri.msapr  97961
+\Src\_EditorState.pa.yaml  625
+\Src\App.pa.yaml  628
+\Src\Screen1.pa.yaml  667
+---- manifest
+---- App.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    Theme: =PowerAppsTheme
+
+---- _EditorState.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+EditorState:
+  ScreensOrder:
+    - Screen1
+
+---- Screen1.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Screen1:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+
+---- DataSources
+---- solution CanvasApps in customizations.xml
+
+> work\sol\customizations.xml:11988:  <CanvasApps>
+> work\sol\customizations.xml:11989:    <CanvasApp>
+  work\sol\customizations.xml:11990:      <Name>wfp_workforceplannerapp_07958</Name>
+  work\sol\customizations.xml:11991:      <AppVersion>2026-10-11T21:08:34Z</AppVersion>
+  work\sol\customizations.xml:11992:      <Status>Ready</Status>
+  work\sol\customizations.xml:11993:      <CreatedByClientVersion>3.26093.11.0</CreatedByClientVersion>
+  work\sol\customizations.xml:11994:      <MinClientVersion>3.26093.11.0</MinClientVersion>
+  work\sol\customizations.xml:11995:      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26093.11","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20261011T210444Z-3.26093.11.0"}</Tags>
+  work\sol\customizations.xml:11996:      <IsCdsUpgraded>0</IsCdsUpgraded>
+  work\sol\customizations.xml:11997:      <GalleryItemId xsi:nil="true"></GalleryItemId>
+  work\sol\customizations.xml:11998:      <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
+  work\sol\customizations.xml:11999:      <DisplayName>Workforce Planner App</DisplayName>
+  work\sol\customizations.xml:12000:      <Description xsi:nil="true"></Description>
+  work\sol\customizations.xml:12001:      <CommitMessage xsi:nil="true"></CommitMessage>
+  work\sol\customizations.xml:12002:      <Publisher xsi:nil="true"></Publisher>
+  work\sol\customizations.xml:12003:      <AuthorizationReferences>[]</AuthorizationReferences>
+  work\sol\customizations.xml:12004:      <ConnectionReferences>{}</ConnectionReferences>
+  work\sol\customizations.xml:12005:      <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"wfp_units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"Units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"wfp_positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"Positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"wfp_hiringactions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"Hiring Actions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"wfp_selectionsteps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"Selection Approval Steps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"wfp_roleassignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"Role Assignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"wfp_details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"Details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"wfp_hiringevents":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"Hiring Events":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"wfp_geographicareas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"},"Geographic Areas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"}}}}</DatabaseReferences>
+  work\sol\customizations.xml:12006:      <AppComponents>[]</AppComponents>
+  work\sol\customizations.xml:12007:      <AppComponentDependencies>[]</AppComponentDependencies>
+  work\sol\customizations.xml:12008:      <CanConsumeAppPass>1</CanConsumeAppPass>
+> work\sol\customizations.xml:12009:      <CanvasAppType>0</CanvasAppType>
+  work\sol\customizations.xml:12010:      <BypassConsent>0</BypassConsent>
+  work\sol\customizations.xml:12011:      <AdminControlBypassConsent>0</AdminControlBypassConsent>
+  work\sol\customizations.xml:12012:      <EmbeddedApp xsi:nil="true"></EmbeddedApp>
+  work\sol\customizations.xml:12013:      <IntroducedVersion>1.0</IntroducedVersion>
+  work\sol\customizations.xml:12014:      <CdsDependencies>{"cdsdependencies":[{"logicalname":"wfp_unit","componenttype":1},{"logicalname":"wfp_position","componenttype":1},{"logicalname":"wfp_hiringaction","componenttype":1},{"logicalname":"wfp_selectionstep","componenttype":1},{"logicalname":"wfp_roleassignment","componenttype":1},{"logicalname":"wfp_detail","componenttype":1},{"logicalname":"wfp_hiringevent","componenttype":1},{"logicalname":"wfp_geographicarea","componenttype":1}]}</CdsDependencies>
+  work\sol\customizations.xml:12015:      <IsCustomizable>1</IsCustomizable>
+> work\sol\customizations.xml:12016:      <BackgroundImageUri>/CanvasApps/wfp_workforceplannerapp_07958_BackgroundImageUri</BackgroundImageUri>
+> work\sol\customizations.xml:12017:      <DocumentUri>/CanvasApps/wfp_workforceplannerapp_07958_DocumentUri.msapp</DocumentUri>
+  work\sol\customizations.xml:12018:      <AdditionalUris>
+> work\sol\customizations.xml:12019:        <AdditionalUri>/CanvasApps/wfp_workforceplannerapp_07958_AdditionalUris0_identity.json</AdditionalUri>
+  work\sol\customizations.xml:12020:      </AdditionalUris>
+> work\sol\customizations.xml:12021:    </CanvasApp>
+> work\sol\customizations.xml:12022:  </CanvasApps>
+  work\sol\customizations.xml:12023:  <Languages>
+  work\sol\customizations.xml:12024:    <Language>1033</Language>
+  work\sol\customizations.xml:12025:  </Languages>
+  work\sol\customizations.xml:12026:</ImportExportXml>
+
+
