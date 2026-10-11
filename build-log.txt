@@ -38,7 +38,7 @@ Packed Solution.
 exit code: 0
 === pac canvas pack ===
 Canvas apps packed using yaml SourceCode must be validated first by opening the app for edit within the Power Apps studio. For more information see https://aka.ms/paccanvas
-Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: 073a9e54-96fb-432d-80eb-cfd5da9bd4a2, Exception Type: System.FormatException
+Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: 818f69a2-f87c-47ed-80d6-109739ca4de4, Exception Type: System.FormatException
 The diagnostic logs can be found at: C:\Users\runneradmin\.dotnet\tools\.store\microsoft.powerapps.cli.tool\2.13.1\microsoft.powerapps.cli.tool\2.13.1\tools\net10.0\any\logs\pac-log.txt
 
 exit code: 1
