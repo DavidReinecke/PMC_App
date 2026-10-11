@@ -1,0 +1,490 @@
+Screens:
+  scrTO:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =ClearCollect(colDetails, Details);
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}));
+        Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =64
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblApp:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =270
+            Y: =10
+            Width: =190
+            Height: =44
+            Text: ="Tables of Organization"
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =468
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Vacancies & Hiring"
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =646
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Selection Approvals"
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =824
+            Y: =10
+            Width: =160
+            Height: =44
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - ddArea:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Items: =colAreas
+            Value: =Name
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+      - lblAreaFixed:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMe:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1240
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblTOTitle:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76
+            Width: =500
+            Height: =40
+            Text: ="Tables of Organization"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - ddUnit:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =16
+            Y: =124
+            Width: =260
+            Height: =44
+            Items: =colUnitOpts
+            Value: =Name
+      - ddStatus:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =288
+            Y: =124
+            Width: =180
+            Height: =44
+            Items: =["All", "Filled", "Vacant"]
+            Value: =Value
+      - txtSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =480
+            Y: =124
+            Width: =320
+            Height: =44
+            HintText: ="Search position, title or incumbent"
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblTONotice:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =812
+            Y: =124
+            Width: =540
+            Height: =44
+            Text: =varNotice
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+      - galTO:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =180
+            Width: =If(varPanel = "", Parent.Width - 32, 860)
+            Height: =Parent.Height - 196
+            TemplateSize: =96
+            TemplatePadding: =6
+            Items: |-
+              =SortByColumns(
+                  Filter(Positions,
+                      'Geographic area' = varArea,
+                      ddStatus.Selected.Value = "All" || 'Position status'.Value = ddStatus.Selected.Value,
+                      ddUnit.Selected.Name = "All units" || Unit.Name = ddUnit.Selected.Name,
+                      IsBlank(txtSearch.Text) || txtSearch.Text in 'Position ID' || txtSearch.Text in Title || txtSearch.Text in Incumbent),
+                  "wfp_name", SortOrder.Ascending)
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctTORow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 12
+                  Height: =Parent.TemplateHeight - 8
+                  Fill: =RGBA(23, 28, 34, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+            - lblTOId:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =6
+                  Width: =520
+                  Height: =28
+                  Text: =ThisItem.'Position ID' & " · " & ThisItem.Title
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+            - lblTOMeta:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =34
+                  Width: =520
+                  Height: =22
+                  Text: |-
+                    =ThisItem.'Pay plan'.Value & " · " & ThisItem.'Grade range' & " · " & ThisItem.'Employment type'.Value & If(ThisItem.'Position status'.Value = "Vacant", " · Funding: " & ThisItem.'Funding status'.Value, "")
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+            - lblTOInc:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =58
+                  Width: =360
+                  Height: =26
+                  Text: =If(ThisItem.'Position status'.Value = "Filled", ThisItem.Incumbent, "Vacant" & If(!IsBlank(ThisItem.'Previous incumbent'), " · was " & ThisItem.'Previous incumbent', ""))
+                  Color: =If(ThisItem.'Position status'.Value = "Filled", RGBA(230, 233, 238, 1), RGBA(224, 164, 58, 1))
+                  Size: =14
+                  FontWeight: =FontWeight.Semibold
+            - lblTODetail:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =372
+                  Y: =58
+                  Width: =360
+                  Height: =26
+                  Color: =RGBA(224, 164, 58, 1)
+                  Size: =12
+                  Text: |-
+                    =With({out: LookUp(colDetails, 'Home position'.'Position ID' = ThisItem.'Position ID'), inn: Filter(colDetails, 'Detailed to'.'Position ID' = ThisItem.'Position ID')},
+                        If(!IsBlank(out), "On detail to " & out.'Detailed to'.'Position ID' & " (" & out.'Detailed to'.Title & ")", "") &
+                        If(!IsBlank(out) && !IsEmpty(inn), " · ", "") &
+                        If(!IsEmpty(inn), "Detailed in: " & Concat(inn, 'Home position'.Incumbent & " from " & 'Home position'.'Position ID', ", "), ""))
+            - btnTOEdit:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 330
+                  Y: =8
+                  Width: =150
+                  Height: =36
+                  Text: ="Edit incumbent"
+                  Visible: =varCanEditInc
+                  OnSelect: =Set(varSel, ThisItem); Set(varPanel, "inc"); Set(varErr, ""); Reset(txtIncName); Reset(txtIncEmail)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+            - btnTODetail:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 330
+                  Y: =50
+                  Width: =150
+                  Height: =36
+                  Text: ="Detail someone in"
+                  Visible: =varCanDetail
+                  OnSelect: =Set(varSel, ThisItem); Set(varPanel, "detail"); Set(varErr, ""); Reset(ddDetailEmp)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+      - rctPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =892
+            Y: =180
+            Width: =458
+            Height: =Parent.Height - 196
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Visible: =varPanel <> ""
+      - lblPanelTitle:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =192
+            Width: =430
+            Height: =56
+            Visible: =varPanel <> ""
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Text: =If(varPanel = "inc", "Edit incumbent · ", "Detail someone into ") & varSel.'Position ID' & " · " & varSel.Title
+      - txtIncName:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =908
+            Y: =260
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "inc"
+            HintText: ="Incumbent name"
+            Default: =varSel.Incumbent
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - txtIncEmail:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =908
+            Y: =312
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "inc"
+            HintText: ="Incumbent sign-in email"
+            Default: =varSel.'Incumbent email'
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - btnIncSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =908
+            Y: =368
+            Width: =206
+            Height: =44
+            Text: ="Set incumbent"
+            Visible: =varPanel = "inc"
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            OnSelect: |-
+              =If(IsBlank(txtIncName.Text),
+                  Set(varErr, "Enter the incumbent's name."),
+                  Patch(Positions, varSel, {Incumbent: txtIncName.Text, 'Incumbent email': Lower(txtIncEmail.Text), 'Position status': LookUp(colChPosStatus, Value = "Filled"), 'Previous incumbent': ""});
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Set incumbent of " & varSel.'Position ID' & " to " & txtIncName.Text, 'Event type': LookUp(colChEvent, Value = "Incumbent change"), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Set(varNotice, "Incumbent updated for " & varSel.'Position ID' & ".");
+                  Set(varPanel, "");
+                  ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail)))
+      - btnIncVacate:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =1126
+            Y: =368
+            Width: =208
+            Height: =44
+            Text: ="Vacate position"
+            Visible: =varPanel = "inc" && varSel.'Position status'.Value = "Filled"
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            OnSelect: |-
+              =Patch(Positions, varSel, {Incumbent: "", 'Incumbent email': "", 'Position status': LookUp(colChPosStatus, Value = "Vacant"), 'Previous incumbent': varSel.Incumbent});
+              // a vacated home position drops its own details
+              RemoveIf(Details, 'Home position'.'Position ID' = varSel.'Position ID');
+              ClearCollect(colDetails, Details);
+              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Vacated " & varSel.'Position ID' & " (was " & varSel.Incumbent & ")", 'Event type': LookUp(colChEvent, Value = "Incumbent change"), 'Geographic area': varArea, By: varMe, Note: ""});
+              Set(varNotice, varSel.'Position ID' & " is now vacant.");
+              Set(varPanel, "")
+      - lblDetailHelp:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =250
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "detail"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Choose the employee by their home position. The home position keeps its incumbent."
+      - ddDetailEmp:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =908
+            Y: =298
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "detail"
+            Value: =lbl
+            Items: =AddColumns(Filter(Positions, 'Geographic area' = varArea, 'Position status'.Value = "Filled", 'Position ID' <> varSel.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
+      - btnDetailSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =908
+            Y: =352
+            Width: =206
+            Height: =44
+            Text: ="Detail in"
+            Visible: =varPanel = "detail"
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            OnSelect: |-
+              =If(!IsBlank(LookUp(colDetails, 'Home position'.'Position ID' = ddDetailEmp.Selected.'Position ID')),
+                  Set(varErr, ddDetailEmp.Selected.Incumbent & " is already detailed. Remove that detail first."),
+                  Patch(Details, Defaults(Details), {'Detail ID': "DT-" & Text(Now(), "yymmdd-hhmmss"), 'Home position': ddDetailEmp.Selected, 'Detailed to': varSel, 'Geographic area': varArea, 'Entered by': varMe});
+                  ClearCollect(colDetails, Details);
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Detailed " & ddDetailEmp.Selected.Incumbent & " (" & ddDetailEmp.Selected.'Position ID' & ") to " & varSel.'Position ID', 'Event type': LookUp(colChEvent, Value = "Detail"), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Set(varErr, "");
+                  Set(varNotice, ddDetailEmp.Selected.Incumbent & " is detailed to " & varSel.'Position ID' & ". " & ddDetailEmp.Selected.'Position ID' & " still shows them as its incumbent."))
+      - lblDetailsHere:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =410
+            Width: =426
+            Height: =26
+            Visible: =varPanel = "detail"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Currently detailed into this position"
+      - galDetailsHere:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =908
+            Y: =438
+            Width: =426
+            Height: =170
+            TemplateSize: =48
+            TemplatePadding: =2
+            Visible: =varPanel = "detail"
+            Items: =Filter(colDetails, 'Detailed to'.'Position ID' = varSel.'Position ID')
+            Fill: =RGBA(23, 28, 34, 1)
+          Children:
+            - lblDetailName:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =4
+                  Y: =4
+                  Width: =290
+                  Height: =40
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =13
+                  Text: =ThisItem.'Home position'.Incumbent & " from " & ThisItem.'Home position'.'Position ID'
+            - btnDetailRemove:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =300
+                  Y: =4
+                  Width: =110
+                  Height: =40
+                  Text: ="Remove"
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  OnSelect: |-
+                    =Remove(Details, LookUp(Details, 'Detail ID' = ThisItem.'Detail ID'));
+                    ClearCollect(colDetails, Details);
+                    Set(varNotice, "Removed the detail from " & ThisItem.'Home position'.'Position ID' & ".")
+      - lblPanelErr:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =Parent.Height - 120
+            Width: =426
+            Height: =44
+            Visible: =varPanel <> ""
+            Color: =RGBA(244, 165, 138, 1)
+            Size: =13
+            Text: =varErr
+      - btnPanelClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =908
+            Y: =Parent.Height - 68
+            Width: =426
+            Height: =44
+            Text: ="Close"
+            Visible: =varPanel <> ""
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")

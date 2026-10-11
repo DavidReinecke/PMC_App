@@ -1,0 +1,394 @@
+Screens:
+  scrVac:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =64
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblApp:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =270
+            Y: =10
+            Width: =190
+            Height: =44
+            Text: ="Tables of Organization"
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =468
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Vacancies & Hiring"
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =646
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Selection Approvals"
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =824
+            Y: =10
+            Width: =160
+            Height: =44
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - ddArea:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Items: =colAreas
+            Value: =Name
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+      - lblAreaFixed:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMe:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1240
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblVacTitle:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76
+            Width: =600
+            Height: =40
+            Text: ="Vacancies & Hiring"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - lblVacNotice:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =640
+            Y: =76
+            Width: =712
+            Height: =40
+            Text: =varNotice
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+      - galVac:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =124
+            Width: =If(varPanel = "", Parent.Width - 32, 860)
+            Height: =Parent.Height - 140
+            TemplateSize: =128
+            TemplatePadding: =6
+            Items: =SortByColumns(Filter('Hiring Actions', 'Geographic area' = varArea), "wfp_name", SortOrder.Ascending)
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctVacRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 12
+                  Height: =Parent.TemplateHeight - 8
+                  Fill: =RGBA(23, 28, 34, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+            - lblVacId:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =6
+                  Width: =560
+                  Height: =28
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+                  Text: =ThisItem.'Action ID' & " · " & ThisItem.Position.'Position ID' & " · " & ThisItem.Position.Title
+            - lblVacMeta:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =36
+                  Width: =560
+                  Height: =22
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Text: =ThisItem.Position.'Pay plan'.Value & " · " & ThisItem.Position.'Grade range' & " · " & ThisItem.Position.'Employment type'.Value & If(!IsBlank(ThisItem.Position.'Previous incumbent'), " · was " & ThisItem.Position.'Previous incumbent', "")
+            - lblVacStage:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =62
+                  Width: =560
+                  Height: =26
+                  Color: =RGBA(224, 164, 58, 1)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Text: |-
+                    ="Stage: " & ThisItem.Stage.Value & If(!IsBlank(ThisItem.'Selected candidate'), " · Selected: " & ThisItem.'Selected candidate' & " (" & ThisItem.'Proposed grade and step' & ")", "") & If(!IsBlank(ThisItem.'Entry on duty'), " · Fills " & Text(ThisItem.'Entry on duty', "mmm d"), "")
+            - ddVacStage:
+                Control: Classic/DropDown@2.4.1
+                Properties:
+                  X: =12
+                  Y: =88
+                  Width: =240
+                  Height: =34
+                  Items: =["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
+                  Value: =Value
+                  Default: =ThisItem.Stage.Value
+                  Visible: =varCanEditHiring && ThisItem.Stage.Value in ["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
+                  OnChange: |-
+                    =Patch('Hiring Actions', ThisItem, {Stage: LookUp(colChStage, Value = Self.Selected.Value)});
+                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: ThisItem.'Action ID' & " moved to " & Self.Selected.Value, 'Event type': LookUp(colChEvent, Value = "Stage change"), 'Geographic area': varArea, By: varMe, Note: ""});
+                    Set(varNotice, ThisItem.'Action ID' & " moved to " & Self.Selected.Value & ".")
+            - btnVacSubmit:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =264
+                  Y: =88
+                  Width: =190
+                  Height: =34
+                  Text: ="Submit selection"
+                  Visible: =varCanEditHiring && ThisItem.Stage.Value = "Interviews"
+                  Fill: =RGBA(224, 164, 58, 1)
+                  Color: =RGBA(20, 17, 10, 1)
+                  BorderColor: =RGBA(224, 164, 58, 1)
+                  OnSelect: =Set(varSel, ThisItem); Set(varPanel, "sel"); Set(varErr, ""); Reset(txtSelCand); Reset(txtSelGrade)
+            - ddVacFund:
+                Control: Classic/DropDown@2.4.1
+                Properties:
+                  X: =Parent.TemplateWidth - 280
+                  Y: =8
+                  Width: =190
+                  Height: =34
+                  Items: =["Approved", "Pending", "Not approved"]
+                  Value: =Value
+                  Default: =ThisItem.Position.'Funding status'.Value
+                  Visible: =varCanFund && ThisItem.Position.'Position status'.Value = "Vacant"
+                  OnChange: |-
+                    =Patch(Positions, ThisItem.Position, {'Funding status': LookUp(colChFunding, Value = Self.Selected.Value)});
+                    Set(varNotice, "Funding for " & ThisItem.Position.'Position ID' & " set to " & Self.Selected.Value & ".")
+            - dpVacEod:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  X: =Parent.TemplateWidth - 280
+                  Y: =50
+                  Width: =170
+                  Height: =34
+                  Visible: =varCanEditHiring && ThisItem.Stage.Value = "Offer"
+                  DefaultDate: =ThisItem.'Entry on duty'
+            - btnVacEod:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 280
+                  Y: =88
+                  Width: =190
+                  Height: =34
+                  Text: ="Set entry on duty"
+                  Visible: =varCanEditHiring && ThisItem.Stage.Value = "Offer"
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  OnSelect: |-
+                    =If(IsBlank(dpVacEod.SelectedDate),
+                        Set(varNotice, "Choose an entry on duty date."),
+                        Patch('Hiring Actions', ThisItem, {'Entry on duty': dpVacEod.SelectedDate});
+                        If(dpVacEod.SelectedDate <= Today(),
+                            Patch(Positions, ThisItem.Position, {Incumbent: ThisItem.'Selected candidate', 'Position status': LookUp(colChPosStatus, Value = "Filled"), 'Previous incumbent': ""});
+                            Set(varNotice, ThisItem.Position.'Position ID' & " is filled by " & ThisItem.'Selected candidate' & "."),
+                            Set(varNotice, "Entry on duty set. The daily fill flow puts " & ThisItem.'Selected candidate' & " into the position on that date.")))
+      - rctSelPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =892
+            Y: =124
+            Width: =458
+            Height: =330
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Visible: =varPanel = "sel"
+      - lblSelTitle:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =136
+            Width: =426
+            Height: =52
+            Visible: =varPanel = "sel"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Text: ="Submit selection · " & varSel.'Action ID' & " · " & varSel.Position.Title
+      - txtSelCand:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =908
+            Y: =196
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "sel"
+            HintText: ="Selected candidate"
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - txtSelGrade:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =908
+            Y: =248
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "sel"
+            HintText: ="Proposed grade and step, for example GS-12 Step 3"
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblSelRoute:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =298
+            Width: =426
+            Height: =44
+            Visible: =varPanel = "sel"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: |-
+              =With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
+                  "Final approval routes to: " & If(
+                      Coalesce(Value(m.g), varSel.Position.'Full performance grade') >= 10, "Area fire chief or deputy chief",
+                      Coalesce(m.plan, varSel.Position.'Pay plan'.Value) = "GW", "Assistant Chief, Operations",
+                      "Assistant Chief, Support Services"))
+      - btnSelSubmit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =908
+            Y: =350
+            Width: =206
+            Height: =44
+            Text: ="Submit for approval"
+            Visible: =varPanel = "sel"
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            OnSelect: |-
+              =If(IsBlank(txtSelCand.Text) || IsBlank(txtSelGrade.Text),
+                  Set(varErr, "Add the selected candidate and the proposed grade and step."),
+                  With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
+                      With({vG: Coalesce(Value(m.g), varSel.Position.'Full performance grade'), vPlan: Coalesce(m.plan, varSel.Position.'Pay plan'.Value),
+                            vRound: CountRows(Filter('Selection Approval Steps', 'Hiring action'.'Action ID' = varSel.'Action ID', Sequence = 1)) + 1,
+                            vSupEmail: LookUp(Positions, 'Position ID' = varSel.Position.'Position ID').'Supervisor position'.'Incumbent email'},
+                          With({vGroup: If(vG >= 10, "Area chief or deputy", If(vPlan = "GW", "Assistant Chief Operations", "Assistant Chief Support Services"))},
+                              Patch('Hiring Actions', varSel, {Stage: LookUp(colChStage, Value = "Selection approval"), 'Selected candidate': txtSelCand.Text, 'Proposed grade and step': Upper(txtSelGrade.Text)});
+                              Collect('Selection Approval Steps',
+                                  {Step: varSel.'Action ID' & " r" & vRound & " step 1", 'Hiring action': varSel, 'Geographic area': varArea, Sequence: 1, 'Approval round': vRound, 'Approver group': LookUp(colChApprover, Value = "Supervisor"), Decision: LookUp(colChDecision, Value = "Pending"), 'Supervisor email': vSupEmail, Position: varSel.Position.'Position ID' & " " & varSel.Position.Title},
+                                  {Step: varSel.'Action ID' & " r" & vRound & " step 2", 'Hiring action': varSel, 'Geographic area': varArea, Sequence: 2, 'Approval round': vRound, 'Approver group': LookUp(colChApprover, Value = "Budget"), Decision: LookUp(colChDecision, Value = "Waiting"), Position: varSel.Position.'Position ID' & " " & varSel.Position.Title},
+                                  {Step: varSel.'Action ID' & " r" & vRound & " step 3", 'Hiring action': varSel, 'Geographic area': varArea, Sequence: 3, 'Approval round': vRound, 'Approver group': LookUp(colChApprover, Value = vGroup), Decision: LookUp(colChDecision, Value = "Waiting"), Position: varSel.Position.'Position ID' & " " & varSel.Position.Title});
+                              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Submitted selection for " & varSel.'Action ID' & " (" & txtSelCand.Text & ", " & Upper(txtSelGrade.Text) & "), final approver " & vGroup, 'Event type': LookUp(colChEvent, Value = "Selection routed"), 'Geographic area': varArea, By: varMe, Note: ""});
+                              Set(varNotice, "Submitted. Final approval routes to " & vGroup & ".");
+                              Set(varPanel, "")))))
+      - lblSelErr:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =908
+            Y: =398
+            Width: =426
+            Height: =24
+            Visible: =varPanel = "sel"
+            Color: =RGBA(244, 165, 138, 1)
+            Size: =13
+            Text: =varErr
+      - btnSelClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =1126
+            Y: =350
+            Width: =208
+            Height: =44
+            Text: ="Cancel"
+            Visible: =varPanel = "sel"
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")

@@ -1,0 +1,231 @@
+Screens:
+  scrAppr:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, "")
+    Children:
+      - rctHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =64
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblApp:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =270
+            Y: =10
+            Width: =190
+            Height: =44
+            Text: ="Tables of Organization"
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =468
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Vacancies & Hiring"
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =646
+            Y: =10
+            Width: =170
+            Height: =44
+            Text: ="Selection Approvals"
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =824
+            Y: =10
+            Width: =160
+            Height: =44
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - ddArea:
+          Control: Classic/DropDown@2.4.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Items: =colAreas
+            Value: =Name
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+      - lblAreaFixed:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1000
+            Y: =10
+            Width: =230
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMe:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =1240
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblApprTitle:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76
+            Width: =600
+            Height: =40
+            Text: ="Selection Approvals"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - lblApprHelp:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =16
+            Y: =116
+            Width: =1334
+            Height: =30
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: |-
+              ="Steps: Supervisor, Budget, then the final approver. GW below 10: Assistant Chief, Operations. GS or WG below 10: Assistant Chief, Support Services. Grade 10 and above: area fire chief or deputy chief."
+      - lblApprNotice:
+          Control: Classic/Label@2.5.1
+          Properties:
+            X: =640
+            Y: =76
+            Width: =712
+            Height: =40
+            Text: =varNotice
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+      - txtApprComment:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            X: =16
+            Y: =150
+            Width: =1334
+            Height: =44
+            HintText: ="Comment (required when returning a selection)"
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - galAppr:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =204
+            Width: =Parent.Width - 32
+            Height: =Parent.Height - 220
+            TemplateSize: =250
+            TemplatePadding: =8
+            Items: =Filter('Hiring Actions', 'Geographic area' = varArea, Stage.Value = "Selection approval")
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctApprRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 12
+                  Height: =Parent.TemplateHeight - 8
+                  Fill: =RGBA(23, 28, 34, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+            - lblApprId:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =6
+                  Width: =900
+                  Height: =28
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+                  Text: =ThisItem.'Action ID' & " · " & ThisItem.Position.'Position ID' & " · " & ThisItem.Position.Title
+            - lblApprSel:
+                Control: Classic/Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =36
+                  Width: =900
+                  Height: =24
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =13
+                  Text: |-
+                    ="Selected: " & ThisItem.'Selected candidate' & " · Proposed " & ThisItem.'Proposed grade and step'
+            - galSteps:
+                Control: Gallery@2.15.0
+                Variant: Horizontal
+                Properties:
+                  X: =12
+                  Y: =66
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =168
+                  TemplateSize: =420
+                  TemplatePadding: =6
+                  Items: =SortByColumns(Filter('Selection Approval Steps', 'Hiring action'.'Action ID' = ThisItem.'Action ID', 'Approval round' = Max(Filter('Selection Approval Steps', 'Hiring action'.'Action ID' = ThisItem.'Action ID'), 'Approval round')), "wfp_sequence", SortOrder.Ascending)
+                  Fill: =RGBA(23, 28, 34, 1)

@@ -1,0 +1,37 @@
+App:
+  Properties:
+    OnStart: |-
+      =Set(varEmail, Lower(User().Email));
+      Set(varMe, User().FullName);
+      // Choice lists used when writing choice columns
+      ClearCollect(colChStage, Choices([@'Hiring Actions'].Stage));
+      ClearCollect(colChPosStatus, Choices([@Positions].'Position status'));
+      ClearCollect(colChFunding, Choices([@Positions].'Funding status'));
+      ClearCollect(colChApprover, Choices([@'Selection Approval Steps'].'Approver group'));
+      ClearCollect(colChDecision, Choices([@'Selection Approval Steps'].Decision));
+      ClearCollect(colChRole, Choices([@'Role Assignments'].Role));
+      ClearCollect(colChAssign, Choices([@'Role Assignments'].'Assignment status'));
+      ClearCollect(colChEvent, Choices([@'Hiring Events'].'Event type'));
+      // Who am I
+      ClearCollect(colMyRoles, ForAll(Filter('Role Assignments', Lower('User email') = varEmail && 'Assignment status'.Value = "Active"), {role: ThisRecord.Role.Value, allAreas: ThisRecord.'All areas', area: ThisRecord.'Geographic area'.Code}));
+      ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail));
+      ClearCollect(colAreas, 'Geographic Areas');
+      Set(varIsDAAll, CountRows(Filter(colMyRoles, role = "Data administrator" && allAreas)) > 0);
+      Set(varIsDA, CountRows(Filter(colMyRoles, role = "Data administrator")) > 0);
+      Set(varIsChief, CountRows(Filter(colMyRoles, role in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"])) > 0);
+      Set(varIsBudget, CountRows(Filter(colMyRoles, role = "Budget")) > 0);
+      Set(varIsSup, CountRows(Filter(Positions, 'Supervisor position'.'Position ID' in colMyPos.'Position ID')) > 0);
+      Set(varCanSeeAll, varIsChief || varIsDAAll);
+      Set(varCanEditInc, varIsDA || varIsChief);
+      Set(varCanDetail, varIsSup || varIsDA || varIsChief);
+      Set(varCanEditHiring, varIsSup || varIsDA);
+      Set(varCanFund, varIsBudget || varIsDA);
+      // Starting area: my role's area, else my position's area
+      Set(varArea, Coalesce(LookUp(colAreas, Code = First(Filter(colMyRoles, !IsBlank(area))).area), First(colMyPos).'Geographic area', First(colAreas)));
+      Set(varPanel, "");
+      Set(varNotice, "");
+      Set(varErr, "");
+      Set(varSel, Blank());
+      ClearCollect(colDetails, Details);
+      ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(Units, 'Geographic area' = varArea), {Name: ThisRecord.Name}))
+    StartScreen: =scrTO

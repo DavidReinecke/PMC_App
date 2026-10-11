@@ -1,0 +1,1195 @@
+{
+ "wfp_geographicarea": [
+  {
+   "wfp_name": "Northern Rockies",
+   "wfp_code": "NR"
+  },
+  {
+   "wfp_name": "Great Basin",
+   "wfp_code": "GB"
+  }
+ ],
+ "wfp_unit": [
+  {
+   "wfp_name": "Geographic Area Office",
+   "wfp_unitcode": "GA",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Yellowstone River",
+   "wfp_unitcode": "YR",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Triple Divide",
+   "wfp_unitcode": "TD",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Northern Plains",
+   "wfp_unitcode": "NP",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Bitterroot Range",
+   "wfp_unitcode": "BR",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Tongue River",
+   "wfp_unitcode": "TR",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Missouri Breaks",
+   "wfp_unitcode": "MB",
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  }
+ ],
+ "wfp_position": [
+  {
+   "wfp_name": "NR-GA-001",
+   "wfp_title": "Geographic Area Fire Chief",
+   "wfp_unit": [
+    "wfp_unit",
+    "Geographic Area Office"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-15",
+   "wfp_topgrade": 15,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Robert Whitaker",
+   "wfp_incumbentemail": "robert.whitaker@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-GA-002",
+   "wfp_title": "Deputy Fire Chief",
+   "wfp_unit": [
+    "wfp_unit",
+    "Geographic Area Office"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-14",
+   "wfp_topgrade": 14,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Elena Marquez",
+   "wfp_incumbentemail": "elena.marquez@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-GA-003",
+   "wfp_title": "Budget Analyst",
+   "wfp_unit": [
+    "wfp_unit",
+    "Geographic Area Office"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-11/12",
+   "wfp_topgrade": 12,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Tom Reyes",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-GA-004",
+   "wfp_title": "Fire Finance Specialist",
+   "wfp_unit": [
+    "wfp_unit",
+    "Geographic Area Office"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-11/12",
+   "wfp_topgrade": 12,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Priya Nandakumar",
+   "wfp_incumbentemail": "priya.nandakumar@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-YR-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Yellowstone River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Caleb Foster",
+   "wfp_incumbentemail": "caleb.foster@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-YR-002",
+   "wfp_title": "Assistant Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Yellowstone River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-11/12",
+   "wfp_topgrade": 12,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Hannah Ostrowski",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-YR-009",
+   "wfp_title": "Engine Module Lead",
+   "wfp_unit": [
+    "wfp_unit",
+    "Yellowstone River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GW",
+   "wfp_grade": "GW-05/06",
+   "wfp_topgrade": 6,
+   "wfp_employmenttype": "Career seasonal",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Dana Whitfield",
+   "wfp_incumbentemail": "dana.whitfield@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-YR-011",
+   "wfp_title": "Heavy Equipment Operator",
+   "wfp_unit": [
+    "wfp_unit",
+    "Yellowstone River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "WG",
+   "wfp_grade": "WG-08/10",
+   "wfp_topgrade": 10,
+   "wfp_employmenttype": "Seasonal",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Hector Salazar",
+   "wfp_incumbentemail": "hector.salazar@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-YR-014",
+   "wfp_title": "Fuels Specialist",
+   "wfp_unit": [
+    "wfp_unit",
+    "Yellowstone River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-09/11",
+   "wfp_topgrade": 11,
+   "wfp_employmenttype": "Career seasonal",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Not approved"
+  },
+  {
+   "wfp_name": "NR-TD-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Triple Divide"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Luis Armendariz",
+   "wfp_incumbentemail": "luis.armendariz@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TD-005",
+   "wfp_title": "Dispatch Center Manager",
+   "wfp_unit": [
+    "wfp_unit",
+    "Triple Divide"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12",
+   "wfp_topgrade": 12,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Grace Linden",
+   "wfp_incumbentemail": "grace.linden@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TD-006",
+   "wfp_title": "Initial Attack Dispatcher",
+   "wfp_unit": [
+    "wfp_unit",
+    "Triple Divide"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-07/09",
+   "wfp_topgrade": 9,
+   "wfp_employmenttype": "Seasonal",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Owen Pruitt",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TD-008",
+   "wfp_title": "Lead Dispatcher",
+   "wfp_unit": [
+    "wfp_unit",
+    "Triple Divide"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-11/12",
+   "wfp_topgrade": 12,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TD-011",
+   "wfp_title": "Warehouse Worker",
+   "wfp_unit": [
+    "wfp_unit",
+    "Triple Divide"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "WG",
+   "wfp_grade": "WG-04/05",
+   "wfp_topgrade": 5,
+   "wfp_employmenttype": "Seasonal",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Lyle Mercer",
+   "wfp_fundingstatus": "Pending"
+  },
+  {
+   "wfp_name": "NR-NP-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Northern Plains"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Frank Delacroix",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-NP-004",
+   "wfp_title": "Fire Prevention Technician",
+   "wfp_unit": [
+    "wfp_unit",
+    "Northern Plains"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GW",
+   "wfp_grade": "GW-03/04",
+   "wfp_topgrade": 4,
+   "wfp_employmenttype": "Seasonal",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Mia Kowalczyk",
+   "wfp_incumbentemail": "mia.kowalczyk@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-NP-007",
+   "wfp_title": "Helitack Crew Supervisor",
+   "wfp_unit": [
+    "wfp_unit",
+    "Northern Plains"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GW",
+   "wfp_grade": "GW-07/08",
+   "wfp_topgrade": 8,
+   "wfp_employmenttype": "Career seasonal",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Jonah Barrett",
+   "wfp_incumbentemail": "jonah.barrett@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-NP-009",
+   "wfp_title": "Engine Operator",
+   "wfp_unit": [
+    "wfp_unit",
+    "Northern Plains"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GW",
+   "wfp_grade": "GW-05/06",
+   "wfp_topgrade": 6,
+   "wfp_employmenttype": "Seasonal",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Dale Whitcomb",
+   "wfp_fundingstatus": "Pending"
+  },
+  {
+   "wfp_name": "NR-NP-012",
+   "wfp_title": "Fire Equipment Mechanic",
+   "wfp_unit": [
+    "wfp_unit",
+    "Northern Plains"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "WG",
+   "wfp_grade": "WG-09/10",
+   "wfp_topgrade": 10,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Tessa Brandt",
+   "wfp_incumbentemail": "tessa.brandt@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-BR-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Bitterroot Range"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Sofia Ellingson",
+   "wfp_incumbentemail": "sofia.ellingson@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-BR-002",
+   "wfp_title": "Fire Prevention Specialist",
+   "wfp_unit": [
+    "wfp_unit",
+    "Bitterroot Range"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-09/11",
+   "wfp_topgrade": 11,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Kyle Dunmore",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TR-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Tongue River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Filled",
+   "wfp_incumbent": "Marcus Teller",
+   "wfp_incumbentemail": "marcus.teller@example.gov",
+   "wfp_previousincumbent": "",
+   "wfp_fundingstatus": "Approved"
+  },
+  {
+   "wfp_name": "NR-TR-002",
+   "wfp_title": "Engine Captain",
+   "wfp_unit": [
+    "wfp_unit",
+    "Tongue River"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-08/09",
+   "wfp_topgrade": 9,
+   "wfp_employmenttype": "Career seasonal",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Ben Alvarado",
+   "wfp_fundingstatus": "Not approved"
+  },
+  {
+   "wfp_name": "NR-MB-001",
+   "wfp_title": "Unit Fire Management Officer",
+   "wfp_unit": [
+    "wfp_unit",
+    "Missouri Breaks"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_payplan": "GS",
+   "wfp_grade": "GS-12/13",
+   "wfp_topgrade": 13,
+   "wfp_employmenttype": "Full time",
+   "wfp_status": "Vacant",
+   "wfp_incumbent": "",
+   "wfp_incumbentemail": "",
+   "wfp_previousincumbent": "Ruth Calloway",
+   "wfp_fundingstatus": "Approved"
+  }
+ ],
+ "_supervisors": [
+  [
+   "NR-GA-002",
+   "NR-GA-001"
+  ],
+  [
+   "NR-GA-003",
+   "NR-GA-002"
+  ],
+  [
+   "NR-GA-004",
+   "NR-GA-002"
+  ],
+  [
+   "NR-YR-001",
+   "NR-GA-002"
+  ],
+  [
+   "NR-YR-002",
+   "NR-YR-001"
+  ],
+  [
+   "NR-YR-009",
+   "NR-YR-002"
+  ],
+  [
+   "NR-YR-011",
+   "NR-YR-001"
+  ],
+  [
+   "NR-YR-014",
+   "NR-YR-001"
+  ],
+  [
+   "NR-TD-001",
+   "NR-GA-002"
+  ],
+  [
+   "NR-TD-005",
+   "NR-TD-001"
+  ],
+  [
+   "NR-TD-006",
+   "NR-TD-005"
+  ],
+  [
+   "NR-TD-008",
+   "NR-TD-005"
+  ],
+  [
+   "NR-TD-011",
+   "NR-TD-001"
+  ],
+  [
+   "NR-NP-001",
+   "NR-GA-002"
+  ],
+  [
+   "NR-NP-004",
+   "NR-NP-001"
+  ],
+  [
+   "NR-NP-007",
+   "NR-NP-001"
+  ],
+  [
+   "NR-NP-009",
+   "NR-NP-007"
+  ],
+  [
+   "NR-NP-012",
+   "NR-NP-001"
+  ],
+  [
+   "NR-BR-001",
+   "NR-GA-002"
+  ],
+  [
+   "NR-BR-002",
+   "NR-BR-001"
+  ],
+  [
+   "NR-TR-001",
+   "NR-GA-002"
+  ],
+  [
+   "NR-TR-002",
+   "NR-TR-001"
+  ],
+  [
+   "NR-MB-001",
+   "NR-GA-002"
+  ]
+ ],
+ "wfp_hiringaction": [
+  {
+   "wfp_name": "HA-26-011",
+   "wfp_position": [
+    "wfp_position",
+    "NR-GA-003"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Announced",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-014",
+   "wfp_position": [
+    "wfp_position",
+    "NR-YR-002"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Selection approval",
+   "wfp_candidate": "Avery Collins",
+   "wfp_proposedgrade": "GS-12 Step 3",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-017",
+   "wfp_position": [
+    "wfp_position",
+    "NR-YR-014"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Draft",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-009",
+   "wfp_position": [
+    "wfp_position",
+    "NR-TD-006"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Selection approval",
+   "wfp_candidate": "Jordan Pike",
+   "wfp_proposedgrade": "GS-09 Step 1",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-022",
+   "wfp_position": [
+    "wfp_position",
+    "NR-TD-008"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Interviews",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-023",
+   "wfp_position": [
+    "wfp_position",
+    "NR-TD-011"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Draft",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-012",
+   "wfp_position": [
+    "wfp_position",
+    "NR-NP-001"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Offer",
+   "wfp_candidate": "Wes Lindqvist",
+   "wfp_proposedgrade": "GS-13 Step 2",
+   "wfp_entryonduty": "2026-10-26"
+  },
+  {
+   "wfp_name": "HA-26-021",
+   "wfp_position": [
+    "wfp_position",
+    "NR-NP-009"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "PMC review",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-018",
+   "wfp_position": [
+    "wfp_position",
+    "NR-BR-002"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "PMC review",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-019",
+   "wfp_position": [
+    "wfp_position",
+    "NR-MB-001"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Cleared to advertise",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  },
+  {
+   "wfp_name": "HA-26-020",
+   "wfp_position": [
+    "wfp_position",
+    "NR-TR-002"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_stage": "Draft",
+   "wfp_candidate": "",
+   "wfp_proposedgrade": "",
+   "wfp_entryonduty": null
+  }
+ ],
+ "wfp_selectionstep": [
+  {
+   "wfp_name": "HA-26-014 step 1",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-014"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 1,
+   "wfp_approvergroup": "Supervisor",
+   "wfp_decision": "Pending",
+   "wfp_decidedby": "",
+   "wfp_decidedon": null,
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "caleb.foster@example.gov",
+   "wfp_positiontext": "NR-YR-002 Assistant Fire Management Officer"
+  },
+  {
+   "wfp_name": "HA-26-014 step 2",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-014"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 2,
+   "wfp_approvergroup": "Budget",
+   "wfp_decision": "Waiting",
+   "wfp_decidedby": "",
+   "wfp_decidedon": null,
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-YR-002 Assistant Fire Management Officer"
+  },
+  {
+   "wfp_name": "HA-26-014 step 3",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-014"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 3,
+   "wfp_approvergroup": "Area chief or deputy",
+   "wfp_decision": "Waiting",
+   "wfp_decidedby": "",
+   "wfp_decidedon": null,
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-YR-002 Assistant Fire Management Officer"
+  },
+  {
+   "wfp_name": "HA-26-009 step 1",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-009"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 1,
+   "wfp_approvergroup": "Supervisor",
+   "wfp_decision": "Approved",
+   "wfp_decidedby": "Grace Linden",
+   "wfp_decidedon": "2026-10-05",
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "grace.linden@example.gov",
+   "wfp_positiontext": "NR-TD-006 Initial Attack Dispatcher"
+  },
+  {
+   "wfp_name": "HA-26-009 step 2",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-009"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 2,
+   "wfp_approvergroup": "Budget",
+   "wfp_decision": "Pending",
+   "wfp_decidedby": "",
+   "wfp_decidedon": null,
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-TD-006 Initial Attack Dispatcher"
+  },
+  {
+   "wfp_name": "HA-26-009 step 3",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-009"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 3,
+   "wfp_approvergroup": "Assistant Chief Support Services",
+   "wfp_decision": "Waiting",
+   "wfp_decidedby": "",
+   "wfp_decidedon": null,
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-TD-006 Initial Attack Dispatcher"
+  },
+  {
+   "wfp_name": "HA-26-012 step 1",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-012"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 1,
+   "wfp_approvergroup": "Supervisor",
+   "wfp_decision": "Approved",
+   "wfp_decidedby": "Elena Marquez",
+   "wfp_decidedon": "2026-09-10",
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "elena.marquez@example.gov",
+   "wfp_positiontext": "NR-NP-001 Unit Fire Management Officer"
+  },
+  {
+   "wfp_name": "HA-26-012 step 2",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-012"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 2,
+   "wfp_approvergroup": "Budget",
+   "wfp_decision": "Approved",
+   "wfp_decidedby": "Priya Nandakumar",
+   "wfp_decidedon": "2026-09-11",
+   "wfp_comment": "Grade and step confirmed.",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-NP-001 Unit Fire Management Officer"
+  },
+  {
+   "wfp_name": "HA-26-012 step 3",
+   "wfp_hiringaction": [
+    "wfp_hiringaction",
+    "HA-26-012"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_sequence": 3,
+   "wfp_approvergroup": "Area chief or deputy",
+   "wfp_decision": "Approved",
+   "wfp_decidedby": "Robert Whitaker",
+   "wfp_decidedon": "2026-09-15",
+   "wfp_comment": "",
+   "wfp_round": 1,
+   "wfp_supervisoremail": "",
+   "wfp_positiontext": "NR-NP-001 Unit Fire Management Officer"
+  }
+ ],
+ "wfp_detail": [
+  {
+   "wfp_name": "DT-26-002",
+   "wfp_homeposition": [
+    "wfp_position",
+    "NR-NP-004"
+   ],
+   "wfp_detailedto": [
+    "wfp_position",
+    "NR-NP-009"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_enteredby": "Renee Boyd"
+  },
+  {
+   "wfp_name": "DT-26-001",
+   "wfp_homeposition": [
+    "wfp_position",
+    "NR-TD-005"
+   ],
+   "wfp_detailedto": [
+    "wfp_position",
+    "NR-TD-008"
+   ],
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ],
+   "wfp_enteredby": "Renee Boyd"
+  }
+ ],
+ "wfp_roleassignment": [
+  {
+   "wfp_name": "Sam Okoye",
+   "wfp_useremail": "sam.okoye@example.gov",
+   "wfp_role": "Data administrator",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Priya Nandakumar",
+   "wfp_useremail": "priya.nandakumar@example.gov",
+   "wfp_role": "Budget",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Robert Whitaker",
+   "wfp_useremail": "robert.whitaker@example.gov",
+   "wfp_role": "Area fire chief",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Nadia Petrov",
+   "wfp_useremail": "nadia.petrov@example.gov",
+   "wfp_role": "PMC member",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-02-03",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Marisol Vega",
+   "wfp_useremail": "marisol.vega@example.gov",
+   "wfp_role": "Assistant Chief Support Services",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Theo Lindgren",
+   "wfp_useremail": "theo.lindgren@example.gov",
+   "wfp_role": "Data administrator",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-05",
+   "wfp_allareas": true
+  },
+  {
+   "wfp_name": "Maya Brandt",
+   "wfp_useremail": "maya.brandt@example.gov",
+   "wfp_role": "Data administrator",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-03-18",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Great Basin"
+   ]
+  },
+  {
+   "wfp_name": "Gabe Torres",
+   "wfp_useremail": "gabe.torres@example.gov",
+   "wfp_role": "Assistant Chief Operations",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Elena Marsh",
+   "wfp_useremail": "elena.marsh@example.gov",
+   "wfp_role": "Deputy chief",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-01-12",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  },
+  {
+   "wfp_name": "Dwight Keller",
+   "wfp_useremail": "dwight.keller@example.gov",
+   "wfp_role": "Area fire chief",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-03-18",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Great Basin"
+   ]
+  },
+  {
+   "wfp_name": "Lena Ortiz",
+   "wfp_useremail": "lena.ortiz@example.gov",
+   "wfp_role": "Assistant Chief Support Services",
+   "wfp_status": "Active",
+   "wfp_startdate": "2026-03-18",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Great Basin"
+   ]
+  },
+  {
+   "wfp_name": "Carl Mercer",
+   "wfp_useremail": "carl.mercer@example.gov",
+   "wfp_role": "Budget",
+   "wfp_status": "Ended",
+   "wfp_startdate": "2026-02-03",
+   "wfp_allareas": false,
+   "wfp_geographicarea": [
+    "wfp_geographicarea",
+    "Northern Rockies"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+$ErrorActionPreference = 'Continue'
+New-Item -ItemType Directory -Force -Path out | Out-Null
+$log = 'out/build-log.txt'
+function Log($t) { $t | Tee-Object -FilePath $log -Append }
+Log "pac version:"
+Log (pac --version 2>&1 | Out-String)
+
+# 1. Tables solution
+Log "=== pac solution pack (tables) ==="
+Log (pac solution pack --zipfile out/WorkforcePlanner_tables.zip --folder solution_source --packagetype Unmanaged 2>&1 | Out-String)
+Log ("exit code: " + $LASTEXITCODE)
+
+# 2. Canvas app pack attempt
+Log "=== pac canvas pack ==="
+if (Test-Path canvas/CanvasManifest.json) {
+  Log (pac canvas pack --sources canvas --msapp out/WorkforcePlanner.msapp 2>&1 | Out-String)
+  Log ("exit code: " + $LASTEXITCODE)
+} else {
+  Log "canvas/CanvasManifest.json not present yet"
+}
+Get-ChildItem out | ForEach-Object { Log ($_.Name + "  " + $_.Length) }

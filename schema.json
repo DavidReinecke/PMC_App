@@ -1,0 +1,637 @@
+[
+ {
+  "name": "wfp_geographicarea",
+  "display": "Geographic Area",
+  "plural": "Geographic Areas",
+  "primary": [
+   "wfp_name",
+   "Name",
+   100
+  ],
+  "desc": "One row per geographic area. Everything is scoped to one.",
+  "cols": [
+   [
+    "wfp_code",
+    "Code",
+    "text",
+    10,
+    "NR, GB, RM and so on"
+   ]
+  ]
+ },
+ {
+  "name": "wfp_unit",
+  "display": "Unit",
+  "plural": "Units",
+  "primary": [
+   "wfp_name",
+   "Name",
+   100
+  ],
+  "desc": "The area office and each unit inside a geographic area.",
+  "cols": [
+   [
+    "wfp_unitcode",
+    "Unit code",
+    "text",
+    10,
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    "Drives area scoping"
+   ]
+  ]
+ },
+ {
+  "name": "wfp_position",
+  "display": "Position",
+  "plural": "Positions",
+  "primary": [
+   "wfp_name",
+   "Position ID",
+   30
+  ],
+  "desc": "One row per box on a Table of Organization.",
+  "cols": [
+   [
+    "wfp_title",
+    "Title",
+    "text",
+    120,
+    ""
+   ],
+   [
+    "wfp_unit",
+    "Unit",
+    "lookup",
+    "wfp_unit",
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    "Drives area scoping"
+   ],
+   [
+    "wfp_payplan",
+    "Pay plan",
+    "choice",
+    [
+     [
+      100000000,
+      "GS"
+     ],
+     [
+      100000001,
+      "GW"
+     ],
+     [
+      100000002,
+      "WG"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_grade",
+    "Grade range",
+    "text",
+    20,
+    "For example GS-12/13"
+   ],
+   [
+    "wfp_topgrade",
+    "Full performance grade",
+    "int",
+    [
+     1,
+     15
+    ],
+    "Highest grade"
+   ],
+   [
+    "wfp_employmenttype",
+    "Employment type",
+    "choice",
+    [
+     [
+      100000000,
+      "Full time"
+     ],
+     [
+      100000001,
+      "Career seasonal"
+     ],
+     [
+      100000002,
+      "Seasonal"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_status",
+    "Position status",
+    "choice",
+    [
+     [
+      100000000,
+      "Filled"
+     ],
+     [
+      100000001,
+      "Vacant"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_incumbent",
+    "Incumbent",
+    "text",
+    120,
+    "Stays on the home position even when detailed elsewhere"
+   ],
+   [
+    "wfp_incumbentemail",
+    "Incumbent email",
+    "text",
+    160,
+    ""
+   ],
+   [
+    "wfp_previousincumbent",
+    "Previous incumbent",
+    "text",
+    120,
+    "Shown while vacant"
+   ],
+   [
+    "wfp_supervisor",
+    "Supervisor position",
+    "lookup",
+    "wfp_position",
+    "Position this one reports to"
+   ],
+   [
+    "wfp_fundingstatus",
+    "Funding status",
+    "choice",
+    [
+     [
+      100000000,
+      "Approved"
+     ],
+     [
+      100000001,
+      "Pending"
+     ],
+     [
+      100000002,
+      "Not approved"
+     ]
+    ],
+    "Matters for vacant positions"
+   ]
+  ]
+ },
+ {
+  "name": "wfp_hiringaction",
+  "display": "Hiring Action",
+  "plural": "Hiring Actions",
+  "primary": [
+   "wfp_name",
+   "Action ID",
+   30
+  ],
+  "desc": "Tracks a vacancy from draft to offer, including the selected candidate.",
+  "cols": [
+   [
+    "wfp_position",
+    "Position",
+    "lookup",
+    "wfp_position",
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    ""
+   ],
+   [
+    "wfp_stage",
+    "Stage",
+    "choice",
+    [
+     [
+      100000000,
+      "Draft"
+     ],
+     [
+      100000001,
+      "PMC review"
+     ],
+     [
+      100000002,
+      "Cleared to advertise"
+     ],
+     [
+      100000003,
+      "Announced"
+     ],
+     [
+      100000004,
+      "Certificate issued"
+     ],
+     [
+      100000005,
+      "Interviews"
+     ],
+     [
+      100000006,
+      "Selection approval"
+     ],
+     [
+      100000007,
+      "Selection approved"
+     ],
+     [
+      100000008,
+      "Offer"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_candidate",
+    "Selected candidate",
+    "text",
+    120,
+    ""
+   ],
+   [
+    "wfp_proposedgrade",
+    "Proposed grade and step",
+    "text",
+    30,
+    "For example GS-12 Step 3. Drives final approver routing"
+   ],
+   [
+    "wfp_entryonduty",
+    "Entry on duty",
+    "date",
+    null,
+    "Position fills on this date"
+   ]
+  ]
+ },
+ {
+  "name": "wfp_selectionstep",
+  "display": "Selection Approval Step",
+  "plural": "Selection Approval Steps",
+  "primary": [
+   "wfp_name",
+   "Step",
+   60
+  ],
+  "desc": "One row per approval step. Step 3 is the final approver, routed from the proposed grade.",
+  "cols": [
+   [
+    "wfp_hiringaction",
+    "Hiring action",
+    "lookup",
+    "wfp_hiringaction",
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    ""
+   ],
+   [
+    "wfp_sequence",
+    "Sequence",
+    "int",
+    [
+     1,
+     3
+    ],
+    "1 Supervisor, 2 Budget, 3 Final approver"
+   ],
+   [
+    "wfp_approvergroup",
+    "Approver group",
+    "choice",
+    [
+     [
+      100000000,
+      "Supervisor"
+     ],
+     [
+      100000001,
+      "Budget"
+     ],
+     [
+      100000002,
+      "Assistant Chief Operations"
+     ],
+     [
+      100000003,
+      "Assistant Chief Support Services"
+     ],
+     [
+      100000004,
+      "Area chief or deputy"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_decision",
+    "Decision",
+    "choice",
+    [
+     [
+      100000000,
+      "Waiting"
+     ],
+     [
+      100000001,
+      "Pending"
+     ],
+     [
+      100000002,
+      "Approved"
+     ],
+     [
+      100000003,
+      "Returned"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_decidedby",
+    "Decided by",
+    "text",
+    120,
+    ""
+   ],
+   [
+    "wfp_decidedon",
+    "Decided on",
+    "date",
+    null,
+    ""
+   ],
+   [
+    "wfp_comment",
+    "Comment",
+    "memo",
+    2000,
+    "Required when returned"
+   ],
+   [
+    "wfp_round",
+    "Approval round",
+    "int",
+    [
+     1,
+     20
+    ],
+    "Increments each time a selection is resubmitted after a return"
+   ],
+   [
+    "wfp_supervisoremail",
+    "Supervisor email",
+    "text",
+    160,
+    "Copied from the position hierarchy when the selection is routed"
+   ],
+   [
+    "wfp_positiontext",
+    "Position",
+    "text",
+    200,
+    "Position ID and title, copied for display"
+   ]
+  ]
+ },
+ {
+  "name": "wfp_roleassignment",
+  "display": "Role Assignment",
+  "plural": "Role Assignments",
+  "primary": [
+   "wfp_name",
+   "Person",
+   120
+  ],
+  "desc": "Who holds which role, for which geographic area. Supervisors are derived from the position hierarchy.",
+  "cols": [
+   [
+    "wfp_useremail",
+    "User email",
+    "text",
+    160,
+    "Entra ID sign-in (UPN)"
+   ],
+   [
+    "wfp_role",
+    "Role",
+    "choice",
+    [
+     [
+      100000000,
+      "Budget"
+     ],
+     [
+      100000001,
+      "Area fire chief"
+     ],
+     [
+      100000002,
+      "Deputy chief"
+     ],
+     [
+      100000003,
+      "Assistant Chief Operations"
+     ],
+     [
+      100000004,
+      "Assistant Chief Support Services"
+     ],
+     [
+      100000005,
+      "PMC member"
+     ],
+     [
+      100000006,
+      "Data administrator"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_status",
+    "Assignment status",
+    "choice",
+    [
+     [
+      100000000,
+      "Active"
+     ],
+     [
+      100000001,
+      "Ended"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    "Empty with All areas = yes"
+   ],
+   [
+    "wfp_allareas",
+    "All areas",
+    "bool",
+    null,
+    "Only for data administrators"
+   ],
+   [
+    "wfp_startdate",
+    "Start date",
+    "date",
+    null,
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "wfp_detail",
+  "display": "Detail",
+  "plural": "Details",
+  "primary": [
+   "wfp_name",
+   "Detail ID",
+   30
+  ],
+  "desc": "Marks that an employee works in another position. Never changes the home position.",
+  "cols": [
+   [
+    "wfp_homeposition",
+    "Home position",
+    "lookup",
+    "wfp_position",
+    "Incumbent record there is untouched"
+   ],
+   [
+    "wfp_detailedto",
+    "Detailed to",
+    "lookup",
+    "wfp_position",
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    ""
+   ],
+   [
+    "wfp_enteredby",
+    "Entered by",
+    "text",
+    120,
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "wfp_hiringevent",
+  "display": "Hiring Event",
+  "plural": "Hiring Events",
+  "primary": [
+   "wfp_name",
+   "Summary",
+   200
+  ],
+  "desc": "Append-only record of stage changes, approvals, details and incumbent changes. Written by the app; no edit or delete rights.",
+  "cols": [
+   [
+    "wfp_eventtype",
+    "Event type",
+    "choice",
+    [
+     [
+      100000000,
+      "Stage change"
+     ],
+     [
+      100000001,
+      "Selection routed"
+     ],
+     [
+      100000002,
+      "Approval"
+     ],
+     [
+      100000003,
+      "Detail"
+     ],
+     [
+      100000004,
+      "Incumbent change"
+     ],
+     [
+      100000005,
+      "Role assigned"
+     ]
+    ],
+    ""
+   ],
+   [
+    "wfp_position",
+    "Position",
+    "lookup",
+    "wfp_position",
+    ""
+   ],
+   [
+    "wfp_geographicarea",
+    "Geographic area",
+    "lookup",
+    "wfp_geographicarea",
+    ""
+   ],
+   [
+    "wfp_actor",
+    "By",
+    "text",
+    120,
+    ""
+   ],
+   [
+    "wfp_note",
+    "Note",
+    "memo",
+    2000,
+    ""
+   ]
+  ]
+ }
+]
