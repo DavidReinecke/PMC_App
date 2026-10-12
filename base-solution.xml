@@ -1,12 +1,12 @@
-<ImportExportXml version="9.2.26084.177" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26084.177" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26085.00176">
+<ImportExportXml version="9.2.26085.176" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26085.176" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26085.00176">
   <SolutionManifest>
     <UniqueName>WorkforcePlanner</UniqueName>
     <LocalizedNames>
       <LocalizedName description="Workforce Planner" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.1</Version>
-    <Managed>1</Managed>
+    <Version>1.0.0.17</Version>
+    <Managed>0</Managed>
     <Publisher>
       <UniqueName>wfp</UniqueName>
       <LocalizedNames>
@@ -81,10 +81,13 @@
       <RootComponent type="1" schemaName="wfp_geographicarea" behavior="0" />
       <RootComponent type="1" schemaName="wfp_hiringaction" behavior="0" />
       <RootComponent type="1" schemaName="wfp_hiringevent" behavior="0" />
+      <RootComponent type="1" schemaName="wfp_laborsetting" behavior="0" />
+      <RootComponent type="1" schemaName="wfp_payrate" behavior="0" />
       <RootComponent type="1" schemaName="wfp_position" behavior="0" />
       <RootComponent type="1" schemaName="wfp_roleassignment" behavior="0" />
       <RootComponent type="1" schemaName="wfp_selectionstep" behavior="0" />
       <RootComponent type="1" schemaName="wfp_unit" behavior="0" />
+      <RootComponent type="29" id="{5ffdcef1-c2c5-f111-aaae-001dd8062052}" behavior="0" />
       <RootComponent type="300" schemaName="wfp_workforceplannerapp_07958" behavior="0" />
     </RootComponents>
     <MissingDependencies />

@@ -3,10 +3,14 @@ Unpack from D:\a\PMC_App\PMC_App\work\sol\CanvasApps\wfp_workforceplannerapp_079
 Unpacking succeeded.
 
 exit 0
-\wfp_workforceplannerapp_07958_DocumentUri.msapr  97961
-\Src\_EditorState.pa.yaml  625
-\Src\App.pa.yaml  628
-\Src\Screen1.pa.yaml  667
+\wfp_workforceplannerapp_07958_DocumentUri.msapr  233996
+\Src\_EditorState.pa.yaml  680
+\Src\App.pa.yaml  3892
+\Src\scrAppr.pa.yaml  9881
+\Src\scrLabor.pa.yaml  34888
+\Src\scrRoles.pa.yaml  21509
+\Src\scrTO.pa.yaml  24725
+\Src\scrVac.pa.yaml  24641
 ---- manifest
 ---- App.pa.yaml
 # ************************************************************************************************
@@ -19,7 +23,47 @@ exit 0
 # ************************************************************************************************
 App:
   Properties:
-    Theme: =PowerAppsTheme
+    OnStart: |-
+      =Set(varEmail, Lower(User().Email));
+      Set(varMe, User().FullName);
+      // Choice lists used when writing choice columns
+      ClearCollect(colChStage, ["Draft", "PMC review", "Cleared to advertise", "Announced", "Certificate issued", "Interviews", "Selection approval", "Selection approved", "Offer"]);
+      ClearCollect(colChPosStatus, ["Filled", "Vacant"]);
+      ClearCollect(colChFunding, ["Approved", "Pending", "Not approved"]);
+      ClearCollect(colChApprover, ["Supervisor", "Budget", "Assistant Chief Operations", "Assistant Chief Support Services", "Area chief or deputy"]);
+      ClearCollect(colChDecision, ["Waiting", "Pending", "Approved", "Returned"]);
+      ClearCollect(colChRole, ["Budget", "Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services", "PMC member", "Data administrator"]);
+      ClearCollect(colChAssign, ["Active", "Ended"]);
+      ClearCollect(colChEvent, ["Stage change", "Selection routed", "Approval", "Detail", "Incumbent change", "Role assigned"]);
+      // Who am I
+      ClearCollect(colMyRoles, ForAll(Filter(FirstN('Role Assignments', 2000), Lower('User email') = varEmail && IfError(Text('Assignment status'), "") = "Active"), {role: IfError(Text(ThisRecord.Role), ""), allAreas: IfError(ThisRecord.'All areas', false), area: IfError(ThisRecord.'Geographic area'.Name, "")}));
+      ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail));
+      ClearCollect(colAreaNames, ForAll('Geographic Areas', {Name: ThisRecord.Name}));
+      Set(varIsDAAll, CountRows(Filter(colMyRoles, role = "Data administrator" && allAreas)) > 0);
+      Set(varIsDA, CountRows(Filter(colMyRoles, role = "Data administrator")) > 0);
+      Set(varIsChief, CountRows(Filter(colMyRoles, role in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"])) > 0);
+      Set(varIsBudget, CountRows(Filter(colMyRoles, role = "Budget")) > 0);
+      Set(varIsSup, CountRows(Filter(FirstN(Positions, 2000), 'Supervisor position'.'Position ID' in colMyPos.'Position ID')) > 0);
+      Set(varCanSeeAll, varIsChief || varIsDAAll);
+      Set(varCanEditInc, varIsDA || varIsChief);
+      Set(varCanDetail, varIsSup || varIsDA || varIsChief);
+      Set(varCanEditHiring, varIsSup || varIsDA);
+      Set(varCanFund, varIsBudget || varIsDA);
+      // Starting area: my role's area, else my position's area
+      Set(varArea, Coalesce(LookUp('Geographic Areas', Name = First(Filter(colMyRoles, !IsBlank(area))).area), LookUp('Geographic Areas', Name = First(colMyPos).'Geographic area'.Name), First('Geographic Areas')));
+      // Labor estimate defaults. Pay rates and the premium are read from Dataverse when the Labor Estimate screen opens.
+      Set(varPayYear, 0);
+      Set(varWgPlaceholder, false);
+      Set(varPrem, 32);
+      Set(varShowPay, false);
+      Set(varPanel, "");
+      Set(varNotice, "");
+      Set(varErr, "");
+      Set(varSelPos, LookUp(Positions, false));
+      Set(varSelAct, LookUp('Hiring Actions', false));
+      ClearCollect(colDetails, Details);
+      ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+    StartScreen: =scrTO
 
 ---- _EditorState.pa.yaml
 # ************************************************************************************************
@@ -32,9 +76,13 @@ App:
 # ************************************************************************************************
 EditorState:
   ScreensOrder:
-    - Screen1
+    - scrTO
+    - scrVac
+    - scrAppr
+    - scrLabor
+    - scrRoles
 
----- Screen1.pa.yaml
+---- scrAppr.pa.yaml
 # ************************************************************************************************
 # Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
 # Use the maker portal to create and edit your Power Apps.
@@ -44,51 +92,2460 @@ EditorState:
 # For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
 # ************************************************************************************************
 Screens:
-  Screen1:
+  scrAppr:
     Properties:
-      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: =Set(varNotice, "")
+    Children:
+      - rctHeaderAppr:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Width: =Parent.Width
+      - lblAppAppr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Workforce Planner"
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            Width: =240
+            X: =16
+            Y: =16
+      - btnNavTOAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Tables of Organization"
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavVacAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Vacancies & Hiring"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavApprAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Selection Approvals"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavLaborAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Labor Estimate"
+            Width: =120
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavRolesAppr:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            Width: =120
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - ddAreaAppr:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Default: =varArea.Name
+            Height: =44
+            Items: ='Geographic Areas'
+            Items.Value: =wfp_name
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Visible: =varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblAreaFixedAppr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =14
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblMeAppr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: =varMe
+            Width: =118
+            X: =Parent.Width - 126
+            Y: =10
+      - lblApprTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Selection Approvals"
+            Width: =Parent.Width * 0.5 - 24
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - lblApprHelp:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =30
+            Size: =12
+            Text: |-
+              ="Steps: Supervisor, Budget, then the final approver. GW below 10: Assistant Chief, Operations. GS or WG below 10: Assistant Chief, Support Services. Grade 10 and above: area fire chief or deputy chief."
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =116 + If(Parent.Width < 1000, 48, 0)
+      - lblApprNotice:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(224, 164, 58, 1)
+            Text: =varNotice
+            Width: =Parent.Width * 0.5 - 16
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - txtApprComment:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Comment (required when returning a selection)"
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =150 + If(Parent.Width < 1000, 48, 0)
+      - galAppr:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(15, 18, 22, 1)
+            Height: =Parent.Height - 220 - If(Parent.Width < 1000, 48, 0)
+            Items: =Filter(FirstN('Hiring Actions', 2000), 'Geographic area'.Name = varArea.Name, Text(Stage) = "Selection approval")
+            TemplatePadding: =8
+            TemplateSize: =250
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =204 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - rctApprRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(23, 28, 34, 1)
+                  Height: =Parent.TemplateHeight - 8
+                  Width: =Parent.TemplateWidth - 12
+            - lblApprId:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =15
+                  Text: =ThisItem.'Action ID' & " · " & ThisItem.Position.'Position ID' & " · " & LookUp(Positions, 'Position ID' = ThisItem.Position.'Position ID').Title
+                  Width: =900
+                  X: =12
+                  Y: =6
+            - lblApprSel:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(154, 164, 178, 1)
+                  Height: =24
+                  Text: |-
+                    ="Selected: " & ThisItem.'Selected candidate' & " · Proposed " & ThisItem.'Proposed grade and step'
+                  Width: =900
+                  X: =12
+                  Y: =36
+            - galSteps:
+                Control: Gallery@2.15.0
+                Variant: Horizontal
+                Properties:
+                  Fill: =RGBA(23, 28, 34, 1)
+                  Height: =168
+                  Items: =Sort(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID', 'Approval round' = Max(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = ThisItem.'Action ID'), 'Approval round')), Sequence, SortOrder.Ascending)
+                  TemplatePadding: =6
+                  TemplateSize: =420
+                  Width: =Parent.TemplateWidth - 36
+                  X: =12
+                  Y: =66
+
+---- scrLabor.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrLabor:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, ""); Set(varShowPay, false);
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}));
+        // Pay rates come from the Pay Rates table. Step 5, latest effective year that has started.
+        ClearCollect(colPayRaw, ForAll(Filter(FirstN('Pay Rates', 5000), Step = 5), {plan: Text('Pay plan'), g: Grade, rate: 'Annual rate', yr: 'Effective year', wa: Coalesce('Wage area', "")}));
+        Set(varPayYear, Coalesce(Max(Filter(colPayRaw, yr <= Year(Today())), yr), Max(colPayRaw, yr), 0));
+        Set(varWgPlaceholder, CountRows(Filter(colPayRaw, plan = "WG" && yr = varPayYear && Lower(wa) = "placeholder")) > 0);
+        ClearCollect(colPay, ForAll(Sequence(15), With({n: Value}, {g: n, gs: Coalesce(LookUp(colPayRaw, plan = "GS" && g = n && yr = varPayYear).rate, 0), gw: Coalesce(LookUp(colPayRaw, plan = "GW" && g = n && yr = varPayYear).rate, 0), wg: Coalesce(LookUp(colPayRaw, plan = "WG" && g = n && yr = varPayYear).rate, 0)})));
+        // Premium percent is saved per geographic area
+        Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name).'Premium percent', 32))
+    Children:
+      - rctHeaderLabor:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Width: =Parent.Width
+      - lblAppLabor:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Workforce Planner"
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            Width: =240
+            X: =16
+            Y: =16
+      - btnNavTOLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Tables of Organization"
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavVacLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Vacancies & Hiring"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavApprLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Selection Approvals"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavLaborLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Labor Estimate"
+            Width: =120
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavRolesLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            Width: =120
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - ddAreaLabor:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Default: =varArea.Name
+            Height: =44
+            Items: ='Geographic Areas'
+            Items.Value: =wfp_name
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = Self.Selected.Name).'Premium percent', 32)); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Visible: =varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblAreaFixedLabor:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =14
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblMeLabor:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: =varMe
+            Width: =118
+            X: =Parent.Width - 126
+            Y: =10
+      - lblLaborTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Labor Estimate"
+            Width: =Parent.Width * 0.5 - 24
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - lblLaborNotice:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(224, 164, 58, 1)
+            Text: =If(varPayYear = 0, "No pay rates found. Load them into the Pay Rates table.", varNotice)
+            Width: =Parent.Width * 0.5 - 16
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - lblLaborHelp:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =34
+            Size: =12
+            Text: ="Annual cost = base pay at the position's full performance grade, step 5, for its pay plan, plus the employee expense premium. Every position is counted for a full year, including seasonal."
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =116 + If(Parent.Width < 1000, 48, 0)
+      - rctPrem:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =52
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =154 + If(Parent.Width < 1000, 48, 0)
+      - lblPremCap:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =52
+            Text: ="Health insurance and other employee expenses"
+            Width: =Parent.Width - 360
+            X: =28
+            Y: =154 + If(Parent.Width < 1000, 48, 0)
+      - btnPremDown:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: |-
+              =Set(varPrem, Max(0, varPrem - 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem}))); If(!IsEmpty(Errors('Labor Settings')), Set(varNotice, "The premium could not be saved."))
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="−"
+            Visible: =varCanFund
+            Width: =44
+            X: =Parent.Width - 190
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+      - lblPremVal:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =16
+            Text: =varPrem & "%"
+            Width: =64
+            X: =Parent.Width - 142
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+      - btnPremUp:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: |-
+              =Set(varPrem, Min(60, varPrem + 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem}))); If(!IsEmpty(Errors('Labor Settings')), Set(varNotice, "The premium could not be saved."))
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="+"
+            Visible: =varCanFund
+            Width: =44
+            X: =Parent.Width - 76
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+      - rctStat1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =72
+            Width: =((Parent.Width - 56) / 3)
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+      - lblStatCap1:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =20
+            Size: =12
+            Text: ="Filled positions, annual"
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+      - lblStatVal1:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =22
+            Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Filled"), cLoaded), "$#,##0")
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+      - rctStat2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =72
+            Width: =((Parent.Width - 56) / 3)
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+      - lblStatCap2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =20
+            Size: =12
+            Text: ="Vacant positions, annual"
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+      - lblStatVal2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =22
+            Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Vacant"), cLoaded), "$#,##0")
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+      - rctStat3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =72
+            Width: =((Parent.Width - 56) / 3)
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+      - lblStatCap3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =20
+            Size: =12
+            Text: ="Total, annual"
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+      - lblStatVal3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =22
+            Text: =Text(Sum(galLabor.AllItems, cLoaded), "$#,##0")
+            Width: =((Parent.Width - 56) / 3) - 24
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+      - ddLUnit:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =colUnitOpts
+            Items.Value: =Name
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.4, 260)
+            X: =16
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+      - ddLStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =["All", "Filled", "Vacant"]
+            Items.Value: =Value
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.25, 180)
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.4 + 8, 288)
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+      - btnPayTables:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Set(varShowPay, !varShowPay)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: =If(varShowPay, "Hide pay tables", "Show pay tables")
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.35, 240)
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.65 + 16, 480)
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+      - rctColHead:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(27, 34, 42, 1)
+            Height: =32
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH0:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Position ID"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.0 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH1:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Title"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.21 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Incumbent"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.16 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.32 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Employment"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.48 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH4:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Status"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.59 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH5:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Funding"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.1 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.66 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH6:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Cost grade"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.76 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH7:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="Base"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.08 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.83 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblCH8:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="With premium"
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.09 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.91 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - galLabor:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(15, 18, 22, 1)
+            Height: =Parent.Height - 384 - 56 - If(Parent.Width < 1000, 48, 0)
+            Items: |-
+              =Sort(
+                  AddColumns(
+                      AddColumns(
+                          Filter(FirstN(Positions, 2000),
+                              'Geographic area'.Name = varArea.Name,
+                              ddLUnit.Selected.Name = "All units" || Unit.Name = ddLUnit.Selected.Name,
+                              ddLStatus.Selected.Value = "All" || Text('Position status') = ddLStatus.Selected.Value),
+                          cBase, With({vGr: 'Full performance grade', vPlan: Text('Pay plan')}, With({r: LookUp(colPay, g = vGr)}, Switch(vPlan, "GW", Coalesce(r.gw, 0), "WG", Coalesce(r.wg, 0), Coalesce(r.gs, 0))))),
+                      cLoaded, cBase * (1 + varPrem / 100)),
+                  'Position ID', SortOrder.Ascending)
+            TemplatePadding: =0
+            TemplateSize: =44
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =384 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - rctLRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(32, 40, 48, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(20, 25, 31, 1)
+                  Height: =Parent.TemplateHeight
+                  Width: =Parent.TemplateWidth
+            - lblLId:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(242, 207, 134, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =ThisItem.'Position ID'
+                  Width: =Parent.TemplateWidth * 0.11 - 8
+                  X: =Parent.TemplateWidth * 0.0 + 8
+            - lblLTitle:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =ThisItem.Title
+                  Width: =Parent.TemplateWidth * 0.21 - 8
+                  X: =Parent.TemplateWidth * 0.11 + 8
+            - lblLInc:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(154, 164, 178, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Incumbent), "Vacant", ThisItem.Incumbent)
+                  Width: =Parent.TemplateWidth * 0.16 - 8
+                  X: =Parent.TemplateWidth * 0.32 + 8
+            - lblLEmp:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.'Employment type')
+                  Width: =Parent.TemplateWidth * 0.11 - 8
+                  X: =Parent.TemplateWidth * 0.48 + 8
+            - lblLStat:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.'Position status')
+                  Width: =Parent.TemplateWidth * 0.07 - 8
+                  X: =Parent.TemplateWidth * 0.59 + 8
+            - lblLFund:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =If(Text(ThisItem.'Position status') = "Vacant", Text(ThisItem.'Funding status'), "—")
+                  Width: =Parent.TemplateWidth * 0.1 - 8
+                  X: =Parent.TemplateWidth * 0.66 + 8
+            - lblLGrade:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.'Pay plan') & "-" & Text(ThisItem.'Full performance grade') & If(Text(ThisItem.'Pay plan') = "WG" && varWgPlaceholder, "*", "")
+                  Width: =Parent.TemplateWidth * 0.07 - 8
+                  X: =Parent.TemplateWidth * 0.76 + 8
+            - lblLBase:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.cBase, "$#,##0")
+                  Width: =Parent.TemplateWidth * 0.08 - 8
+                  X: =Parent.TemplateWidth * 0.83 + 8
+            - lblLLoaded:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(255, 255, 255, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.cLoaded, "$#,##0")
+                  Width: =Parent.TemplateWidth * 0.09 - 8
+                  X: =Parent.TemplateWidth * 0.91 + 8
+      - rctTot:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+            Fill: =RGBA(27, 34, 42, 1)
+            Height: =40
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =Parent.Height - 48
+      - lblTotCap:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: ="Total for filter" & If(varWgPlaceholder && CountRows(Filter(galLabor.AllItems, Text('Pay plan') = "WG")) > 0, "   (* WG rates are placeholders until the WG table is loaded)", "")
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.6
+            X: =28
+            Y: =Parent.Height - 48
+      - lblTotBase:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: =Text(Sum(galLabor.AllItems, cBase), "$#,##0")
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.08 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.83 + 8
+            Y: =Parent.Height - 48
+      - lblTotLoaded:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =12
+            Text: =Text(Sum(galLabor.AllItems, cLoaded), "$#,##0")
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.09 - 8
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.91 + 8
+            Y: =Parent.Height - 48
+      - rctPay:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =Parent.Height - 352 - 8 - If(Parent.Width < 1000, 48, 0)
+            Visible: =varShowPay
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblPayTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =12
+            Text: ="Step 5 annual rates, effective " & varPayYear & ". Edit them in the Pay Rates table."
+            Visible: =varShowPay
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =360 + If(Parent.Width < 1000, 48, 0)
+      - lblPH0:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="Grade"
+            Visible: =varShowPay
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.0
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+      - lblPH1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="GS"
+            Visible: =varShowPay
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+      - lblPH2:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="GW"
+            Visible: =varShowPay
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.5
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+      - lblPH3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(154, 164, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="WG*"
+            Visible: =varShowPay
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.75
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+      - galPay:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =Parent.Height - 418 - 64 - If(Parent.Width < 1000, 48, 0)
+            Items: =colPay
+            TemplatePadding: =0
+            TemplateSize: =32
+            Visible: =varShowPay
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =418 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - lblPay0:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: ="GS-" & ThisItem.g
+                  Width: =Parent.TemplateWidth * 0.25
+                  X: =Parent.TemplateWidth * 0
+            - lblPay1:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.gs, "$#,##0")
+                  Width: =Parent.TemplateWidth * 0.25
+                  X: =Parent.TemplateWidth * 0.25
+            - lblPay2:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.gw, "$#,##0")
+                  Width: =Parent.TemplateWidth * 0.25
+                  X: =Parent.TemplateWidth * 0.5
+            - lblPay3:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  Color: =RGBA(230, 233, 238, 1)
+                  Height: =Parent.TemplateHeight
+                  Size: =12
+                  Text: =Text(ThisItem.wg, "$#,##0")
+                  Width: =Parent.TemplateWidth * 0.25
+                  X: =Parent.TemplateWidth * 0.75
+
+---- scrRoles.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrRoles:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeaderRoles:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Width: =Parent.Width
+      - lblAppRoles:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Workforce Planner"
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            Width: =240
+            X: =16
+            Y: =16
+      - btnNavTORoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Tables of Organization"
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavVacRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Vacancies & Hiring"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavApprRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Selection Approvals"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavLaborRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Labor Estimate"
+            Width: =120
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavRolesRoles:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            Width: =120
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - ddAreaRoles:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Default: =varArea.Name
+            Height: =44
+            Items: ='Geographic Areas'
+            Items.Value: =wfp_name
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Visible: =varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblAreaFixedRoles:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =14
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblMeRoles:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: =varMe
+            Width: =118
+            X: =Parent.Width - 126
+            Y: =10
+      - lblRoleTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Role Assignments"
+            Width: =Parent.Width * 0.5 - 24
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - lblRoleHelp:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: =If(varIsDAAll, "You assign roles in any area and can appoint data administrators for one area or all areas.", "You assign roles for " & varArea.Name & " only.") & " Supervisors come from the position hierarchy and are not assigned here."
+            Width: =Min(900, Parent.Width - 32)
+            X: =16
+            Y: =114 + If(Parent.Width < 1000, 48, 0)
+      - lblRoleNotice:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(224, 164, 58, 1)
+            Text: =varNotice
+            Width: =Parent.Width * 0.5 - 16
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - txtRoleSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Search by name or role"
+            Width: =420
+            X: =16
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
+      - tglEnded:
+          Control: Classic/Toggle@2.1.0
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FalseText: ="Active only"
+            Height: =44
+            TrueText: ="Show ended"
+            Width: =190
+            X: =450
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
+      - btnRoleAdd:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Set(varPanel, "role"); Set(varErr, ""); Reset(txtRName); Reset(txtREmail); Reset(ddRRole)
+            Text: ="Assign a role"
+            Width: =200
+            X: =Parent.Width - 216
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
+      - galRoles:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(15, 18, 22, 1)
+            Height: =Parent.Height - 230 - If(Parent.Width < 1000, 48, 0)
+            Items: |-
+              =Sort(Filter(FirstN('Role Assignments', 2000),
+                  'Geographic area'.Name = varArea.Name || (varIsDAAll && 'All areas'),
+                  tglEnded.Value || Text('Assignment status') = "Active",
+                  IsBlank(txtRoleSearch.Text) || txtRoleSearch.Text in Person || txtRoleSearch.Text in Text(Role)), Person, SortOrder.Ascending)
+            TemplatePadding: =6
+            TemplateSize: =72
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =214 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - rctRoleRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(23, 28, 34, 1)
+                  Height: =Parent.TemplateHeight - 8
+                  Width: =Parent.TemplateWidth - 12
+            - lblRoleName:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =15
+                  Text: =ThisItem.Person & " · " & Text(ThisItem.Role)
+                  Width: =740
+                  X: =12
+                  Y: =6
+            - lblRoleMeta:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(154, 164, 178, 1)
+                  Height: =20
+                  Size: =12
+                  Text: =If(ThisItem.'All areas', "All areas", ThisItem.'Geographic area'.Name) & " · " & ThisItem.'User email' & " · " & Text(ThisItem.'Assignment status') & " · since " & Text(ThisItem.'Start date', "mmm d, yyyy")
+                  Width: =776
+                  X: =12
+                  Y: =34
+            - lblRoleSees:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(224, 164, 58, 1)
+                  Height: =22
+                  Size: =12
+                  Text: =If(Text(ThisItem.Role) in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"], "All areas, view", If(ThisItem.'All areas', "All areas, administer", "Own area only"))
+                  Width: =200
+                  X: =865
+                  Y: =34
+            - btnRoleEnd:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  OnSelect: |-
+                    =Patch('Role Assignments', ThisItem, {'Assignment status': Switch("Ended", "Active", 'Assignment status (Role Assignments)'.Active, "Ended", 'Assignment status (Role Assignments)'.Ended)});
+                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Ended " & Text(ThisItem.Role) & " for " & ThisItem.Person, 'Event type': Switch("Role assigned", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                    Set(varNotice, "Ended " & ThisItem.Person & "'s " & Text(ThisItem.Role) & " assignment.")
+                  Text: ="End"
+                  Visible: =Text(ThisItem.'Assignment status') = "Active"
+                  Width: =110
+                  X: =Parent.TemplateWidth - 140
+                  Y: =14
+      - rctRolePanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =470
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =214 + If(Parent.Width < 1000, 48, 0)
+      - lblRolePanelTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =16
+            Text: ="Assign a role"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =226 + If(Parent.Width < 1000, 48, 0)
+      - lblRHelp:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Give a person access. They sign in with the email below."
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =258 + If(Parent.Width < 1000, 48, 0)
+      - lblRNameL:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =22
+            Size: =12
+            Text: ="Full name"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =302 + If(Parent.Width < 1000, 48, 0)
+      - lblREmailL:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =22
+            Size: =12
+            Text: ="Sign-in email (work email)"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =376 + If(Parent.Width < 1000, 48, 0)
+      - lblRRoleL:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =22
+            Size: =12
+            Text: ="Role"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =450 + If(Parent.Width < 1000, 48, 0)
+      - lblRAreaL:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =22
+            Size: =12
+            Text: ="Area (Data administrator can be All areas)"
+            Visible: =varPanel = "role" && varIsDAAll
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =524 + If(Parent.Width < 1000, 48, 0)
+      - txtRName:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Person's name"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =326 + If(Parent.Width < 1000, 48, 0)
+      - txtREmail:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Sign-in email"
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =400 + If(Parent.Width < 1000, 48, 0)
+      - ddRRole:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =colChRole
+            Items.Value: =Value
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =474 + If(Parent.Width < 1000, 48, 0)
+      - ddRArea:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: |-
+              =If(ddRRole.Selected.Value = "Data administrator", Ungroup(Table({t: Table({Name: "All areas"})}, {t: colAreaNames}), t), colAreaNames)
+            Items.Value: =Name
+            Visible: =varPanel = "role" && varIsDAAll
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =548 + If(Parent.Width < 1000, 48, 0)
+      - btnRoleSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: |-
+              =With({vAll: varIsDAAll && ddRArea.Selected.Name = "All areas", vAreaRec: If(varIsDAAll, LookUp('Geographic Areas', Name = ddRArea.Selected.Name), varArea)},
+                  If(IsBlank(txtRName.Text) || IsBlank(txtREmail.Text),
+                      Set(varErr, "Enter the person's name and sign-in email."),
+                      !vAll && IsBlank(vAreaRec),
+                      Set(varErr, "Choose a geographic area."),
+                      !vAll && ddRRole.Selected.Value in ["Area fire chief", "Assistant Chief Support Services", "Data administrator"] && !IsBlank(LookUp(FirstN('Role Assignments', 2000), Text('Assignment status') = "Active" && Text(Role) = ddRRole.Selected.Value && 'Geographic area'.Name = vAreaRec.Name)),
+                      Set(varErr, "That role is already held in the area. End that assignment first."),
+                      Patch('Role Assignments', Defaults('Role Assignments'), {Person: txtRName.Text, 'User email': Lower(txtREmail.Text), Role: Switch(ddRRole.Selected.Value, "Budget", 'Role (Role Assignments)'.Budget, "Area fire chief", 'Role (Role Assignments)'.'Area fire chief', "Deputy chief", 'Role (Role Assignments)'.'Deputy chief', "Assistant Chief Operations", 'Role (Role Assignments)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Role (Role Assignments)'.'Assistant Chief Support Services', "PMC member", 'Role (Role Assignments)'.'PMC member', "Data administrator", 'Role (Role Assignments)'.'Data administrator'), 'Assignment status': Switch("Active", "Active", 'Assignment status (Role Assignments)'.Active, "Ended", 'Assignment status (Role Assignments)'.Ended), 'All areas': vAll, 'Geographic area': If(vAll, Blank(), vAreaRec), 'Start date': Today()});
+                      Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Assigned " & ddRRole.Selected.Value & " to " & txtRName.Text, 'Event type': Switch("Role assigned", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                      Set(varNotice, txtRName.Text & " is now " & ddRRole.Selected.Value & ".");
+                      Set(varPanel, "")))
+            Text: ="Save assignment"
+            Visible: =varPanel = "role"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =606 + If(Parent.Width < 1000, 48, 0)
+      - btnRoleClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")
+            Text: ="Cancel"
+            Visible: =varPanel = "role"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =606 + If(Parent.Width < 1000, 48, 0)
+      - lblRoleErr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(244, 165, 138, 1)
+            Height: =36
+            Text: =varErr
+            Visible: =varPanel = "role"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =658 + If(Parent.Width < 1000, 48, 0)
+
+---- scrTO.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrTO:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =ClearCollect(colDetails, Details);
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}));
+        Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeaderTO:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Width: =Parent.Width
+      - lblAppTO:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Workforce Planner"
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            Width: =240
+            X: =16
+            Y: =16
+      - btnNavTOTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Tables of Organization"
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavVacTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Vacancies & Hiring"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavApprTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Selection Approvals"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavLaborTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Labor Estimate"
+            Width: =120
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavRolesTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            Width: =120
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - ddAreaTO:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Default: =varArea.Name
+            Height: =44
+            Items: ='Geographic Areas'
+            Items.Value: =wfp_name
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Visible: =varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblAreaFixedTO:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =14
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblMeTO:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: =varMe
+            Width: =118
+            X: =Parent.Width - 126
+            Y: =10
+      - lblTOTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Tables of Organization"
+            Width: =Parent.Width * 0.5 - 24
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - ddUnit:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =colUnitOpts
+            Items.Value: =Name
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.3, 260)
+            X: =16
+            Y: =124 + If(Parent.Width < 1000, 48, 0)
+      - ddStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =["All", "Filled", "Vacant"]
+            Items.Value: =Value
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.25, 180)
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.3 + 8, 288)
+            Y: =124 + If(Parent.Width < 1000, 48, 0)
+      - txtSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Search position, title or incumbent"
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.45, 320)
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.55 + 16, 480)
+            Y: =124 + If(Parent.Width < 1000, 48, 0)
+      - lblTONotice:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(224, 164, 58, 1)
+            Height: =44
+            Text: =varNotice
+            Width: =If(Parent.Width < 1000, Parent.Width * 0.5 - 16, Parent.Width - 828)
+            X: =If(Parent.Width < 1000, Parent.Width * 0.5, 812)
+            Y: =124
+      - galTO:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(15, 18, 22, 1)
+            Height: =Parent.Height - 196 - If(Parent.Width < 1000, 48, 0)
+            Items: |-
+              =Sort(
+                  Filter(FirstN(Positions, 2000),
+                      'Geographic area'.Name = varArea.Name,
+                      ddStatus.Selected.Value = "All" || Text('Position status') = ddStatus.Selected.Value,
+                      ddUnit.Selected.Name = "All units" || Unit.Name = ddUnit.Selected.Name,
+                      IsBlank(txtSearch.Text) || txtSearch.Text in 'Position ID' || txtSearch.Text in Title || txtSearch.Text in Incumbent),
+                  'Position ID', SortOrder.Ascending)
+            TemplatePadding: =6
+            TemplateSize: =96
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =180 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - rctTORow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(23, 28, 34, 1)
+                  Height: =Parent.TemplateHeight - 8
+                  Width: =Parent.TemplateWidth - 12
+            - lblTOId:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =15
+                  Text: =ThisItem.'Position ID' & " · " & ThisItem.Title
+                  Width: =626
+                  X: =12
+                  Y: =6
+            - lblTOMeta:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(154, 164, 178, 1)
+                  Height: =22
+                  Size: =12
+                  Text: |-
+                    =Text(ThisItem.'Pay plan') & " · " & ThisItem.'Grade range' & " · " & Text(ThisItem.'Employment type') & If(Text(ThisItem.'Position status') = "Vacant", " · Funding: " & Text(ThisItem.'Funding status'), "")
+                  Width: =520
+                  X: =12
+                  Y: =34
+            - lblTOInc:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =If(Text(ThisItem.'Position status') = "Filled", RGBA(230, 233, 238, 1), RGBA(224, 164, 58, 1))
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =14
+                  Text: =If(Text(ThisItem.'Position status') = "Filled", ThisItem.Incumbent, "Vacant" & If(!IsBlank(ThisItem.'Previous incumbent'), " · was " & ThisItem.'Previous incumbent', ""))
+                  Width: =450
+                  X: =12
+                  Y: =58
+            - lblTODetail:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(224, 164, 58, 1)
+                  Height: =26
+                  Size: =12
+                  Text: |-
+                    =With({out: LookUp(colDetails, 'Home position'.'Position ID' = ThisItem.'Position ID'), inn: Filter(colDetails, 'Detailed to'.'Position ID' = ThisItem.'Position ID')},
+                        If(!IsBlank(out), "On detail to " & out.'Detailed to'.'Position ID' & " (" & out.'Detailed to'.Title & ")", "") &
+                        If(!IsBlank(out) && !IsEmpty(inn), " · ", "") &
+                        If(!IsEmpty(inn), "Detailed in: " & Concat(inn, 'Home position'.Incumbent & " from " & 'Home position'.'Position ID', ", "), ""))
+                  Width: =360
+                  X: =372
+                  Y: =58
+            - btnTOEdit:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Height: =36
+                  OnSelect: =Set(varSelPos, ThisItem); Set(varPanel, "inc"); Set(varErr, ""); Reset(txtIncName); Reset(txtIncEmail)
+                  Size: =12
+                  Text: ="Edit incumbent"
+                  Visible: =varCanEditInc
+                  Width: =150
+                  X: =Parent.TemplateWidth - 330
+                  Y: =8
+            - btnTODetail:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Height: =36
+                  OnSelect: =Set(varSelPos, ThisItem); Set(varPanel, "detail"); Set(varErr, ""); Reset(ddDetailEmp)
+                  Size: =12
+                  Text: ="Detail someone in"
+                  Visible: =varCanDetail
+                  Width: =150
+                  X: =Parent.TemplateWidth - 330
+                  Y: =50
+      - rctPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =Parent.Height - 196 - If(Parent.Width < 1000, 48, 0)
+            Visible: =varPanel <> ""
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =180 + If(Parent.Width < 1000, 48, 0)
+      - lblPanelTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =56
+            Size: =16
+            Text: =If(varPanel = "inc", "Edit incumbent · ", "Detail someone into ") & varSelPos.'Position ID' & " · " & varSelPos.Title
+            Visible: =varPanel <> ""
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 28
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =192 + If(Parent.Width < 1000, 48, 0)
+      - txtIncName:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =varSelPos.Incumbent
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Incumbent name"
+            Visible: =varPanel = "inc"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =260 + If(Parent.Width < 1000, 48, 0)
+      - txtIncEmail:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =varSelPos.'Incumbent email'
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Incumbent sign-in email"
+            Visible: =varPanel = "inc"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =312 + If(Parent.Width < 1000, 48, 0)
+      - btnIncSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: |-
+              =If(IsBlank(txtIncName.Text),
+                  Set(varErr, "Enter the incumbent's name."),
+                  Patch(Positions, varSelPos, {Incumbent: txtIncName.Text, 'Incumbent email': Lower(txtIncEmail.Text), 'Position status': Switch("Filled", "Filled", 'Position status (Positions)'.Filled, "Vacant", 'Position status (Positions)'.Vacant), 'Previous incumbent': ""});
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Set incumbent of " & varSelPos.'Position ID' & " to " & txtIncName.Text, 'Event type': Switch("Incumbent change", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Set(varNotice, "Incumbent updated for " & varSelPos.'Position ID' & ".");
+                  Set(varPanel, "");
+                  ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail)))
+            Text: ="Set incumbent"
+            Visible: =varPanel = "inc"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =368 + If(Parent.Width < 1000, 48, 0)
+      - btnIncVacate:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: |-
+              =Patch(Positions, varSelPos, {Incumbent: "", 'Incumbent email': "", 'Position status': Switch("Vacant", "Filled", 'Position status (Positions)'.Filled, "Vacant", 'Position status (Positions)'.Vacant), 'Previous incumbent': varSelPos.Incumbent});
+              // a vacated home position drops its own details
+              RemoveIf(Details, 'Home position'.'Position ID' = varSelPos.'Position ID');
+              ClearCollect(colDetails, Details);
+              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Vacated " & varSelPos.'Position ID' & " (was " & varSelPos.Incumbent & ")", 'Event type': Switch("Incumbent change", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+              Set(varNotice, varSelPos.'Position ID' & " is now vacant.");
+              Set(varPanel, "")
+            Text: ="Vacate position"
+            Visible: =varPanel = "inc" && Text(varSelPos.'Position status') = "Filled"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =368 + If(Parent.Width < 1000, 48, 0)
+      - lblDetailHelp:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: ="Choose the employee by their home position. The home position keeps its incumbent."
+            Visible: =varPanel = "detail"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =250 + If(Parent.Width < 1000, 48, 0)
+      - ddDetailEmp:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Height: =44
+            Items: =AddColumns(Filter(FirstN(Positions, 2000), 'Geographic area'.Name = varArea.Name, Text('Position status') = "Filled", 'Position ID' <> varSelPos.'Position ID'), lbl, 'Position ID' & " · " & Incumbent)
+            Items.Value: =lbl
+            Visible: =varPanel = "detail"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+      - btnDetailSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: |-
+              =If(!IsBlank(LookUp(colDetails, 'Home position'.'Position ID' = ddDetailEmp.Selected.'Position ID')),
+                  Set(varErr, ddDetailEmp.Selected.Incumbent & " is already detailed. Remove that detail first."),
+                  Patch(Details, Defaults(Details), {'Detail ID': "DT-" & Text(Now(), "yymmdd-hhmmss"), 'Home position': ddDetailEmp.Selected, 'Detailed to': varSelPos, 'Geographic area': varArea, 'Entered by': varMe});
+                  ClearCollect(colDetails, Details);
+                  Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Detailed " & ddDetailEmp.Selected.Incumbent & " (" & ddDetailEmp.Selected.'Position ID' & ") to " & varSelPos.'Position ID', 'Event type': Switch("Detail", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                  Set(varErr, "");
+                  Set(varNotice, ddDetailEmp.Selected.Incumbent & " is detailed to " & varSelPos.'Position ID' & ". " & ddDetailEmp.Selected.'Position ID' & " still shows them as its incumbent."))
+            Text: ="Detail in"
+            Visible: =varPanel = "detail"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+      - lblDetailsHere:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =26
+            Size: =12
+            Text: ="Currently detailed into this position"
+            Visible: =varPanel = "detail"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =410 + If(Parent.Width < 1000, 48, 0)
+      - galDetailsHere:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =170
+            Items: =Filter(colDetails, 'Detailed to'.'Position ID' = varSelPos.'Position ID')
+            TemplatePadding: =2
+            TemplateSize: =48
+            Visible: =varPanel = "detail"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =438 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - lblDetailName:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  Text: =ThisItem.'Home position'.Incumbent & " from " & ThisItem.'Home position'.'Position ID'
+                  Width: =290
+                  X: =4
+                  Y: =4
+            - btnDetailRemove:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  OnSelect: |-
+                    =Remove(Details, LookUp(Details, 'Detail ID' = ThisItem.'Detail ID'));
+                    ClearCollect(colDetails, Details);
+                    Set(varNotice, "Removed the detail from " & ThisItem.'Home position'.'Position ID' & ".")
+                  Text: ="Remove"
+                  Width: =110
+                  X: =300
+                  Y: =4
+      - lblPanelErr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(244, 165, 138, 1)
+            Height: =44
+            Text: =varErr
+            Visible: =varPanel <> ""
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =Parent.Height - 120
+      - btnPanelClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")
+            Text: ="Close"
+            Visible: =varPanel <> ""
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =Parent.Height - 68
+
+---- scrVac.pa.yaml
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scrVac:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeaderVac:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Width: =Parent.Width
+      - lblAppVac:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Workforce Planner"
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            Width: =240
+            X: =16
+            Y: =16
+      - btnNavTOVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Tables of Organization"
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavVacVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Vacancies & Hiring"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavApprVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Selection Approvals"
+            Width: =140
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavLaborVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Labor Estimate"
+            Width: =120
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - btnNavRolesVac:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =12
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            Width: =120
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+      - ddAreaVac:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Default: =varArea.Name
+            Height: =44
+            Items: ='Geographic Areas'
+            Items.Value: =wfp_name
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Visible: =varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblAreaFixedVac:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =14
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+      - lblMeVac:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: =varMe
+            Width: =118
+            X: =Parent.Width - 126
+            Y: =10
+      - lblVacTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Vacancies & Hiring"
+            Width: =Parent.Width * 0.5 - 24
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - lblVacNotice:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(224, 164, 58, 1)
+            Text: =varNotice
+            Width: =Parent.Width * 0.5 - 16
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+      - galVac:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(15, 18, 22, 1)
+            Height: =Parent.Height - 140 - If(Parent.Width < 1000, 48, 0)
+            Items: =Sort(Filter(FirstN('Hiring Actions', 2000), 'Geographic area'.Name = varArea.Name), 'Action ID', SortOrder.Ascending)
+            TemplatePadding: =6
+            TemplateSize: =128
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            X: =16
+            Y: =124 + If(Parent.Width < 1000, 48, 0)
+          Children:
+            - rctVacRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(23, 28, 34, 1)
+                  Height: =Parent.TemplateHeight - 8
+                  Width: =Parent.TemplateWidth - 12
+            - lblVacId:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(230, 233, 238, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =15
+                  Text: =ThisItem.'Action ID' & " · " & ThisItem.Position.'Position ID' & " · " & LookUp(Positions, 'Position ID' = ThisItem.Position.'Position ID').Title
+                  Width: =560
+                  X: =12
+                  Y: =6
+            - lblVacMeta:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(154, 164, 178, 1)
+                  Height: =22
+                  Size: =12
+                  Text: =Text(ThisItem.Position.'Pay plan') & " · " & ThisItem.Position.'Grade range' & " · " & Text(ThisItem.Position.'Employment type') & If(!IsBlank(ThisItem.Position.'Previous incumbent'), " · was " & ThisItem.Position.'Previous incumbent', "")
+                  Width: =560
+                  X: =12
+                  Y: =36
+            - lblVacStage:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(224, 164, 58, 1)
+                  FontWeight: =FontWeight.Semibold
+                  Height: =26
+                  Text: |-
+                    ="Stage: " & Text(ThisItem.Stage) & If(!IsBlank(ThisItem.'Selected candidate'), " · Selected: " & ThisItem.'Selected candidate' & " (" & ThisItem.'Proposed grade and step' & ")", "") & If(!IsBlank(ThisItem.'Entry on duty'), " · Fills " & Text(ThisItem.'Entry on duty', "mmm d"), "")
+                  Width: =560
+                  X: =12
+                  Y: =62
+            - ddVacStage:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  Default: =IfError(Text(ThisItem.Stage), "")
+                  Height: =34
+                  Items: =["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
+                  Items.Value: =Value
+                  OnChange: |-
+                    =Patch('Hiring Actions', ThisItem, {Stage: Switch(Self.Selected.Value, "Draft", 'Stage (Hiring Actions)'.Draft, "PMC review", 'Stage (Hiring Actions)'.'PMC review', "Cleared to advertise", 'Stage (Hiring Actions)'.'Cleared to advertise', "Announced", 'Stage (Hiring Actions)'.Announced, "Certificate issued", 'Stage (Hiring Actions)'.'Certificate issued', "Interviews", 'Stage (Hiring Actions)'.Interviews, "Selection approval", 'Stage (Hiring Actions)'.'Selection approval', "Selection approved", 'Stage (Hiring Actions)'.'Selection approved', "Offer", 'Stage (Hiring Actions)'.Offer)});
+                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: ThisItem.'Action ID' & " moved to " & Self.Selected.Value, 'Event type': Switch("Stage change", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                    Set(varNotice, ThisItem.'Action ID' & " moved to " & Self.Selected.Value & ".")
+                  Visible: =varCanEditHiring && Text(ThisItem.Stage) in ["Cleared to advertise", "Announced", "Certificate issued", "Interviews"]
+                  Width: =240
+                  X: =12
+                  Y: =88
+            - btnVacSubmit:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(224, 164, 58, 1)
+                  Color: =RGBA(20, 17, 10, 1)
+                  Fill: =RGBA(224, 164, 58, 1)
+                  Height: =34
+                  OnSelect: =Set(varSelAct, ThisItem); Set(varPanel, "sel"); Set(varErr, ""); Reset(txtSelCand); Reset(txtSelGrade)
+                  Text: ="Submit selection"
+                  Visible: =varCanEditHiring && Text(ThisItem.Stage) = "Interviews"
+                  Width: =190
+                  X: =264
+                  Y: =88
+            - ddVacFund:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  Default: =Text(ThisItem.Position.'Funding status')
+                  Height: =34
+                  Items: =["Approved", "Pending", "Not approved"]
+                  Items.Value: =Value
+                  OnChange: |-
+                    =Patch(Positions, ThisItem.Position, {'Funding status': Switch(Self.Selected.Value, "Approved", 'Funding status (Positions)'.Approved, "Pending", 'Funding status (Positions)'.Pending, "Not approved", 'Funding status (Positions)'.'Not approved')});
+                    Set(varNotice, "Funding for " & ThisItem.Position.'Position ID' & " set to " & Self.Selected.Value & ".")
+                  Visible: =varCanFund && Text(ThisItem.Position.'Position status') = "Vacant"
+                  Width: =190
+                  X: =Parent.TemplateWidth - 280
+                  Y: =8
+            - dpVacEod:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  DefaultDate: =ThisItem.'Entry on duty'
+                  Height: =34
+                  Visible: =varCanEditHiring && Text(ThisItem.Stage) = "Offer"
+                  Width: =170
+                  X: =Parent.TemplateWidth - 280
+                  Y: =50
+            - btnVacEod:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Height: =34
+                  OnSelect: |-
+                    =If(IsBlank(dpVacEod.SelectedDate),
+                        Set(varNotice, "Choose an entry on duty date."),
+                        Patch('Hiring Actions', ThisItem, {'Entry on duty': dpVacEod.SelectedDate});
+                        If(dpVacEod.SelectedDate <= Today(),
+                            Patch(Positions, ThisItem.Position, {Incumbent: ThisItem.'Selected candidate', 'Position status': Switch("Filled", "Filled", 'Position status (Positions)'.Filled, "Vacant", 'Position status (Positions)'.Vacant), 'Previous incumbent': ""});
+                            Set(varNotice, ThisItem.Position.'Position ID' & " is filled by " & ThisItem.'Selected candidate' & "."),
+                            Set(varNotice, "Entry on duty set. The daily fill flow puts " & ThisItem.'Selected candidate' & " into the position on that date.")))
+                  Text: ="Set entry on duty"
+                  Visible: =varCanEditHiring && Text(ThisItem.Stage) = "Offer"
+                  Width: =190
+                  X: =Parent.TemplateWidth - 280
+                  Y: =88
+      - rctSelPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Fill: =RGBA(23, 28, 34, 1)
+            Height: =330
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =124 + If(Parent.Width < 1000, 48, 0)
+      - lblSelTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(230, 233, 238, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =52
+            Size: =16
+            Text: ="Submit selection · " & varSelAct.'Action ID' & " · " & LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').Title
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =136 + If(Parent.Width < 1000, 48, 0)
+      - txtSelCand:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Selected candidate"
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =196 + If(Parent.Width < 1000, 48, 0)
+      - txtSelGrade:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Default: =""
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            HintText: ="Proposed grade and step, for example GS-12 Step 3"
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =248 + If(Parent.Width < 1000, 48, 0)
+      - lblSelRoute:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(154, 164, 178, 1)
+            Height: =44
+            Size: =12
+            Text: |-
+              =With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
+                  "Final approval routes to: " & If(
+                      Coalesce(Value(m.g), varSelAct.Position.'Full performance grade') >= 10, "Area fire chief or deputy chief",
+                      Coalesce(m.plan, Text(varSelAct.Position.'Pay plan')) = "GW", "Assistant Chief, Operations",
+                      "Assistant Chief, Support Services"))
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+      - btnSelSubmit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            Fill: =RGBA(224, 164, 58, 1)
+            Height: =44
+            OnSelect: |-
+              =If(IsBlank(txtSelCand.Text) || IsBlank(txtSelGrade.Text),
+                  Set(varErr, "Add the selected candidate and the proposed grade and step."),
+                  With({m: Match(Upper(txtSelGrade.Text), "(?<plan>GS|GW|WG)\s*-?\s*(?<g>\d{1,2})")},
+                      With({vG: Coalesce(Value(m.g), varSelAct.Position.'Full performance grade'), vPlan: Coalesce(m.plan, Text(varSelAct.Position.'Pay plan')),
+                            vRound: CountRows(Filter(FirstN('Selection Approval Steps', 2000), 'Hiring action'.'Action ID' = varSelAct.'Action ID', Sequence = 1)) + 1,
+                            vSupEmail: LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').'Supervisor position'.'Incumbent email'},
+                          With({vGroup: If(vG >= 10, "Area chief or deputy", If(vPlan = "GW", "Assistant Chief Operations", "Assistant Chief Support Services"))},
+                              Patch('Hiring Actions', varSelAct, {Stage: Switch("Selection approval", "Draft", 'Stage (Hiring Actions)'.Draft, "PMC review", 'Stage (Hiring Actions)'.'PMC review', "Cleared to advertise", 'Stage (Hiring Actions)'.'Cleared to advertise', "Announced", 'Stage (Hiring Actions)'.Announced, "Certificate issued", 'Stage (Hiring Actions)'.'Certificate issued', "Interviews", 'Stage (Hiring Actions)'.Interviews, "Selection approval", 'Stage (Hiring Actions)'.'Selection approval', "Selection approved", 'Stage (Hiring Actions)'.'Selection approved', "Offer", 'Stage (Hiring Actions)'.Offer), 'Selected candidate': txtSelCand.Text, 'Proposed grade and step': Upper(txtSelGrade.Text)});
+                              Collect('Selection Approval Steps',
+                                  {Step: varSelAct.'Action ID' & " r" & vRound & " step 1", 'Hiring action': varSelAct, 'Geographic area': varArea, Sequence: 1, 'Approval round': vRound, 'Approver group': Switch("Supervisor", "Supervisor", 'Approver group (Selection Approval Steps)'.Supervisor, "Budget", 'Approver group (Selection Approval Steps)'.Budget, "Assistant Chief Operations", 'Approver group (Selection Approval Steps)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Approver group (Selection Approval Steps)'.'Assistant Chief Support Services', "Area chief or deputy", 'Approver group (Selection Approval Steps)'.'Area chief or deputy'), Decision: Switch("Pending", "Waiting", 'Decision (Selection Approval Steps)'.Waiting, "Pending", 'Decision (Selection Approval Steps)'.Pending, "Approved", 'Decision (Selection Approval Steps)'.Approved, "Returned", 'Decision (Selection Approval Steps)'.Returned), 'Supervisor email': vSupEmail, Position: varSelAct.Position.'Position ID' & " " & LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').Title},
+                                  {Step: varSelAct.'Action ID' & " r" & vRound & " step 2", 'Hiring action': varSelAct, 'Geographic area': varArea, Sequence: 2, 'Approval round': vRound, 'Approver group': Switch("Budget", "Supervisor", 'Approver group (Selection Approval Steps)'.Supervisor, "Budget", 'Approver group (Selection Approval Steps)'.Budget, "Assistant Chief Operations", 'Approver group (Selection Approval Steps)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Approver group (Selection Approval Steps)'.'Assistant Chief Support Services', "Area chief or deputy", 'Approver group (Selection Approval Steps)'.'Area chief or deputy'), Decision: Switch("Waiting", "Waiting", 'Decision (Selection Approval Steps)'.Waiting, "Pending", 'Decision (Selection Approval Steps)'.Pending, "Approved", 'Decision (Selection Approval Steps)'.Approved, "Returned", 'Decision (Selection Approval Steps)'.Returned), Position: varSelAct.Position.'Position ID' & " " & LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').Title},
+                                  {Step: varSelAct.'Action ID' & " r" & vRound & " step 3", 'Hiring action': varSelAct, 'Geographic area': varArea, Sequence: 3, 'Approval round': vRound, 'Approver group': Switch(vGroup, "Supervisor", 'Approver group (Selection Approval Steps)'.Supervisor, "Budget", 'Approver group (Selection Approval Steps)'.Budget, "Assistant Chief Operations", 'Approver group (Selection Approval Steps)'.'Assistant Chief Operations', "Assistant Chief Support Services", 'Approver group (Selection Approval Steps)'.'Assistant Chief Support Services', "Area chief or deputy", 'Approver group (Selection Approval Steps)'.'Area chief or deputy'), Decision: Switch("Waiting", "Waiting", 'Decision (Selection Approval Steps)'.Waiting, "Pending", 'Decision (Selection Approval Steps)'.Pending, "Approved", 'Decision (Selection Approval Steps)'.Approved, "Returned", 'Decision (Selection Approval Steps)'.Returned), Position: varSelAct.Position.'Position ID' & " " & LookUp(Positions, 'Position ID' = varSelAct.Position.'Position ID').Title});
+                              Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Submitted selection for " & varSelAct.'Action ID' & " (" & txtSelCand.Text & ", " & Upper(txtSelGrade.Text) & "), final approver " & vGroup, 'Event type': Switch("Selection routed", "Stage change", 'Event type (Hiring Events)'.'Stage change', "Selection routed", 'Event type (Hiring Events)'.'Selection routed', "Approval", 'Event type (Hiring Events)'.Approval, "Detail", 'Event type (Hiring Events)'.Detail, "Incumbent change", 'Event type (Hiring Events)'.'Incumbent change', "Role assigned", 'Event type (Hiring Events)'.'Role assigned'), 'Geographic area': varArea, By: varMe, Note: ""});
+                              Set(varNotice, "Submitted. Final approval routes to " & vGroup & ".");
+                              Set(varPanel, "")))))
+            Text: ="Submit for approval"
+            Visible: =varPanel = "sel"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =350 + If(Parent.Width < 1000, 48, 0)
+      - lblSelErr:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(244, 165, 138, 1)
+            Height: =24
+            Text: =varErr
+            Visible: =varPanel = "sel"
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =398 + If(Parent.Width < 1000, 48, 0)
+      - btnSelClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 66, 78, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            Height: =44
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")
+            Text: ="Cancel"
+            Visible: =varPanel = "sel"
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =350 + If(Parent.Width < 1000, 48, 0)
 
 ---- DataSources
 ---- solution CanvasApps in customizations.xml
 
-> work\sol\customizations.xml:11988:  <CanvasApps>
-> work\sol\customizations.xml:11989:    <CanvasApp>
-  work\sol\customizations.xml:11990:      <Name>wfp_workforceplannerapp_07958</Name>
-  work\sol\customizations.xml:11991:      <AppVersion>2026-10-11T21:08:34Z</AppVersion>
-  work\sol\customizations.xml:11992:      <Status>Ready</Status>
-  work\sol\customizations.xml:11993:      <CreatedByClientVersion>3.26093.11.0</CreatedByClientVersion>
-  work\sol\customizations.xml:11994:      <MinClientVersion>3.26093.11.0</MinClientVersion>
-  work\sol\customizations.xml:11995:      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26093.11","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20261011T210444Z-3.26093.11.0"}</Tags>
-  work\sol\customizations.xml:11996:      <IsCdsUpgraded>0</IsCdsUpgraded>
-  work\sol\customizations.xml:11997:      <GalleryItemId xsi:nil="true"></GalleryItemId>
-  work\sol\customizations.xml:11998:      <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
-  work\sol\customizations.xml:11999:      <DisplayName>Workforce Planner App</DisplayName>
-  work\sol\customizations.xml:12000:      <Description xsi:nil="true"></Description>
-  work\sol\customizations.xml:12001:      <CommitMessage xsi:nil="true"></CommitMessage>
-  work\sol\customizations.xml:12002:      <Publisher xsi:nil="true"></Publisher>
-  work\sol\customizations.xml:12003:      <AuthorizationReferences>[]</AuthorizationReferences>
-  work\sol\customizations.xml:12004:      <ConnectionReferences>{}</ConnectionReferences>
-  work\sol\customizations.xml:12005:      <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"wfp_units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"Units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"wfp_positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"Positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"wfp_hiringactions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"Hiring Actions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"wfp_selectionsteps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"Selection Approval Steps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"wfp_roleassignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"Role Assignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"wfp_details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"Details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"wfp_hiringevents":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"Hiring Events":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"wfp_geographicareas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"},"Geographic Areas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"}}}}</DatabaseReferences>
-  work\sol\customizations.xml:12006:      <AppComponents>[]</AppComponents>
-  work\sol\customizations.xml:12007:      <AppComponentDependencies>[]</AppComponentDependencies>
-  work\sol\customizations.xml:12008:      <CanConsumeAppPass>1</CanConsumeAppPass>
-> work\sol\customizations.xml:12009:      <CanvasAppType>0</CanvasAppType>
-  work\sol\customizations.xml:12010:      <BypassConsent>0</BypassConsent>
-  work\sol\customizations.xml:12011:      <AdminControlBypassConsent>0</AdminControlBypassConsent>
-  work\sol\customizations.xml:12012:      <EmbeddedApp xsi:nil="true"></EmbeddedApp>
-  work\sol\customizations.xml:12013:      <IntroducedVersion>1.0</IntroducedVersion>
-  work\sol\customizations.xml:12014:      <CdsDependencies>{"cdsdependencies":[{"logicalname":"wfp_unit","componenttype":1},{"logicalname":"wfp_position","componenttype":1},{"logicalname":"wfp_hiringaction","componenttype":1},{"logicalname":"wfp_selectionstep","componenttype":1},{"logicalname":"wfp_roleassignment","componenttype":1},{"logicalname":"wfp_detail","componenttype":1},{"logicalname":"wfp_hiringevent","componenttype":1},{"logicalname":"wfp_geographicarea","componenttype":1}]}</CdsDependencies>
-  work\sol\customizations.xml:12015:      <IsCustomizable>1</IsCustomizable>
-> work\sol\customizations.xml:12016:      <BackgroundImageUri>/CanvasApps/wfp_workforceplannerapp_07958_BackgroundImageUri</BackgroundImageUri>
-> work\sol\customizations.xml:12017:      <DocumentUri>/CanvasApps/wfp_workforceplannerapp_07958_DocumentUri.msapp</DocumentUri>
-  work\sol\customizations.xml:12018:      <AdditionalUris>
-> work\sol\customizations.xml:12019:        <AdditionalUri>/CanvasApps/wfp_workforceplannerapp_07958_AdditionalUris0_identity.json</AdditionalUri>
-  work\sol\customizations.xml:12020:      </AdditionalUris>
-> work\sol\customizations.xml:12021:    </CanvasApp>
-> work\sol\customizations.xml:12022:  </CanvasApps>
-  work\sol\customizations.xml:12023:  <Languages>
-  work\sol\customizations.xml:12024:    <Language>1033</Language>
-  work\sol\customizations.xml:12025:  </Languages>
-  work\sol\customizations.xml:12026:</ImportExportXml>
+> work\sol\customizations.xml:14738:  <CanvasApps>
+> work\sol\customizations.xml:14739:    <CanvasApp>
+  work\sol\customizations.xml:14740:      <Name>wfp_workforceplannerapp_07958</Name>
+  work\sol\customizations.xml:14741:      <AppVersion>2026-10-12T21:05:42Z</AppVersion>
+  work\sol\customizations.xml:14742:      <Status>Ready</Status>
+  work\sol\customizations.xml:14743:      <CreatedByClientVersion>3.26094.9.0</CreatedByClientVersion>
+  work\sol\customizations.xml:14744:      <MinClientVersion>3.26094.9.0</MinClientVersion>
+  work\sol\customizations.xml:14745:      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26094.9","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20261012T205436Z-3.26093.11.0"}</Tags>
+  work\sol\customizations.xml:14746:      <IsCdsUpgraded>0</IsCdsUpgraded>
+  work\sol\customizations.xml:14747:      <GalleryItemId xsi:nil="true"></GalleryItemId>
+  work\sol\customizations.xml:14748:      <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
+  work\sol\customizations.xml:14749:      <DisplayName>Workforce Planner App</DisplayName>
+  work\sol\customizations.xml:14750:      <Description xsi:nil="true"></Description>
+  work\sol\customizations.xml:14751:      <CommitMessage xsi:nil="true"></CommitMessage>
+  work\sol\customizations.xml:14752:      <Publisher></Publisher>
+  work\sol\customizations.xml:14753:      <AuthorizationReferences>[]</AuthorizationReferences>
+  work\sol\customizations.xml:14754:      <ConnectionReferences>{}</ConnectionReferences>
+  work\sol\customizations.xml:14755:      <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"Units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"Positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"Hiring Actions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"Selection Approval Steps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"Role Assignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"Details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"Hiring Events":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"Geographic Areas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"},"Pay Rates":{"entitySetName":"wfp_payrates","logicalName":"wfp_payrate"},"Labor Settings":{"entitySetName":"wfp_laborsettings","logicalName":"wfp_laborsetting"}}}}</DatabaseReferences>
+  work\sol\customizations.xml:14756:      <AppComponents>[]</AppComponents>
+  work\sol\customizations.xml:14757:      <AppComponentDependencies>[]</AppComponentDependencies>
+  work\sol\customizations.xml:14758:      <CanConsumeAppPass>1</CanConsumeAppPass>
+> work\sol\customizations.xml:14759:      <CanvasAppType>0</CanvasAppType>
+  work\sol\customizations.xml:14760:      <BypassConsent>0</BypassConsent>
+  work\sol\customizations.xml:14761:      <AdminControlBypassConsent>0</AdminControlBypassConsent>
+  work\sol\customizations.xml:14762:      <EmbeddedApp xsi:nil="true"></EmbeddedApp>
+  work\sol\customizations.xml:14763:      <IntroducedVersion>1.0</IntroducedVersion>
+  work\sol\customizations.xml:14764:      <CdsDependencies>{"cdsdependencies":[{"logicalname":"wfp_unit","componenttype":1},{"logicalname":"wfp_position","componenttype":1},{"logicalname":"wfp_hiringaction","componenttype":1},{"logicalname":"wfp_selectionstep","componenttype":1},{"logicalname":"wfp_roleassignment","componenttype":1},{"logicalname":"wfp_detail","componenttype":1},{"logicalname":"wfp_hiringevent","componenttype":1},{"logicalname":"wfp_geographicarea","componenttype":1},{"logicalname":"wfp_payrate","componenttype":1},{"logicalname":"wfp_laborsetting","componenttype":1}]}</CdsDependencies>
+  work\sol\customizations.xml:14765:      <IsCustomizable>1</IsCustomizable>
+> work\sol\customizations.xml:14766:      <BackgroundImageUri>/CanvasApps/wfp_workforceplannerapp_07958_BackgroundImageUri</BackgroundImageUri>
+> work\sol\customizations.xml:14767:      <DocumentUri>/CanvasApps/wfp_workforceplannerapp_07958_DocumentUri.msapp</DocumentUri>
+  work\sol\customizations.xml:14768:      <AdditionalUris>
+> work\sol\customizations.xml:14769:        <AdditionalUri>/CanvasApps/wfp_workforceplannerapp_07958_AdditionalUris0_identity.json</AdditionalUri>
+  work\sol\customizations.xml:14770:      </AdditionalUris>
+> work\sol\customizations.xml:14771:    </CanvasApp>
+> work\sol\customizations.xml:14772:  </CanvasApps>
+  work\sol\customizations.xml:14773:  <connectionreferences>
+  work\sol\customizations.xml:14774:    <connectionreference connectionreferencelogicalname="mt_sharedcommondataserviceforapps_5e6d5">
+  work\sol\customizations.xml:14775:      <connectionreferencedisplayname>Microsoft Dataverse DataverseChargeCardApp-5e6d5</connectionreferencedisplayname>
+  work\sol\customizations.xml:14776:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
+  work\sol\customizations.xml:14777:      <iscustomizable>1</iscustomizable>
+  work\sol\customizations.xml:14778:      <promptingbehavior>0</promptingbehavior>
+  work\sol\customizations.xml:14779:      <statecode>0</statecode>
+  work\sol\customizations.xml:14780:      <statuscode>1</statuscode>
+  work\sol\customizations.xml:14781:    </connectionreference>
+  work\sol\customizations.xml:14782:    <connectionreference connectionreferencelogicalname="mt_sharedexcelonlinebusiness_eddf5">
+  work\sol\customizations.xml:14783:      <connectionreferencedisplayname>Excel Online (Business) DataverseChargeCardApp-eddf5</connectionreferencedisplayname>
+  work\sol\customizations.xml:14784:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness</connectorid>
+  work\sol\customizations.xml:14785:      <iscustomizable>1</iscustomizable>
+  work\sol\customizations.xml:14786:      <promptingbehavior>0</promptingbehavior>
+  work\sol\customizations.xml:14787:      <statecode>0</statecode>
+  work\sol\customizations.xml:14788:      <statuscode>1</statuscode>
+  work\sol\customizations.xml:14789:    </connectionreference>
+  work\sol\customizations.xml:14790:  </connectionreferences>
+  work\sol\customizations.xml:14791:  <Languages>
+  work\sol\customizations.xml:14792:    <Language>1033</Language>
+  work\sol\customizations.xml:14793:  </Languages>
+  work\sol\customizations.xml:14794:</ImportExportXml>
 
 
