@@ -5,7 +5,7 @@
       <LocalizedName description="Workforce Planner" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.17</Version>
+    <Version>1.0.0.21</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>wfp</UniqueName>
@@ -81,9 +81,11 @@
       <RootComponent type="1" schemaName="wfp_geographicarea" behavior="0" />
       <RootComponent type="1" schemaName="wfp_hiringaction" behavior="0" />
       <RootComponent type="1" schemaName="wfp_hiringevent" behavior="0" />
+      <RootComponent type="1" schemaName="wfp_incumbentupdate" behavior="0" />
       <RootComponent type="1" schemaName="wfp_laborsetting" behavior="0" />
       <RootComponent type="1" schemaName="wfp_payrate" behavior="0" />
       <RootComponent type="1" schemaName="wfp_position" behavior="0" />
+      <RootComponent type="1" schemaName="wfp_positionrequest" behavior="0" />
       <RootComponent type="1" schemaName="wfp_roleassignment" behavior="0" />
       <RootComponent type="1" schemaName="wfp_selectionstep" behavior="0" />
       <RootComponent type="1" schemaName="wfp_unit" behavior="0" />

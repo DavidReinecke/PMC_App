@@ -3,13 +3,13 @@ Unpack from D:\a\PMC_App\PMC_App\work\sol\CanvasApps\wfp_workforceplannerapp_079
 Unpacking succeeded.
 
 exit 0
-\wfp_workforceplannerapp_07958_DocumentUri.msapr  233996
+\wfp_workforceplannerapp_07958_DocumentUri.msapr  258537
 \Src\_EditorState.pa.yaml  680
 \Src\App.pa.yaml  3892
 \Src\scrAppr.pa.yaml  9881
 \Src\scrLabor.pa.yaml  34888
 \Src\scrRoles.pa.yaml  21509
-\Src\scrTO.pa.yaml  24725
+\Src\scrTO.pa.yaml  24669
 \Src\scrVac.pa.yaml  24641
 ---- manifest
 ---- App.pa.yaml
@@ -206,7 +206,7 @@ Screens:
             Default: =varArea.Name
             Height: =44
             Items: ='Geographic Areas'
-            Items.Value: =wfp_name
+            Items.Value: =wfp_code
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
             Visible: =varCanSeeAll
@@ -463,7 +463,7 @@ Screens:
             Default: =varArea.Name
             Height: =44
             Items: ='Geographic Areas'
-            Items.Value: =wfp_name
+            Items.Value: =wfp_code
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = Self.Selected.Name).'Premium percent', 32)); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
             Visible: =varCanSeeAll
@@ -1236,7 +1236,7 @@ Screens:
             Default: =varArea.Name
             Height: =44
             Items: ='Geographic Areas'
-            Items.Value: =wfp_name
+            Items.Value: =wfp_code
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
             Visible: =varCanSeeAll
@@ -1355,20 +1355,20 @@ Screens:
                 Properties:
                   Color: =RGBA(230, 233, 238, 1)
                   FontWeight: =FontWeight.Semibold
-                  Height: =28
+                  Height: =26
                   Size: =15
                   Text: =ThisItem.Person & " · " & Text(ThisItem.Role)
-                  Width: =740
+                  Width: =420
                   X: =12
                   Y: =6
             - lblRoleMeta:
                 Control: Label@2.5.1
                 Properties:
                   Color: =RGBA(154, 164, 178, 1)
-                  Height: =20
+                  Height: =22
                   Size: =12
                   Text: =If(ThisItem.'All areas', "All areas", ThisItem.'Geographic area'.Name) & " · " & ThisItem.'User email' & " · " & Text(ThisItem.'Assignment status') & " · since " & Text(ThisItem.'Start date', "mmm d, yyyy")
-                  Width: =776
+                  Width: =520
                   X: =12
                   Y: =34
             - lblRoleSees:
@@ -1379,7 +1379,7 @@ Screens:
                   Size: =12
                   Text: =If(Text(ThisItem.Role) in ["Area fire chief", "Deputy chief", "Assistant Chief Operations", "Assistant Chief Support Services"], "All areas, view", If(ThisItem.'All areas', "All areas, administer", "Own area only"))
                   Width: =200
-                  X: =865
+                  X: =540
                   Y: =34
             - btnRoleEnd:
                 Control: Classic/Button@2.2.0
@@ -1695,7 +1695,7 @@ Screens:
             Default: =varArea.Name
             Height: =44
             Items: ='Geographic Areas'
-            Items.Value: =wfp_name
+            Items.Value: =wfp_code
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
             Visible: =varCanSeeAll
@@ -1808,7 +1808,7 @@ Screens:
                   Height: =28
                   Size: =15
                   Text: =ThisItem.'Position ID' & " · " & ThisItem.Title
-                  Width: =626
+                  Width: =520
                   X: =12
                   Y: =6
             - lblTOMeta:
@@ -1827,10 +1827,10 @@ Screens:
                 Properties:
                   Color: =If(Text(ThisItem.'Position status') = "Filled", RGBA(230, 233, 238, 1), RGBA(224, 164, 58, 1))
                   FontWeight: =FontWeight.Semibold
-                  Height: =28
+                  Height: =26
                   Size: =14
                   Text: =If(Text(ThisItem.'Position status') = "Filled", ThisItem.Incumbent, "Vacant" & If(!IsBlank(ThisItem.'Previous incumbent'), " · was " & ThisItem.'Previous incumbent', ""))
-                  Width: =450
+                  Width: =360
                   X: =12
                   Y: =58
             - lblTODetail:
@@ -1855,7 +1855,6 @@ Screens:
                   Fill: =RGBA(29, 37, 46, 1)
                   Height: =36
                   OnSelect: =Set(varSelPos, ThisItem); Set(varPanel, "inc"); Set(varErr, ""); Reset(txtIncName); Reset(txtIncEmail)
-                  Size: =12
                   Text: ="Edit incumbent"
                   Visible: =varCanEditInc
                   Width: =150
@@ -1869,7 +1868,6 @@ Screens:
                   Fill: =RGBA(29, 37, 46, 1)
                   Height: =36
                   OnSelect: =Set(varSelPos, ThisItem); Set(varPanel, "detail"); Set(varErr, ""); Reset(ddDetailEmp)
-                  Size: =12
                   Text: ="Detail someone in"
                   Visible: =varCanDetail
                   Width: =150
@@ -2200,7 +2198,7 @@ Screens:
             Default: =varArea.Name
             Height: =44
             Items: ='Geographic Areas'
-            Items.Value: =wfp_name
+            Items.Value: =wfp_code
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
             Visible: =varCanSeeAll
@@ -2490,62 +2488,62 @@ Screens:
 ---- DataSources
 ---- solution CanvasApps in customizations.xml
 
-> work\sol\customizations.xml:14738:  <CanvasApps>
-> work\sol\customizations.xml:14739:    <CanvasApp>
-  work\sol\customizations.xml:14740:      <Name>wfp_workforceplannerapp_07958</Name>
-  work\sol\customizations.xml:14741:      <AppVersion>2026-10-12T21:05:42Z</AppVersion>
-  work\sol\customizations.xml:14742:      <Status>Ready</Status>
-  work\sol\customizations.xml:14743:      <CreatedByClientVersion>3.26094.9.0</CreatedByClientVersion>
-  work\sol\customizations.xml:14744:      <MinClientVersion>3.26094.9.0</MinClientVersion>
-  work\sol\customizations.xml:14745:      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26094.9","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20261012T205436Z-3.26093.11.0"}</Tags>
-  work\sol\customizations.xml:14746:      <IsCdsUpgraded>0</IsCdsUpgraded>
-  work\sol\customizations.xml:14747:      <GalleryItemId xsi:nil="true"></GalleryItemId>
-  work\sol\customizations.xml:14748:      <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
-  work\sol\customizations.xml:14749:      <DisplayName>Workforce Planner App</DisplayName>
-  work\sol\customizations.xml:14750:      <Description xsi:nil="true"></Description>
-  work\sol\customizations.xml:14751:      <CommitMessage xsi:nil="true"></CommitMessage>
-  work\sol\customizations.xml:14752:      <Publisher></Publisher>
-  work\sol\customizations.xml:14753:      <AuthorizationReferences>[]</AuthorizationReferences>
-  work\sol\customizations.xml:14754:      <ConnectionReferences>{}</ConnectionReferences>
-  work\sol\customizations.xml:14755:      <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"Units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"Positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"Hiring Actions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"Selection Approval Steps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"Role Assignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"Details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"Hiring Events":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"Geographic Areas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"},"Pay Rates":{"entitySetName":"wfp_payrates","logicalName":"wfp_payrate"},"Labor Settings":{"entitySetName":"wfp_laborsettings","logicalName":"wfp_laborsetting"}}}}</DatabaseReferences>
-  work\sol\customizations.xml:14756:      <AppComponents>[]</AppComponents>
-  work\sol\customizations.xml:14757:      <AppComponentDependencies>[]</AppComponentDependencies>
-  work\sol\customizations.xml:14758:      <CanConsumeAppPass>1</CanConsumeAppPass>
-> work\sol\customizations.xml:14759:      <CanvasAppType>0</CanvasAppType>
-  work\sol\customizations.xml:14760:      <BypassConsent>0</BypassConsent>
-  work\sol\customizations.xml:14761:      <AdminControlBypassConsent>0</AdminControlBypassConsent>
-  work\sol\customizations.xml:14762:      <EmbeddedApp xsi:nil="true"></EmbeddedApp>
-  work\sol\customizations.xml:14763:      <IntroducedVersion>1.0</IntroducedVersion>
-  work\sol\customizations.xml:14764:      <CdsDependencies>{"cdsdependencies":[{"logicalname":"wfp_unit","componenttype":1},{"logicalname":"wfp_position","componenttype":1},{"logicalname":"wfp_hiringaction","componenttype":1},{"logicalname":"wfp_selectionstep","componenttype":1},{"logicalname":"wfp_roleassignment","componenttype":1},{"logicalname":"wfp_detail","componenttype":1},{"logicalname":"wfp_hiringevent","componenttype":1},{"logicalname":"wfp_geographicarea","componenttype":1},{"logicalname":"wfp_payrate","componenttype":1},{"logicalname":"wfp_laborsetting","componenttype":1}]}</CdsDependencies>
-  work\sol\customizations.xml:14765:      <IsCustomizable>1</IsCustomizable>
-> work\sol\customizations.xml:14766:      <BackgroundImageUri>/CanvasApps/wfp_workforceplannerapp_07958_BackgroundImageUri</BackgroundImageUri>
-> work\sol\customizations.xml:14767:      <DocumentUri>/CanvasApps/wfp_workforceplannerapp_07958_DocumentUri.msapp</DocumentUri>
-  work\sol\customizations.xml:14768:      <AdditionalUris>
-> work\sol\customizations.xml:14769:        <AdditionalUri>/CanvasApps/wfp_workforceplannerapp_07958_AdditionalUris0_identity.json</AdditionalUri>
-  work\sol\customizations.xml:14770:      </AdditionalUris>
-> work\sol\customizations.xml:14771:    </CanvasApp>
-> work\sol\customizations.xml:14772:  </CanvasApps>
-  work\sol\customizations.xml:14773:  <connectionreferences>
-  work\sol\customizations.xml:14774:    <connectionreference connectionreferencelogicalname="mt_sharedcommondataserviceforapps_5e6d5">
-  work\sol\customizations.xml:14775:      <connectionreferencedisplayname>Microsoft Dataverse DataverseChargeCardApp-5e6d5</connectionreferencedisplayname>
-  work\sol\customizations.xml:14776:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
-  work\sol\customizations.xml:14777:      <iscustomizable>1</iscustomizable>
-  work\sol\customizations.xml:14778:      <promptingbehavior>0</promptingbehavior>
-  work\sol\customizations.xml:14779:      <statecode>0</statecode>
-  work\sol\customizations.xml:14780:      <statuscode>1</statuscode>
-  work\sol\customizations.xml:14781:    </connectionreference>
-  work\sol\customizations.xml:14782:    <connectionreference connectionreferencelogicalname="mt_sharedexcelonlinebusiness_eddf5">
-  work\sol\customizations.xml:14783:      <connectionreferencedisplayname>Excel Online (Business) DataverseChargeCardApp-eddf5</connectionreferencedisplayname>
-  work\sol\customizations.xml:14784:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness</connectorid>
-  work\sol\customizations.xml:14785:      <iscustomizable>1</iscustomizable>
-  work\sol\customizations.xml:14786:      <promptingbehavior>0</promptingbehavior>
-  work\sol\customizations.xml:14787:      <statecode>0</statecode>
-  work\sol\customizations.xml:14788:      <statuscode>1</statuscode>
-  work\sol\customizations.xml:14789:    </connectionreference>
-  work\sol\customizations.xml:14790:  </connectionreferences>
-  work\sol\customizations.xml:14791:  <Languages>
-  work\sol\customizations.xml:14792:    <Language>1033</Language>
-  work\sol\customizations.xml:14793:  </Languages>
-  work\sol\customizations.xml:14794:</ImportExportXml>
+> work\sol\customizations.xml:18487:  <CanvasApps>
+> work\sol\customizations.xml:18488:    <CanvasApp>
+  work\sol\customizations.xml:18489:      <Name>wfp_workforceplannerapp_07958</Name>
+  work\sol\customizations.xml:18490:      <AppVersion>2026-10-12T21:28:34Z</AppVersion>
+  work\sol\customizations.xml:18491:      <Status>Ready</Status>
+  work\sol\customizations.xml:18492:      <CreatedByClientVersion>3.26094.9.0</CreatedByClientVersion>
+  work\sol\customizations.xml:18493:      <MinClientVersion>3.26094.9.0</MinClientVersion>
+  work\sol\customizations.xml:18494:      <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26094.9","minimumRequiredApiVersion":"2.2.0","hasComponent":"false","hasUnlockedComponent":"false","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20261012T212417Z-3.26094.9.0"}</Tags>
+  work\sol\customizations.xml:18495:      <IsCdsUpgraded>0</IsCdsUpgraded>
+  work\sol\customizations.xml:18496:      <GalleryItemId xsi:nil="true"></GalleryItemId>
+  work\sol\customizations.xml:18497:      <BackgroundColor>RGBA(0,176,240,1)</BackgroundColor>
+  work\sol\customizations.xml:18498:      <DisplayName>Workforce Planner App</DisplayName>
+  work\sol\customizations.xml:18499:      <Description xsi:nil="true"></Description>
+  work\sol\customizations.xml:18500:      <CommitMessage xsi:nil="true"></CommitMessage>
+  work\sol\customizations.xml:18501:      <Publisher></Publisher>
+  work\sol\customizations.xml:18502:      <AuthorizationReferences>[]</AuthorizationReferences>
+  work\sol\customizations.xml:18503:      <ConnectionReferences>{}</ConnectionReferences>
+  work\sol\customizations.xml:18504:      <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"Units":{"entitySetName":"wfp_units","logicalName":"wfp_unit"},"Positions":{"entitySetName":"wfp_positions","logicalName":"wfp_position"},"Hiring Actions":{"entitySetName":"wfp_hiringactions","logicalName":"wfp_hiringaction"},"Selection Approval Steps":{"entitySetName":"wfp_selectionsteps","logicalName":"wfp_selectionstep"},"Role Assignments":{"entitySetName":"wfp_roleassignments","logicalName":"wfp_roleassignment"},"Details":{"entitySetName":"wfp_details","logicalName":"wfp_detail"},"Hiring Events":{"entitySetName":"wfp_hiringevents","logicalName":"wfp_hiringevent"},"Geographic Areas":{"entitySetName":"wfp_geographicareas","logicalName":"wfp_geographicarea"},"Pay Rates":{"entitySetName":"wfp_payrates","logicalName":"wfp_payrate"},"Labor Settings":{"entitySetName":"wfp_laborsettings","logicalName":"wfp_laborsetting"},"wfp_positionrequests":{"entitySetName":"wfp_positionrequests","logicalName":"wfp_positionrequest"},"Position Requests":{"entitySetName":"wfp_positionrequests","logicalName":"wfp_positionrequest"},"wfp_incumbentupdates":{"entitySetName":"wfp_incumbentupdates","logicalName":"wfp_incumbentupdate"},"Incumbent Updates":{"entitySetName":"wfp_incumbentupdates","logicalName":"wfp_incumbentupdate"}}}}</DatabaseReferences>
+  work\sol\customizations.xml:18505:      <AppComponents>[]</AppComponents>
+  work\sol\customizations.xml:18506:      <AppComponentDependencies>[]</AppComponentDependencies>
+  work\sol\customizations.xml:18507:      <CanConsumeAppPass>1</CanConsumeAppPass>
+> work\sol\customizations.xml:18508:      <CanvasAppType>0</CanvasAppType>
+  work\sol\customizations.xml:18509:      <BypassConsent>0</BypassConsent>
+  work\sol\customizations.xml:18510:      <AdminControlBypassConsent>0</AdminControlBypassConsent>
+  work\sol\customizations.xml:18511:      <EmbeddedApp xsi:nil="true"></EmbeddedApp>
+  work\sol\customizations.xml:18512:      <IntroducedVersion>1.0</IntroducedVersion>
+  work\sol\customizations.xml:18513:      <CdsDependencies>{"cdsdependencies":[{"logicalname":"wfp_unit","componenttype":1},{"logicalname":"wfp_position","componenttype":1},{"logicalname":"wfp_hiringaction","componenttype":1},{"logicalname":"wfp_selectionstep","componenttype":1},{"logicalname":"wfp_roleassignment","componenttype":1},{"logicalname":"wfp_detail","componenttype":1},{"logicalname":"wfp_hiringevent","componenttype":1},{"logicalname":"wfp_geographicarea","componenttype":1},{"logicalname":"wfp_payrate","componenttype":1},{"logicalname":"wfp_laborsetting","componenttype":1},{"logicalname":"wfp_positionrequest","componenttype":1},{"logicalname":"wfp_incumbentupdate","componenttype":1}]}</CdsDependencies>
+  work\sol\customizations.xml:18514:      <IsCustomizable>1</IsCustomizable>
+> work\sol\customizations.xml:18515:      <BackgroundImageUri>/CanvasApps/wfp_workforceplannerapp_07958_BackgroundImageUri</BackgroundImageUri>
+> work\sol\customizations.xml:18516:      <DocumentUri>/CanvasApps/wfp_workforceplannerapp_07958_DocumentUri.msapp</DocumentUri>
+  work\sol\customizations.xml:18517:      <AdditionalUris>
+> work\sol\customizations.xml:18518:        <AdditionalUri>/CanvasApps/wfp_workforceplannerapp_07958_AdditionalUris0_identity.json</AdditionalUri>
+  work\sol\customizations.xml:18519:      </AdditionalUris>
+> work\sol\customizations.xml:18520:    </CanvasApp>
+> work\sol\customizations.xml:18521:  </CanvasApps>
+  work\sol\customizations.xml:18522:  <connectionreferences>
+  work\sol\customizations.xml:18523:    <connectionreference connectionreferencelogicalname="mt_sharedcommondataserviceforapps_5e6d5">
+  work\sol\customizations.xml:18524:      <connectionreferencedisplayname>Microsoft Dataverse DataverseChargeCardApp-5e6d5</connectionreferencedisplayname>
+  work\sol\customizations.xml:18525:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
+  work\sol\customizations.xml:18526:      <iscustomizable>1</iscustomizable>
+  work\sol\customizations.xml:18527:      <promptingbehavior>0</promptingbehavior>
+  work\sol\customizations.xml:18528:      <statecode>0</statecode>
+  work\sol\customizations.xml:18529:      <statuscode>1</statuscode>
+  work\sol\customizations.xml:18530:    </connectionreference>
+  work\sol\customizations.xml:18531:    <connectionreference connectionreferencelogicalname="mt_sharedexcelonlinebusiness_eddf5">
+  work\sol\customizations.xml:18532:      <connectionreferencedisplayname>Excel Online (Business) DataverseChargeCardApp-eddf5</connectionreferencedisplayname>
+  work\sol\customizations.xml:18533:      <connectorid>/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness</connectorid>
+  work\sol\customizations.xml:18534:      <iscustomizable>1</iscustomizable>
+  work\sol\customizations.xml:18535:      <promptingbehavior>0</promptingbehavior>
+  work\sol\customizations.xml:18536:      <statecode>0</statecode>
+  work\sol\customizations.xml:18537:      <statuscode>1</statuscode>
+  work\sol\customizations.xml:18538:    </connectionreference>
+  work\sol\customizations.xml:18539:  </connectionreferences>
+  work\sol\customizations.xml:18540:  <Languages>
+  work\sol\customizations.xml:18541:    <Language>1033</Language>
+  work\sol\customizations.xml:18542:  </Languages>
+  work\sol\customizations.xml:18543:</ImportExportXml>
 
 

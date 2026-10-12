@@ -5,6 +5,6 @@ Packing succeeded.
 
 pack exit 0
 layout flags patched
-merged wfp_incumbentupdate
-merged wfp_positionrequest
+already in base: wfp_incumbentupdate
+already in base: wfp_positionrequest
 zip built
