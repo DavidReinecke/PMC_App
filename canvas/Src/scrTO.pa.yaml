@@ -312,7 +312,6 @@ Screens:
       - txtIncName:
           Control: Classic/TextInput@2.3.2
           Properties:
-            Default: =""
             X: =908
             Y: =260
             Width: =426
@@ -326,7 +325,6 @@ Screens:
       - txtIncEmail:
           Control: Classic/TextInput@2.3.2
           Properties:
-            Default: =""
             X: =908
             Y: =312
             Width: =426
