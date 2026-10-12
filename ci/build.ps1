@@ -13,6 +13,9 @@ Log ("exit code: " + $LASTEXITCODE)
 Log (pac solution pack --zipfile out/WorkforcePlanner_PayTables.zip --folder paytables_source --packagetype Unmanaged 2>&1 | Out-String)
 Log ("paytables exit: " + $LASTEXITCODE)
 
+Log (pac solution pack --zipfile out/WorkforcePlanner_NewTables.zip --folder newtables_source --packagetype Unmanaged 2>&1 | Out-String)
+Log ("newtables exit: " + $LASTEXITCODE)
+
 # 2. Canvas app pack attempt
 Log "=== pac canvas pack ==="
 if (Test-Path canvas/CanvasManifest.json) {

@@ -34,8 +34,30 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = ([regex]'<Version>[^<]*</Version>').Replace($sx, '<Version>1.0.0.18</Version>', 1)
+  $sx = ([regex]'<Version>[^<]*</Version>').Replace($sx, '<Version>1.0.0.19</Version>', 1)
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
+  # merge the Position Requests and Incumbent Updates tables unless the base already has them
+  try {
+    Expand-Archive -Path out/WorkforcePlanner_NewTables.zip -DestinationPath work/nt -Force
+    $nt = New-Object System.Xml.XmlDocument; $nt.PreserveWhitespace = $true
+    $nt.Load((Resolve-Path work/nt/customizations.xml).Path)
+    $cxPath = (Resolve-Path work/sol/customizations.xml).Path
+    $cx = New-Object System.Xml.XmlDocument; $cx.PreserveWhitespace = $true
+    $cx.Load($cxPath)
+    $ents = $cx.SelectSingleNode('/ImportExportXml/Entities')
+    $rels = $cx.SelectSingleNode('/ImportExportXml/EntityRelationships')
+    $sx = Get-Content work/sol/solution.xml -Raw
+    foreach ($e in $nt.SelectNodes('/ImportExportXml/Entities/Entity')) {
+      $nm = $e.SelectSingleNode('Name').InnerText
+      if ($cx.SelectSingleNode("/ImportExportXml/Entities/Entity[Name='$nm']")) { Log ("already in base: " + $nm); continue }
+      [void]$ents.AppendChild($cx.ImportNode($e, $true))
+      foreach ($r in $nt.SelectNodes("/ImportExportXml/EntityRelationships/EntityRelationship[ReferencingEntityName='$nm']")) { [void]$rels.AppendChild($cx.ImportNode($r, $true)) }
+      $sx = $sx.Replace('</RootComponents>', ('<RootComponent type="1" schemaName="' + $nm + '" behavior="0" /></RootComponents>'))
+      Log ("merged " + $nm)
+    }
+    [System.IO.File]::WriteAllText($cxPath, $cx.OuterXml, (New-Object System.Text.UTF8Encoding($false)))
+    Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
+  } catch { Log ("new table merge failed: " + $_) }
   Copy-Item flows/WorkforcePlanner_Import_Sample.xlsx out/
   Copy-Item flows/WorkforcePlanner_PayRates_2026.xlsx out/
   # zip with forward slashes via .NET
