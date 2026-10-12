@@ -4,7 +4,7 @@ function Log($t){ $t | Tee-Object -FilePath $log -Append }
 # replace screens/app with ours
 Remove-Item work/src/Src/*.pa.yaml -Force
 Copy-Item canvas/Src/*.pa.yaml work/src/Src/
-$hdr = "EditorState:`n  ScreensOrder:`n    - scrTO`n    - scrVac`n    - scrAppr`n    - scrRoles`n"
+$hdr = "EditorState:`n  ScreensOrder:`n    - scrTO`n    - scrVac`n    - scrAppr`n    - scrLabor`n    - scrRoles`n"
 Set-Content work/src/Src/_EditorState.pa.yaml $hdr -Encoding utf8
 Log (pac canvas pack --sources work/src --msapp out/WorkforcePlanner.msapp 2>&1 | Out-String)
 Log ("pack exit " + $LASTEXITCODE)
@@ -34,7 +34,7 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.10</Version>')
+  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.11</Version>')
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
   Copy-Item flows/WorkforcePlanner_Import_Sample.xlsx out/
   # zip with forward slashes via .NET

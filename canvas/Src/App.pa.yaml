@@ -28,6 +28,10 @@ App:
       Set(varCanFund, varIsBudget || varIsDA);
       // Starting area: my role's area, else my position's area
       Set(varArea, Coalesce(LookUp('Geographic Areas', Name = First(Filter(colMyRoles, !IsBlank(area))).area), LookUp('Geographic Areas', Name = First(colMyPos).'Geographic area'.Name), First('Geographic Areas')));
+      // Labor estimate: step 5 annual rates (Salary Table 2026-RUS, effective January 2026). WG values are placeholders.
+      ClearCollect(colPay, {g: 1, gs: 29954, gw: 42535, wg: 34000}, {g: 2, gs: 32611, gw: 45329, wg: 37400}, {g: 3, gs: 36762, gw: 49995, wg: 40800}, {g: 4, gs: 41265, gw: 54882, wg: 44200}, {g: 5, gs: 46167, gw: 60018, wg: 47600}, {g: 6, gs: 51463, gw: 65358, wg: 51000}, {g: 7, gs: 57188, gw: 70914, wg: 54400}, {g: 8, gs: 63332, gw: 76631, wg: 57800}, {g: 9, gs: 69954, gw: 82546, wg: 61200}, {g: 10, gs: 77030, gw: 88585, wg: 64600}, {g: 11, gs: 84638, gw: 94794, wg: 68000}, {g: 12, gs: 101443, gw: 110573, wg: 71400}, {g: 13, gs: 120629, gw: 127867, wg: 74800}, {g: 14, gs: 142549, gw: 146825, wg: 78200}, {g: 15, gs: 167672, gw: 170188, wg: 81600});
+      Set(varPrem, 32);
+      Set(varShowPay, false);
       Set(varPanel, "");
       Set(varNotice, "");
       Set(varErr, "");

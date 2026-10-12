@@ -18,7 +18,7 @@ Screens:
       - lblAppTO:
           Control: Label@2.5.1
           Properties:
-            Visible: =Parent.Width >= 1200 || Parent.Width < 1000
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
             X: =16
             Y: =16
             Width: =240
@@ -31,9 +31,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =If(Parent.Width >= 1200, 270, 16)
+            X: =If(Parent.Width >= 1340, 270, 16)
             Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =If(Parent.Width >= 1200, 190, 170)
+            Width: =160
             Height: =44
             Text: ="Tables of Organization"
             Visible: =true
@@ -49,9 +49,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =If(Parent.Width >= 1200, 468, 194)
+            X: =If(Parent.Width >= 1340, 438, 184)
             Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =If(Parent.Width >= 1200, 170, 150)
+            Width: =140
             Height: =44
             Text: ="Vacancies & Hiring"
             Visible: =true
@@ -67,9 +67,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =If(Parent.Width >= 1200, 646, 352)
+            X: =If(Parent.Width >= 1340, 586, 332)
             Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =If(Parent.Width >= 1200, 170, 150)
+            Width: =140
             Height: =44
             Text: ="Selection Approvals"
             Visible: =true
@@ -81,13 +81,31 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+      - btnNavLaborTO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =120
+            Height: =44
+            Text: ="Labor Estimate"
+            Visible: =true
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
       - btnNavRolesTO:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =If(Parent.Width >= 1200, 824, 510)
+            X: =If(Parent.Width >= 1340, 862, 608)
             Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =If(Parent.Width >= 1200, 160, 140)
+            Width: =120
             Height: =44
             Text: ="Role Assignments"
             Visible: =varIsDA
@@ -102,9 +120,9 @@ Screens:
       - ddAreaTO:
           Control: Classic/DropDown@2.3.1
           Properties:
-            X: =If(Parent.Width >= 1200, Parent.Width - 366, If(Parent.Width >= 1000, Parent.Width - 336, 270))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
             Y: =10
-            Width: =If(Parent.Width >= 1200, 230, If(Parent.Width >= 1000, 200, Parent.Width - 404))
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
             Height: =44
             Items: ='Geographic Areas'
             Default: =varArea.Name
@@ -114,9 +132,9 @@ Screens:
       - lblAreaFixedTO:
           Control: Label@2.5.1
           Properties:
-            X: =If(Parent.Width >= 1200, Parent.Width - 366, If(Parent.Width >= 1000, Parent.Width - 336, 270))
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
             Y: =10
-            Width: =If(Parent.Width >= 1200, 230, If(Parent.Width >= 1000, 200, Parent.Width - 404))
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
             Height: =44
             Text: =varArea.Name & " · your area"
             Visible: =!varCanSeeAll

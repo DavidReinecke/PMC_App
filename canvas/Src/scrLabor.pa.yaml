@@ -1,0 +1,825 @@
+Screens:
+  scrLabor:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, ""); Set(varShowPay, false);
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+    Children:
+      - rctHeaderLabor:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =If(Parent.Width < 1000, 112, 64)
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblAppLabor:
+          Control: Label@2.5.1
+          Properties:
+            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTOLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =160
+            Height: =44
+            Text: ="Tables of Organization"
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavVacLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 438, 184)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =140
+            Height: =44
+            Text: ="Vacancies & Hiring"
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavApprLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 586, 332)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =140
+            Height: =44
+            Text: ="Selection Approvals"
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavLaborLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 734, 480)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =120
+            Height: =44
+            Text: ="Labor Estimate"
+            Visible: =true
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - btnNavRolesLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Size: =12
+            X: =If(Parent.Width >= 1340, 862, 608)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =120
+            Height: =44
+            Text: ="Role Assignments"
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - ddAreaLabor:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            Height: =44
+            Items: ='Geographic Areas'
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+      - lblAreaFixedLabor:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            Y: =10
+            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMeLabor:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width - 126
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblLaborTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width * 0.5 - 24
+            Height: =40
+            Text: ="Labor Estimate"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - lblLaborHelp:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =116 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =34
+            Text: ="Annual cost = base pay at the position's full performance grade, step 5, for its pay plan, plus the employee expense premium. Every position is counted for a full year, including seasonal."
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+      - rctPrem:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16
+            Y: =154 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =52
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblPremCap:
+          Control: Label@2.5.1
+          Properties:
+            X: =28
+            Y: =154 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width - 360
+            Height: =52
+            Text: ="Health insurance and other employee expenses"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - btnPremDown:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 190
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Width: =44
+            Height: =44
+            Text: ="−"
+            Size: =12
+            Visible: =varCanFund
+            OnSelect: =Set(varPrem, Max(0, varPrem - 1))
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - lblPremVal:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width - 142
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Width: =64
+            Height: =44
+            Text: =varPrem & "%"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =16
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - btnPremUp:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 76
+            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Width: =44
+            Height: =44
+            Text: ="+"
+            Size: =12
+            Visible: =varCanFund
+            OnSelect: =Set(varPrem, Min(60, varPrem + 1))
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - rctStat1:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3)
+            Height: =72
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblStatCap1:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =20
+            Text: ="Filled positions, annual"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+      - lblStatVal1:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =36
+            Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Filled"), cLoaded), "$#,##0")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =22
+            FontWeight: =FontWeight.Bold
+      - rctStat2:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3)
+            Height: =72
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblStatCap2:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =20
+            Text: ="Vacant positions, annual"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+      - lblStatVal2:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =36
+            Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Vacant"), cLoaded), "$#,##0")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =22
+            FontWeight: =FontWeight.Bold
+      - rctStat3:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12)
+            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3)
+            Height: =72
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblStatCap3:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =20
+            Text: ="Total, annual"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+      - lblStatVal3:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
+            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Width: =((Parent.Width - 56) / 3) - 24
+            Height: =36
+            Text: =Text(Sum(galLabor.AllItems, cLoaded), "$#,##0")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =22
+            FontWeight: =FontWeight.Bold
+      - ddLUnit:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =16
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.4, 260)
+            Height: =44
+            Items: =colUnitOpts
+      - ddLStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.4 + 8, 288)
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.25, 180)
+            Height: =44
+            Items: =["All", "Filled", "Vacant"]
+      - btnPayTables:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.65 + 16, 480)
+            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.35, 240)
+            Height: =44
+            Text: =If(varShowPay, "Hide pay tables", "Show pay tables")
+            Size: =12
+            Visible: =true
+            OnSelect: =Set(varShowPay, !varShowPay)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+      - rctColHead:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =32
+            Fill: =RGBA(27, 34, 42, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblCH0:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.0 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
+            Height: =32
+            Text: ="Position ID"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH1:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.21 - 8
+            Height: =32
+            Text: ="Title"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH2:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.32 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.16 - 8
+            Height: =32
+            Text: ="Incumbent"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH3:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.48 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
+            Height: =32
+            Text: ="Employment"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH4:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.59 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
+            Height: =32
+            Text: ="Status"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH5:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.66 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.1 - 8
+            Height: =32
+            Text: ="Funding"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH6:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.76 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
+            Height: =32
+            Text: ="Cost grade"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH7:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.83 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.08 - 8
+            Height: =32
+            Text: ="Base"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Right
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblCH8:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.91 + 8
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.09 - 8
+            Height: =32
+            Text: ="With premium"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Align: =Align.Right
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - galLabor:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =384 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =Parent.Height - 384 - 56 - If(Parent.Width < 1000, 48, 0)
+            TemplateSize: =44
+            TemplatePadding: =0
+            Items: |-
+              =Sort(
+                  AddColumns(
+                      AddColumns(
+                          Filter(FirstN(Positions, 2000),
+                              'Geographic area'.Name = varArea.Name,
+                              ddLUnit.Selected.Name = "All units" || Unit.Name = ddLUnit.Selected.Name,
+                              ddLStatus.Selected.Value = "All" || Text('Position status') = ddLStatus.Selected.Value),
+                          cBase, With({r: LookUp(colPay, g = ThisRecord.'Full performance grade')}, Switch(Text(ThisRecord.'Pay plan'), "GW", Coalesce(r.gw, 0), "WG", Coalesce(r.wg, 0), Coalesce(r.gs, 0)))),
+                      cLoaded, cBase * (1 + varPrem / 100)),
+                  'Position ID', SortOrder.Ascending)
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctLRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Fill: =RGBA(20, 25, 31, 1)
+                  BorderColor: =RGBA(32, 40, 48, 1)
+                  BorderThickness: =1
+            - lblLId:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.0 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.11 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =ThisItem.'Position ID'
+                  Color: =RGBA(242, 207, 134, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLTitle:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.11 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.21 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =ThisItem.Title
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLInc:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.32 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.16 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =If(IsBlank(ThisItem.Incumbent), "Vacant", ThisItem.Incumbent)
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLEmp:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.48 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.11 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.'Employment type')
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLStat:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.59 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.07 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.'Position status')
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLFund:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.66 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.1 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =If(Text(ThisItem.'Position status') = "Vacant", Text(ThisItem.'Funding status'), "—")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLGrade:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.76 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.07 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.'Pay plan') & "-" & Text(ThisItem.'Full performance grade') & If(Text(ThisItem.'Pay plan') = "WG", "*", "")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLBase:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.83 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.08 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.cBase, "$#,##0")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblLLoaded:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.91 + 8
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.09 - 8
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.cLoaded, "$#,##0")
+                  Color: =RGBA(255, 255, 255, 1)
+                  Size: =12
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
+      - rctTot:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =16
+            Y: =Parent.Height - 48
+            Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =40
+            Fill: =RGBA(27, 34, 42, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            BorderThickness: =1
+      - lblTotCap:
+          Control: Label@2.5.1
+          Properties:
+            X: =28
+            Y: =Parent.Height - 48
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.6
+            Height: =40
+            Text: ="Total for filter" & If(CountRows(Filter(galLabor.AllItems, Text('Pay plan') = "WG")) > 0, "   (* WG rates are placeholders until the WG table is loaded)", "")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblTotBase:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.83 + 8
+            Y: =Parent.Height - 48
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.08 - 8
+            Height: =40
+            Text: =Text(Sum(galLabor.AllItems, cBase), "$#,##0")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =12
+            Align: =Align.Right
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Semibold
+      - lblTotLoaded:
+          Control: Label@2.5.1
+          Properties:
+            X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.91 + 8
+            Y: =Parent.Height - 48
+            Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.09 - 8
+            Height: =40
+            Text: =Text(Sum(galLabor.AllItems, cLoaded), "$#,##0")
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =12
+            Align: =Align.Right
+            VerticalAlign: =VerticalAlign.Middle
+            FontWeight: =FontWeight.Bold
+      - rctPay:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            Height: =Parent.Height - 352 - 8 - If(Parent.Width < 1000, 48, 0)
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Visible: =varShowPay
+      - lblPayTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =360 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =24
+            Text: ="Step 5 annual rates, Salary Table 2026-RUS, effective January 2026"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =12
+            Visible: =varShowPay
+            FontWeight: =FontWeight.Semibold
+      - lblPH0:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.0
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Height: =24
+            Text: ="Grade"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Visible: =varShowPay
+            Align: =Align.Left
+            FontWeight: =FontWeight.Semibold
+      - lblPH1:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Height: =24
+            Text: ="GS"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Visible: =varShowPay
+            Align: =Align.Right
+            FontWeight: =FontWeight.Semibold
+      - lblPH2:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.5
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Height: =24
+            Text: ="GW"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Visible: =varShowPay
+            Align: =Align.Right
+            FontWeight: =FontWeight.Semibold
+      - lblPH3:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.75
+            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
+            Height: =24
+            Text: ="WG*"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =11
+            Visible: =varShowPay
+            Align: =Align.Right
+            FontWeight: =FontWeight.Semibold
+      - galPay:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =418 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =Parent.Height - 418 - 64 - If(Parent.Width < 1000, 48, 0)
+            TemplateSize: =32
+            TemplatePadding: =0
+            Items: =colPay
+            Visible: =varShowPay
+            Fill: =RGBA(23, 28, 34, 1)
+          Children:
+            - lblPay0:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.25
+                  Height: =Parent.TemplateHeight
+                  Text: ="GS-" & ThisItem.g
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Left
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblPay1:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.25
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.25
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.gs, "$#,##0")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblPay2:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.5
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.25
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.gw, "$#,##0")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
+            - lblPay3:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth * 0.75
+                  Y: =0
+                  Width: =Parent.TemplateWidth * 0.25
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.wg, "$#,##0")
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =12
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
