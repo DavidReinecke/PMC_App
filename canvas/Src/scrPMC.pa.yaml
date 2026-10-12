@@ -1,0 +1,798 @@
+Screens:
+  scrPMC:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeaderPMC:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =If(Parent.Width < 1700, 112, 64)
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblAppPMC:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTOPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 0 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 0)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 150)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Org", "Tables of Organization")
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavVacPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 1 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 158)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Vacancies", "Vacancies & Hiring")
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavApprPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 2 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 306)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Approvals", "Selection Approvals")
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavLaborPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 3 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 454)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Labor", "Labor Estimate")
+            Visible: =true
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavPMCPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 4 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 572)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "PMC", "PMC Requests")
+            Visible: =true
+            OnSelect: =Navigate(scrPMC, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavIncPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 5 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 690)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 100)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Incumbents", "Incumbents")
+            Visible: =true
+            OnSelect: =Navigate(scrInc, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavRolesPMC:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 6 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 798)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 120)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Roles", "Role Assignments")
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - ddAreaPMC:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
+            Y: =10
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
+            Height: =44
+            Items: ='Geographic Areas'
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblAreaFixedPMC:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
+            Y: =10
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMePMC:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width - 126
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblPMCTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width * 0.5 - 24
+            Height: =40
+            Text: ="PMC Requests"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - lblPMCNotice:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width * 0.5 - 16
+            Height: =40
+            Text: =varNotice
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+      - lblPMCStats:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =116 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =24
+            Text: |-
+              =With({r: Filter(FirstN('Position Requests', 2000), 'Geographic area'.Name = varArea.Name)}, "Waiting on the PMC: " & CountRows(Filter(r, Text('Request status') = "Submitted")) & "   Cleared: " & CountRows(Filter(r, Text('Request status') = "Cleared")) & "   Returned: " & CountRows(Filter(r, Text('Request status') = "Returned")))
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+      - lblPMCHelp:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =142 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =24
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Ask the PMC to advertise a vacant position or to add a new position. You can edit or withdraw your own request until the PMC clears or returns it."
+      - ddPStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =16
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =180
+            Height: =44
+            Items: =["All statuses", "Submitted", "Cleared", "Returned", "Withdrawn"]
+            Default: ="Submitted"
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - ddPType:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =204
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =200
+            Height: =44
+            Items: =["All types", "Advertise vacancy", "Add position"]
+            Default: ="All types"
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - btnNewReq:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =412
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =170
+            Height: =44
+            Text: ="New request"
+            Visible: =varCanRequest
+            OnSelect: =Set(varEditReq, LookUp('Position Requests', false)); Set(varPanel, "req"); Set(varErr, ""); Reset(ddReqType); Reset(ddReqPos); Reset(txtReqTitle); Reset(ddReqUnit); Reset(ddReqPlan); Reset(ddReqGrade); Reset(ddReqEmp); Reset(txtReqFund); Reset(txtReqJust)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - txtPComment:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =16
+            Y: =222 + If(Parent.Width < 1700, 48, 0)
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =44
+            HintText: ="PMC comment (required when returning a request)"
+            Visible: =varCanPMC
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - galReq:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =222 + If(varCanPMC, 52, 0) + If(Parent.Width < 1700, 48, 0)
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =Parent.Height - (222 + If(varCanPMC, 52, 0) + If(Parent.Width < 1700, 48, 0)) - 16
+            TemplateSize: =160
+            TemplatePadding: =6
+            Items: =Sort(Filter(FirstN('Position Requests', 2000), 'Geographic area'.Name = varArea.Name, ddPStatus.Selected.Value = "All statuses" || Text('Request status') = ddPStatus.Selected.Value, ddPType.Selected.Value = "All types" || Text('Request type') = ddPType.Selected.Value), 'Request ID', SortOrder.Descending)
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctPReqRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 12
+                  Height: =Parent.TemplateHeight - 8
+                  Fill: =RGBA(23, 28, 34, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+            - lblPReqId:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =6
+                  Width: =Parent.TemplateWidth - 200
+                  Height: =28
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+                  Text: =ThisItem.'Request ID' & " · " & Text(ThisItem.'Request type')
+            - lblPReqStatus:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 150
+                  Y: =6
+                  Width: =138
+                  Height: =28
+                  Align: =Align.Right
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =Switch(Text(ThisItem.'Request status'), "Cleared", RGBA(120, 200, 140, 1), "Returned", RGBA(244, 165, 138, 1), "Withdrawn", RGBA(154, 164, 178, 1), RGBA(224, 164, 58, 1))
+                  Text: =Text(ThisItem.'Request status')
+            - lblPReqSub:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =36
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =13
+                  Text: =If(Text(ThisItem.'Request type') = "Advertise vacancy", ThisItem.Position.'Position ID' & " · " & LookUp(FirstN(Positions, 2000), 'Position ID' = ThisItem.Position.'Position ID').Title, ThisItem.'Proposed title' & " · " & Text(ThisItem.'Pay plan') & "-" & ThisItem.'Full performance grade' & " · " & Text(ThisItem.'Employment type') & " · " & ThisItem.Unit.Name)
+            - lblPReqMeta:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =60
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Text: |-
+                    ="Requested by " & ThisItem.'Requested by' & " on " & Text(ThisItem.'Request date', "mmm d, yyyy") & " · Funding: " & ThisItem.'Funding source'
+            - lblPReqJust:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =84
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Text: |-
+                    =ThisItem.Justification & If(!IsBlank(ThisItem.'PMC comment'), "   |   PMC: " & ThisItem.'PMC comment', "")
+            - btnReqClear:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 150 - 8 - 80 - 8 - 70 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =150
+                  Height: =34
+                  Text: =If(Text(ThisItem.'Request type') = "Advertise vacancy", "Clear to advertise", "Approve position")
+                  Visible: =varCanPMC && Text(ThisItem.'Request status') = "Submitted"
+                  OnSelect: |-
+                    =If(Text(ThisItem.'Request type') = "Advertise vacancy",
+                        With({vAct: LookUp(FirstN('Hiring Actions', 2000), Position.'Position ID' = ThisItem.Position.'Position ID')},
+                            If(IsBlank(vAct.'Action ID'),
+                                Patch('Hiring Actions', Defaults('Hiring Actions'), {'Action ID': "HA-" & Text(Now(), "yymmdd-hhmmss"), Position: LookUp(FirstN(Positions, 2000), 'Position ID' = ThisItem.Position.'Position ID'), 'Geographic area': varArea, Stage: 'Stage (Hiring Actions)'.'Cleared to advertise'}),
+                                If(Text(vAct.Stage) in ["Draft", "PMC review"], Patch('Hiring Actions', vAct, {Stage: 'Stage (Hiring Actions)'.'Cleared to advertise'})))),
+                        Patch(Positions, Defaults(Positions), {'Position ID': "NEW-" & Text(Now(), "yymmdd-hhmmss"), Title: ThisItem.'Proposed title', Unit: ThisItem.Unit, 'Geographic area': varArea, 'Pay plan': Switch(Text(ThisItem.'Pay plan'), "GS", 'Pay plan (Positions)'.GS, "GW", 'Pay plan (Positions)'.GW, "WG", 'Pay plan (Positions)'.WG), 'Full performance grade': ThisItem.'Full performance grade', 'Employment type': Switch(Text(ThisItem.'Employment type'), "Full time", 'Employment type (Positions)'.'Full time', "Career seasonal", 'Employment type (Positions)'.'Career seasonal', "Seasonal", 'Employment type (Positions)'.Seasonal), 'Position status': 'Position status (Positions)'.Vacant, 'Funding status': 'Funding status (Positions)'.Approved, Incumbent: "", 'Incumbent email': ""}));
+                    Patch('Position Requests', ThisItem, {'Request status': 'Request status (Position Requests)'.Cleared, 'Decided by': varMe, 'Decided on': Today(), 'PMC comment': txtPComment.Text});
+                    Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "PMC cleared " & ThisItem.'Request ID' & " (" & Text(ThisItem.'Request type') & ")", 'Event type': 'Event type (Hiring Events)'.'Stage change', 'Geographic area': varArea, By: varMe, Note: txtPComment.Text});
+                    Reset(txtPComment);
+                    Set(varNotice, If(Text(ThisItem.'Request type') = "Advertise vacancy", "Cleared to advertise. The hiring action is on Vacancies & Hiring.", "Position added to the table of organization as vacant. Rename its Position ID if you use position numbers."))
+                  Fill: =RGBA(224, 164, 58, 1)
+                  Color: =RGBA(20, 17, 10, 1)
+                  BorderColor: =RGBA(224, 164, 58, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+            - btnReqReturn:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 80 - 8 - 70 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =80
+                  Height: =34
+                  Text: ="Return"
+                  Visible: =varCanPMC && Text(ThisItem.'Request status') = "Submitted"
+                  OnSelect: |-
+                    =If(IsBlank(txtPComment.Text),
+                        Set(varNotice, "Add a comment before returning a request."),
+                        Patch('Position Requests', ThisItem, {'Request status': 'Request status (Position Requests)'.Returned, 'Decided by': varMe, 'Decided on': Today(), 'PMC comment': txtPComment.Text});
+                        Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "PMC returned " & ThisItem.'Request ID', 'Event type': 'Event type (Hiring Events)'.'Stage change', 'Geographic area': varArea, By: varMe, Note: txtPComment.Text});
+                        Reset(txtPComment);
+                        Set(varNotice, "Returned to " & ThisItem.'Requested by' & "."))
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+            - btnReqEdit:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 70 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =70
+                  Height: =34
+                  Text: ="Edit"
+                  Visible: =Lower(ThisItem.'Requested by email') = varEmail && Text(ThisItem.'Request status') = "Submitted"
+                  OnSelect: =Set(varEditReq, ThisItem); Set(varPanel, "req"); Set(varErr, ""); Reset(ddReqType); Reset(ddReqPos); Reset(txtReqTitle); Reset(ddReqUnit); Reset(ddReqPlan); Reset(ddReqGrade); Reset(ddReqEmp); Reset(txtReqFund); Reset(txtReqJust)
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+            - btnReqWithdraw:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =90
+                  Height: =34
+                  Text: ="Withdraw"
+                  Visible: =Lower(ThisItem.'Requested by email') = varEmail && Text(ThisItem.'Request status') = "Submitted"
+                  OnSelect: |-
+                    =Patch('Position Requests', ThisItem, {'Request status': 'Request status (Position Requests)'.Withdrawn});
+                    Set(varNotice, "Request withdrawn.")
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+      - rctReqPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            Height: =If(ddReqType.Selected.Value = "Add position", 508, 396)
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Visible: =varPanel = "req"
+      - lblReqTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 10
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =30
+            Visible: =varPanel = "req"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Text: =If(IsBlank(varEditReq.'Request ID'), "New request to the PMC", "Edit " & varEditReq.'Request ID')
+      - lblRqType:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 44
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "req"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Request type"
+      - ddReqType:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 62
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "req"
+            Items: =colChReqType
+            Default: =If(IsBlank(varEditReq.'Request ID'), "Advertise vacancy", Text(varEditReq.'Request type'))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqPos:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 104
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Advertise vacancy"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Vacant position"
+      - ddReqPos:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 122
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Advertise vacancy"
+            Items: |-
+              =ForAll(Sort(Filter(FirstN(Positions, 2000), 'Geographic area'.Name = varArea.Name, Text('Position status') = "Vacant", varCanPMC || 'Supervisor position'.'Position ID' in colMyPos.'Position ID'), 'Position ID'), {Value: 'Position ID' & " · " & Title, pid: 'Position ID'})
+            Default: =If(IsBlank(varEditReq.Position.'Position ID'), "", varEditReq.Position.'Position ID' & " · " & LookUp(FirstN(Positions, 2000), 'Position ID' = varEditReq.Position.'Position ID').Title)
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqTitleIn:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 104
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Proposed title"
+      - txtReqTitle:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 122
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Default: =varEditReq.'Proposed title'
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqUnit:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 164
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Unit"
+      - lblRqEmp:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 164
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Employment type"
+      - ddReqUnit:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 182
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Items: |-
+              =ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Value: Name})
+            Default: =varEditReq.Unit.Name
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - ddReqEmp:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 182
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Items: =colChEmp
+            Default: =If(IsBlank(varEditReq.'Request ID'), "Full time", Text(varEditReq.'Employment type'))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqPlan:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 224
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Pay plan"
+      - lblRqGrade:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 224
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =18
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Full performance grade"
+      - ddReqPlan:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 242
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Items: =colChPlan
+            Default: =If(IsBlank(varEditReq.'Request ID'), "GS", Text(varEditReq.'Pay plan'))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - ddReqGrade:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 242
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =36
+            Visible: =varPanel = "req" && ddReqType.Selected.Value = "Add position"
+            Items: =Sequence(15)
+            Default: =Coalesce(varEditReq.'Full performance grade', 11)
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqFund:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 288, 176)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "req"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Funding source"
+      - txtReqFund:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 288, 176) + 18
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "req"
+            HintText: ="Fund or project the position is paid from"
+            Default: =varEditReq.'Funding source'
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblRqJust:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 352, 240)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "req"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Justification"
+      - txtReqJust:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 352, 240) + 18
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =72
+            Visible: =varPanel = "req"
+            Mode: =TextMode.MultiLine
+            Default: =varEditReq.Justification
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblReqErr:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 352, 240) + 94
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =22
+            Visible: =varPanel = "req"
+            Color: =RGBA(244, 165, 138, 1)
+            Size: =12
+            Text: =varErr
+      - btnReqSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 460, 348)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =40
+            Text: =If(IsBlank(varEditReq.'Request ID'), "Submit to PMC", "Save changes")
+            Visible: =varPanel = "req"
+            OnSelect: |-
+              =With({vAdd: ddReqType.Selected.Value = "Add position", vPid: ddReqPos.Selected.pid},
+                  If(vAdd && IsBlank(txtReqTitle.Text), Set(varErr, "Enter the proposed title."),
+                  If(vAdd && IsBlank(ddReqUnit.Selected.Value), Set(varErr, "Choose the unit."),
+                  If(!vAdd && IsBlank(vPid), Set(varErr, "Choose the vacant position."),
+                  If(IsBlank(txtReqFund.Text), Set(varErr, "Enter the funding source."),
+                  If(IsBlank(txtReqJust.Text), Set(varErr, "Enter a justification."),
+                  If(!vAdd && CountRows(Filter(FirstN('Position Requests', 2000), Position.'Position ID' = vPid, Text('Request status') = "Submitted", 'Request ID' <> Coalesce(varEditReq.'Request ID', ""))) > 0, Set(varErr, "That position already has an open request."),
+                      If(IsBlank(varEditReq.'Request ID'),
+                          Patch('Position Requests', Defaults('Position Requests'), {
+                                  'Request ID': "PR-" & Text(Now(), "yymmdd-hhmmss"),
+                                  'Request type': Switch(ddReqType.Selected.Value, "Advertise vacancy", 'Request type (Position Requests)'.'Advertise vacancy', 'Request type (Position Requests)'.'Add position'),
+                                  Position: If(vAdd, Blank(), LookUp(FirstN(Positions, 2000), 'Position ID' = vPid)),
+                                  Unit: If(vAdd, LookUp(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), Name = ddReqUnit.Selected.Value), Blank()),
+                                  'Geographic area': varArea,
+                                  'Proposed title': If(vAdd, txtReqTitle.Text, ""),
+                                  'Pay plan': Switch(ddReqPlan.Selected.Value, "GS", 'Pay plan (Position Requests)'.GS, "GW", 'Pay plan (Position Requests)'.GW, "WG", 'Pay plan (Position Requests)'.WG),
+                                  'Full performance grade': ddReqGrade.Selected.Value,
+                                  'Employment type': Switch(ddReqEmp.Selected.Value, "Full time", 'Employment type (Position Requests)'.'Full time', "Career seasonal", 'Employment type (Position Requests)'.'Career seasonal', "Seasonal", 'Employment type (Position Requests)'.Seasonal),
+                                  Justification: txtReqJust.Text,
+                                  'Funding source': txtReqFund.Text,
+                                  'Requested by': varMe,
+                                  'Requested by email': varEmail,
+                                  'Request date': Today(),
+                                  'Request status': 'Request status (Position Requests)'.Submitted});
+                          Set(varNotice, "Request submitted to the PMC."),
+                          Patch('Position Requests', varEditReq, {
+                                  'Request type': Switch(ddReqType.Selected.Value, "Advertise vacancy", 'Request type (Position Requests)'.'Advertise vacancy', 'Request type (Position Requests)'.'Add position'),
+                                  Position: If(vAdd, Blank(), LookUp(FirstN(Positions, 2000), 'Position ID' = vPid)),
+                                  Unit: If(vAdd, LookUp(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), Name = ddReqUnit.Selected.Value), Blank()),
+                                  'Geographic area': varArea,
+                                  'Proposed title': If(vAdd, txtReqTitle.Text, ""),
+                                  'Pay plan': Switch(ddReqPlan.Selected.Value, "GS", 'Pay plan (Position Requests)'.GS, "GW", 'Pay plan (Position Requests)'.GW, "WG", 'Pay plan (Position Requests)'.WG),
+                                  'Full performance grade': ddReqGrade.Selected.Value,
+                                  'Employment type': Switch(ddReqEmp.Selected.Value, "Full time", 'Employment type (Position Requests)'.'Full time', "Career seasonal", 'Employment type (Position Requests)'.'Career seasonal', "Seasonal", 'Employment type (Position Requests)'.Seasonal),
+                                  Justification: txtReqJust.Text,
+                                  'Funding source': txtReqFund.Text});
+                          Set(varNotice, "Request updated."));
+                      Set(varPanel, ""); Set(varErr, ""))))))))
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnReqClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 460, 348)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =40
+            Text: ="Cancel"
+            Visible: =varPanel = "req"
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12

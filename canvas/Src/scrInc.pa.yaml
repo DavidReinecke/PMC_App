@@ -1,0 +1,662 @@
+Screens:
+  scrInc:
+    Properties:
+      Fill: =RGBA(15, 18, 22, 1)
+      OnVisible: |-
+        =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, "")
+    Children:
+      - rctHeaderInc:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =If(Parent.Width < 1700, 112, 64)
+            Fill: =RGBA(23, 28, 34, 1)
+      - lblAppInc:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =16
+            Width: =240
+            Height: =32
+            Text: ="Workforce Planner"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =18
+            FontWeight: =FontWeight.Bold
+      - btnNavTOInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 0 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 0)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 150)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Org", "Tables of Organization")
+            Visible: =true
+            OnSelect: =Navigate(scrTO, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavVacInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 1 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 158)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Vacancies", "Vacancies & Hiring")
+            Visible: =true
+            OnSelect: =Navigate(scrVac, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavApprInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 2 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 306)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Approvals", "Selection Approvals")
+            Visible: =true
+            OnSelect: =Navigate(scrAppr, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavLaborInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 3 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 454)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Labor", "Labor Estimate")
+            Visible: =true
+            OnSelect: =Navigate(scrLabor, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavPMCInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 4 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 572)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "PMC", "PMC Requests")
+            Visible: =true
+            OnSelect: =Navigate(scrPMC, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavIncInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 5 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 690)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 100)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Incumbents", "Incumbents")
+            Visible: =true
+            OnSelect: =Navigate(scrInc, ScreenTransition.None)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavRolesInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 6 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 798)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 120)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Roles", "Role Assignments")
+            Visible: =varIsDA
+            OnSelect: =Navigate(scrRoles, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - ddAreaInc:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
+            Y: =10
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
+            Height: =44
+            Items: ='Geographic Areas'
+            Default: =varArea.Name
+            Visible: =varCanSeeAll
+            OnChange: |-
+              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblAreaFixedInc:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
+            Y: =10
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
+            Height: =44
+            Text: =varArea.Name & " · your area"
+            Visible: =!varCanSeeAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =14
+            VerticalAlign: =VerticalAlign.Middle
+      - lblMeInc:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width - 126
+            Y: =10
+            Width: =118
+            Height: =44
+            Text: =varMe
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - lblIncTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width * 0.5 - 24
+            Height: =40
+            Text: ="Incumbent Updates"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =24
+            FontWeight: =FontWeight.Bold
+      - lblIncNotice:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width * 0.5 - 16
+            Height: =40
+            Text: =varNotice
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
+      - lblIncStats:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =116 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =24
+            Text: |-
+              =With({r: Filter(FirstN('Incumbent Updates', 2000), 'Geographic area'.Name = varArea.Name)}, "Waiting to be applied: " & CountRows(Filter(r, Text('Update status') = "Pending")) & "   Applied: " & CountRows(Filter(r, Text('Update status') = "Applied")) & "   Rejected: " & CountRows(Filter(r, Text('Update status') = "Rejected")))
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+      - lblIncHelp:
+          Control: Label@2.5.1
+          Properties:
+            X: =16
+            Y: =142 + If(Parent.Width < 1700, 48, 0)
+            Width: =Parent.Width - 32
+            Height: =24
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Supervisors request who occupies a position. A chief or data administrator applies the update, which changes the table of organization."
+      - ddIStatus:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =16
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =180
+            Height: =44
+            Items: =["All statuses", "Pending", "Applied", "Rejected"]
+            Default: ="Pending"
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - btnNewInc:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =204
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =190
+            Height: =44
+            Text: ="Request an update"
+            Visible: =varCanDetail
+            OnSelect: =Set(varPanel, "inc"); Set(varErr, ""); Reset(ddIncPos); Reset(ddIncType); Reset(txtIncNewName); Reset(txtIncNewEmail); Reset(dpIncDate); Reset(txtIncReason)
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - txtIComment:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =16
+            Y: =222 + If(Parent.Width < 1700, 48, 0)
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =44
+            HintText: ="Comment (optional when applying, shown when rejecting)"
+            Visible: =varCanEditInc
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - galInc:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =16
+            Y: =222 + If(varCanEditInc, 52, 0) + If(Parent.Width < 1700, 48, 0)
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =Parent.Height - (222 + If(varCanEditInc, 52, 0) + If(Parent.Width < 1700, 48, 0)) - 16
+            TemplateSize: =160
+            TemplatePadding: =6
+            Items: =Sort(Filter(FirstN('Incumbent Updates', 2000), 'Geographic area'.Name = varArea.Name, ddIStatus.Selected.Value = "All statuses" || Text('Update status') = ddIStatus.Selected.Value), 'Update ID', SortOrder.Descending)
+            Fill: =RGBA(15, 18, 22, 1)
+          Children:
+            - rctIncRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 12
+                  Height: =Parent.TemplateHeight - 8
+                  Fill: =RGBA(23, 28, 34, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  BorderThickness: =1
+            - lblIncId:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =6
+                  Width: =Parent.TemplateWidth - 200
+                  Height: =28
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+                  Text: =ThisItem.'Update ID' & " · " & ThisItem.Position.'Position ID' & " · " & LookUp(FirstN(Positions, 2000), 'Position ID' = ThisItem.Position.'Position ID').Title
+            - lblIncStatus:
+                Control: Label@2.5.1
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 150
+                  Y: =6
+                  Width: =138
+                  Height: =28
+                  Align: =Align.Right
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =Switch(Text(ThisItem.'Update status'), "Applied", RGBA(120, 200, 140, 1), "Rejected", RGBA(244, 165, 138, 1), RGBA(224, 164, 58, 1))
+                  Text: =Text(ThisItem.'Update status')
+            - lblIncWhat:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =36
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(230, 233, 238, 1)
+                  Size: =13
+                  Text: |-
+                    =Text(ThisItem.'Update type') & ": " & Coalesce(LookUp(FirstN(Positions, 2000), 'Position ID' = ThisItem.Position.'Position ID').Incumbent, "vacant") & If(Text(ThisItem.'Update type') = "Vacate", " leaves the position", " to " & ThisItem.'New incumbent' & " (" & ThisItem.'New incumbent email' & ")") & If(!IsBlank(ThisItem.'Effective date'), " · effective " & Text(ThisItem.'Effective date', "mmm d, yyyy"), "")
+            - lblIncMeta:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =60
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Text: ="Requested by " & ThisItem.'Requested by' & " on " & Text(ThisItem.'Created On', "mmm d, yyyy")
+            - lblIncReason:
+                Control: Label@2.5.1
+                Properties:
+                  X: =12
+                  Y: =84
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Color: =RGBA(154, 164, 178, 1)
+                  Size: =12
+                  Text: |-
+                    =ThisItem.Reason & If(!IsBlank(ThisItem.Comment), "   |   " & ThisItem.'Decided by' & ": " & ThisItem.Comment, "")
+            - btnIncApply:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 90 - 8 - 80 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =90
+                  Height: =34
+                  Text: ="Apply"
+                  Visible: =varCanEditInc && Text(ThisItem.'Update status') = "Pending"
+                  OnSelect: |-
+                    =With({vPid: ThisItem.Position.'Position ID'},
+                        With({vPos: LookUp(FirstN(Positions, 2000), 'Position ID' = vPid)},
+                            If(Text(ThisItem.'Update type') = "Vacate",
+                                Patch(Positions, vPos, {'Previous incumbent': vPos.Incumbent, Incumbent: "", 'Incumbent email': "", 'Position status': 'Position status (Positions)'.Vacant}),
+                                Patch(Positions, vPos, {Incumbent: ThisItem.'New incumbent', 'Incumbent email': Lower(ThisItem.'New incumbent email'), 'Position status': 'Position status (Positions)'.Filled, 'Previous incumbent': ""}));
+                            Patch('Incumbent Updates', ThisItem, {'Update status': 'Update status (Incumbent Updates)'.Applied, 'Decided by': varMe, 'Decided on': Today(), Comment: txtIComment.Text});
+                            Patch('Hiring Events', Defaults('Hiring Events'), {Summary: "Applied " & ThisItem.'Update ID' & " (" & Text(ThisItem.'Update type') & ") to " & vPid, 'Event type': 'Event type (Hiring Events)'.'Incumbent change', 'Geographic area': varArea, By: varMe, Note: txtIComment.Text});
+                            ClearCollect(colMyPos, Filter(Positions, 'Incumbent email' = varEmail));
+                            Reset(txtIComment);
+                            Set(varNotice, "Applied to " & vPid & ".")))
+                  Fill: =RGBA(224, 164, 58, 1)
+                  Color: =RGBA(20, 17, 10, 1)
+                  BorderColor: =RGBA(224, 164, 58, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+            - btnIncReject:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 80 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =80
+                  Height: =34
+                  Text: ="Reject"
+                  Visible: =varCanEditInc && Text(ThisItem.'Update status') = "Pending"
+                  OnSelect: |-
+                    =If(IsBlank(txtIComment.Text),
+                        Set(varNotice, "Add a comment before rejecting an update."),
+                        Patch('Incumbent Updates', ThisItem, {'Update status': 'Update status (Incumbent Updates)'.Rejected, 'Decided by': varMe, 'Decided on': Today(), Comment: txtIComment.Text});
+                        Reset(txtIComment);
+                        Set(varNotice, "Update rejected."))
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+            - btnIncWithdraw:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 12 - 8 - 90
+                  Y: =Parent.TemplateHeight - 8 - 42
+                  Width: =90
+                  Height: =34
+                  Text: ="Withdraw"
+                  Visible: =Text(ThisItem.'Update status') = "Pending" && Lower(ThisItem.'Requested by email') = varEmail
+                  OnSelect: |-
+                    =Patch('Incumbent Updates', ThisItem, {'Update status': 'Update status (Incumbent Updates)'.Rejected, 'Decided by': varMe, 'Decided on': Today(), Comment: "Withdrawn by requester"});
+                    Set(varNotice, "Update withdrawn.")
+                  Fill: =RGBA(29, 37, 46, 1)
+                  Color: =RGBA(230, 233, 238, 1)
+                  BorderColor: =RGBA(56, 66, 78, 1)
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Size: =12
+      - rctIncPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =172 + If(Parent.Width < 1700, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
+            Height: =508
+            Fill: =RGBA(23, 28, 34, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            BorderThickness: =1
+            Visible: =varPanel = "inc"
+      - lblIncPTitle:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 10
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =30
+            Visible: =varPanel = "inc"
+            Color: =RGBA(230, 233, 238, 1)
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Text: ="Request an incumbent update"
+      - lblIPos:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 44
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Position"
+      - ddIncPos:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 62
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "inc"
+            Items: |-
+              =ForAll(Sort(Filter(FirstN(Positions, 2000), 'Geographic area'.Name = varArea.Name, varCanEditInc || 'Supervisor position'.'Position ID' in colMyPos.'Position ID'), 'Position ID'), {Value: 'Position ID' & " · " & Title & " · " & If(Text('Position status') = "Filled", Incumbent, "Vacant"), pid: 'Position ID'})
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblIType:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 104
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Update type"
+      - ddIncType:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 122
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "inc"
+            Items: =colChUpdType
+            Default: ="Fill"
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblIName:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 164
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc" && ddIncType.Selected.Value <> "Vacate"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="New incumbent name"
+      - txtIncNewName:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 182
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "inc" && ddIncType.Selected.Value <> "Vacate"
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblIEmail:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 224
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc" && ddIncType.Selected.Value <> "Vacate"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="New incumbent sign-in email"
+      - txtIncNewEmail:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 242
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "inc" && ddIncType.Selected.Value <> "Vacate"
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblIDate:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 284
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Effective date"
+      - dpIncDate:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 302
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =36
+            Visible: =varPanel = "inc"
+            DefaultDate: =Today()
+      - lblIReason:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 344
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =18
+            Visible: =varPanel = "inc"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Reason"
+      - txtIncReason:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =""
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 362
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =64
+            Visible: =varPanel = "inc"
+            Mode: =TextMode.MultiLine
+            Size: =12
+            Color: =RGBA(230, 233, 238, 1)
+            Fill: =RGBA(29, 37, 46, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+      - lblIncErr:
+          Control: Label@2.5.1
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 430
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
+            Height: =22
+            Visible: =varPanel = "inc"
+            Color: =RGBA(244, 165, 138, 1)
+            Size: =12
+            Text: =varErr
+      - btnIncSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 456
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =40
+            Text: ="Submit update"
+            Visible: =varPanel = "inc"
+            OnSelect: |-
+              =With({vPid: ddIncPos.Selected.pid, vType: ddIncType.Selected.Value},
+                  If(IsBlank(vPid), Set(varErr, "Choose the position."),
+                  If(vType <> "Vacate" && IsBlank(txtIncNewName.Text), Set(varErr, "Enter the new incumbent's name."),
+                  If(vType <> "Vacate" && !IsMatch(txtIncNewEmail.Text, Match.Email), Set(varErr, "Enter a valid sign-in email."),
+                  If(IsBlank(txtIncReason.Text), Set(varErr, "Enter a reason."),
+                  If(CountRows(Filter(FirstN('Incumbent Updates', 2000), Position.'Position ID' = vPid, Text('Update status') = "Pending")) > 0, Set(varErr, "That position already has an update waiting."),
+                      Patch('Incumbent Updates', Defaults('Incumbent Updates'), {
+                              'Update ID': "IU-" & Text(Now(), "yymmdd-hhmmss"),
+                              Position: LookUp(FirstN(Positions, 2000), 'Position ID' = vPid),
+                              'Geographic area': varArea,
+                              'Update type': Switch(vType, "Fill", 'Update type (Incumbent Updates)'.Fill, "Change incumbent", 'Update type (Incumbent Updates)'.'Change incumbent', "Vacate", 'Update type (Incumbent Updates)'.Vacate),
+                              'New incumbent': If(vType = "Vacate", "", txtIncNewName.Text),
+                              'New incumbent email': If(vType = "Vacate", "", Lower(txtIncNewEmail.Text)),
+                              'Effective date': dpIncDate.SelectedDate,
+                              Reason: txtIncReason.Text,
+                              'Requested by': varMe,
+                              'Requested by email': varEmail,
+                              'Update status': 'Update status (Incumbent Updates)'.Pending});
+                      Set(varNotice, "Update submitted for " & vPid & ".");
+                      Set(varPanel, ""); Set(varErr, "")))))))
+            Fill: =RGBA(224, 164, 58, 1)
+            Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnIncClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =172 + If(Parent.Width < 1700, 48, 0) + 456
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
+            Height: =40
+            Text: ="Cancel"
+            Visible: =varPanel = "inc"
+            OnSelect: =Set(varPanel, ""); Set(varErr, "")
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12

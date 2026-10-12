@@ -19,12 +19,11 @@ Screens:
             X: =0
             Y: =0
             Width: =Parent.Width
-            Height: =If(Parent.Width < 1000, 112, 64)
+            Height: =If(Parent.Width < 1700, 112, 64)
             Fill: =RGBA(23, 28, 34, 1)
       - lblAppLabor:
           Control: Label@2.5.1
           Properties:
-            Visible: =Parent.Width >= 1340 || Parent.Width < 1000
             X: =16
             Y: =16
             Width: =240
@@ -36,12 +35,11 @@ Screens:
       - btnNavTOLabor:
           Control: Classic/Button@2.2.0
           Properties:
-            Size: =12
-            X: =If(Parent.Width >= 1340, 270, 16)
-            Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =160
+            X: =If(Parent.Width < 1000, 16 + 0 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 0)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 150)
             Height: =44
-            Text: ="Tables of Organization"
+            Text: =If(Parent.Width < 1000, "Org", "Tables of Organization")
             Visible: =true
             OnSelect: =Navigate(scrTO, ScreenTransition.None)
             Fill: =RGBA(29, 37, 46, 1)
@@ -51,15 +49,15 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+            Size: =12
       - btnNavVacLabor:
           Control: Classic/Button@2.2.0
           Properties:
-            Size: =12
-            X: =If(Parent.Width >= 1340, 438, 184)
-            Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =140
+            X: =If(Parent.Width < 1000, 16 + 1 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 158)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
             Height: =44
-            Text: ="Vacancies & Hiring"
+            Text: =If(Parent.Width < 1000, "Vacancies", "Vacancies & Hiring")
             Visible: =true
             OnSelect: =Navigate(scrVac, ScreenTransition.None)
             Fill: =RGBA(29, 37, 46, 1)
@@ -69,15 +67,15 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+            Size: =12
       - btnNavApprLabor:
           Control: Classic/Button@2.2.0
           Properties:
-            Size: =12
-            X: =If(Parent.Width >= 1340, 586, 332)
-            Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =140
+            X: =If(Parent.Width < 1000, 16 + 2 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 306)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 140)
             Height: =44
-            Text: ="Selection Approvals"
+            Text: =If(Parent.Width < 1000, "Approvals", "Selection Approvals")
             Visible: =true
             OnSelect: =Navigate(scrAppr, ScreenTransition.None)
             Fill: =RGBA(29, 37, 46, 1)
@@ -87,33 +85,69 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+            Size: =12
       - btnNavLaborLabor:
           Control: Classic/Button@2.2.0
           Properties:
-            Size: =12
-            X: =If(Parent.Width >= 1340, 734, 480)
-            Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =120
+            X: =If(Parent.Width < 1000, 16 + 3 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 454)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
             Height: =44
-            Text: ="Labor Estimate"
+            Text: =If(Parent.Width < 1000, "Labor", "Labor Estimate")
             Visible: =true
             OnSelect: =Navigate(scrLabor, ScreenTransition.None)
             Fill: =RGBA(224, 164, 58, 1)
             Color: =RGBA(20, 17, 10, 1)
+            BorderColor: =RGBA(224, 164, 58, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
+      - btnNavPMCLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 4 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 572)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 110)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "PMC", "PMC Requests")
+            Visible: =true
+            OnSelect: =Navigate(scrPMC, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
             RadiusTopLeft: =8
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+            Size: =12
+      - btnNavIncLabor:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(Parent.Width < 1000, 16 + 5 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 690)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 100)
+            Height: =44
+            Text: =If(Parent.Width < 1000, "Incumbents", "Incumbents")
+            Visible: =true
+            OnSelect: =Navigate(scrInc, ScreenTransition.None)
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            Size: =12
       - btnNavRolesLabor:
           Control: Classic/Button@2.2.0
           Properties:
-            Size: =12
-            X: =If(Parent.Width >= 1340, 862, 608)
-            Y: =If(Parent.Width < 1000, 58, 10)
-            Width: =120
+            X: =If(Parent.Width < 1000, 16 + 6 * ((Parent.Width - 32 - 36) / 7 + 6), If(Parent.Width >= 1700, 270, 16) + 798)
+            Y: =If(Parent.Width >= 1700, 10, 58)
+            Width: =If(Parent.Width < 1000, (Parent.Width - 32 - 36) / 7, 120)
             Height: =44
-            Text: ="Role Assignments"
+            Text: =If(Parent.Width < 1000, "Roles", "Role Assignments")
             Visible: =varIsDA
             OnSelect: =Navigate(scrRoles, ScreenTransition.None)
             Fill: =RGBA(29, 37, 46, 1)
@@ -123,24 +157,29 @@ Screens:
             RadiusTopRight: =8
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
+            Size: =12
       - ddAreaLabor:
           Control: Classic/DropDown@2.3.1
           Properties:
-            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
             Y: =10
-            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
             Height: =44
             Items: ='Geographic Areas'
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
               =Set(varArea, Self.Selected); Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = Self.Selected.Name).'Premium percent', 32)); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+            Size: =12
+            Fill: =RGBA(29, 37, 46, 1)
+            Color: =RGBA(230, 233, 238, 1)
+            BorderColor: =RGBA(56, 66, 78, 1)
       - lblAreaFixedLabor:
           Control: Label@2.5.1
           Properties:
-            X: =If(Parent.Width >= 1340, Parent.Width - 336, If(Parent.Width >= 1000, 736, 270))
+            X: =If(Parent.Width >= 1000, Parent.Width - 336, 270)
             Y: =10
-            Width: =If(Parent.Width >= 1340, 200, If(Parent.Width >= 1000, Max(140, Parent.Width - 870), Parent.Width - 404))
+            Width: =If(Parent.Width >= 1000, 200, Parent.Width - 404)
             Height: =44
             Text: =varArea.Name & " · your area"
             Visible: =!varCanSeeAll
@@ -162,7 +201,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16
-            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
             Width: =Parent.Width * 0.5 - 24
             Height: =40
             Text: ="Labor Estimate"
@@ -173,7 +212,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =Parent.Width * 0.5
-            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Y: =76 + If(Parent.Width < 1700, 48, 0)
             Width: =Parent.Width * 0.5 - 16
             Height: =40
             Text: =If(varPayYear = 0, "No pay rates found. Load them into the Pay Rates table.", varNotice)
@@ -184,7 +223,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16
-            Y: =116 + If(Parent.Width < 1000, 48, 0)
+            Y: =116 + If(Parent.Width < 1700, 48, 0)
             Width: =Parent.Width - 32
             Height: =34
             Text: ="Annual cost = base pay at the position's full performance grade, step 5, for its pay plan, plus the employee expense premium. Every position is counted for a full year, including seasonal."
@@ -194,7 +233,7 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =16
-            Y: =154 + If(Parent.Width < 1000, 48, 0)
+            Y: =154 + If(Parent.Width < 1700, 48, 0)
             Width: =Parent.Width - 32
             Height: =52
             Fill: =RGBA(23, 28, 34, 1)
@@ -204,7 +243,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =28
-            Y: =154 + If(Parent.Width < 1000, 48, 0)
+            Y: =154 + If(Parent.Width < 1700, 48, 0)
             Width: =Parent.Width - 360
             Height: =52
             Text: ="Health insurance and other employee expenses"
@@ -216,7 +255,7 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             X: =Parent.Width - 190
-            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Y: =158 + If(Parent.Width < 1700, 48, 0)
             Width: =44
             Height: =44
             Text: ="−"
@@ -235,7 +274,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =Parent.Width - 142
-            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Y: =158 + If(Parent.Width < 1700, 48, 0)
             Width: =64
             Height: =44
             Text: =varPrem & "%"
@@ -248,7 +287,7 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             X: =Parent.Width - 76
-            Y: =158 + If(Parent.Width < 1000, 48, 0)
+            Y: =158 + If(Parent.Width < 1700, 48, 0)
             Width: =44
             Height: =44
             Text: ="+"
@@ -267,7 +306,7 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =16 + 0 * (((Parent.Width - 56) / 3) + 12)
-            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Y: =216 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3)
             Height: =72
             Fill: =RGBA(23, 28, 34, 1)
@@ -277,7 +316,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Y: =222 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =20
             Text: ="Filled positions, annual"
@@ -287,7 +326,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 0 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Y: =244 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =36
             Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Filled"), cLoaded), "$#,##0")
@@ -298,7 +337,7 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =16 + 1 * (((Parent.Width - 56) / 3) + 12)
-            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Y: =216 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3)
             Height: =72
             Fill: =RGBA(23, 28, 34, 1)
@@ -308,7 +347,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Y: =222 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =20
             Text: ="Vacant positions, annual"
@@ -318,7 +357,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 1 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Y: =244 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =36
             Text: =Text(Sum(Filter(galLabor.AllItems, Text('Position status') = "Vacant"), cLoaded), "$#,##0")
@@ -329,7 +368,7 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =16 + 2 * (((Parent.Width - 56) / 3) + 12)
-            Y: =216 + If(Parent.Width < 1000, 48, 0)
+            Y: =216 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3)
             Height: =72
             Fill: =RGBA(23, 28, 34, 1)
@@ -339,7 +378,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =222 + If(Parent.Width < 1000, 48, 0)
+            Y: =222 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =20
             Text: ="Total, annual"
@@ -349,7 +388,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + 2 * (((Parent.Width - 56) / 3) + 12) + 12
-            Y: =244 + If(Parent.Width < 1000, 48, 0)
+            Y: =244 + If(Parent.Width < 1700, 48, 0)
             Width: =((Parent.Width - 56) / 3) - 24
             Height: =36
             Text: =Text(Sum(galLabor.AllItems, cLoaded), "$#,##0")
@@ -360,7 +399,7 @@ Screens:
           Control: Classic/DropDown@2.3.1
           Properties:
             X: =16
-            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Y: =298 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.4, 260)
             Height: =44
             Items: =colUnitOpts
@@ -368,7 +407,7 @@ Screens:
           Control: Classic/DropDown@2.3.1
           Properties:
             X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.4 + 8, 288)
-            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Y: =298 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.25, 180)
             Height: =44
             Items: =["All", "Filled", "Vacant"]
@@ -376,7 +415,7 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             X: =If(Parent.Width < 1000, 16 + (Parent.Width - 48) * 0.65 + 16, 480)
-            Y: =298 + If(Parent.Width < 1000, 48, 0)
+            Y: =298 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, (Parent.Width - 48) * 0.35, 240)
             Height: =44
             Text: =If(varShowPay, "Hide pay tables", "Show pay tables")
@@ -394,7 +433,7 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =16
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
             Height: =32
             Fill: =RGBA(27, 34, 42, 1)
@@ -404,7 +443,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.0 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
             Height: =32
             Text: ="Position ID"
@@ -417,7 +456,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.21 - 8
             Height: =32
             Text: ="Title"
@@ -430,7 +469,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.32 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.16 - 8
             Height: =32
             Text: ="Incumbent"
@@ -443,7 +482,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.48 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.11 - 8
             Height: =32
             Text: ="Employment"
@@ -456,7 +495,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.59 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
             Height: =32
             Text: ="Status"
@@ -469,7 +508,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.66 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.1 - 8
             Height: =32
             Text: ="Funding"
@@ -482,7 +521,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.76 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.07 - 8
             Height: =32
             Text: ="Cost grade"
@@ -495,7 +534,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.83 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.08 - 8
             Height: =32
             Text: ="Base"
@@ -508,7 +547,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16 + (If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.91 + 8
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.09 - 8
             Height: =32
             Text: ="With premium"
@@ -522,9 +561,9 @@ Screens:
           Variant: Vertical
           Properties:
             X: =16
-            Y: =384 + If(Parent.Width < 1000, 48, 0)
+            Y: =384 + If(Parent.Width < 1700, 48, 0)
             Width: =If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
-            Height: =Parent.Height - 384 - 56 - If(Parent.Width < 1000, 48, 0)
+            Height: =Parent.Height - 384 - 56 - If(Parent.Width < 1700, 48, 0)
             TemplateSize: =44
             TemplatePadding: =0
             Items: |-
@@ -710,9 +749,9 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
-            Y: =352 + If(Parent.Width < 1000, 48, 0)
+            Y: =352 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
-            Height: =Parent.Height - 352 - 8 - If(Parent.Width < 1000, 48, 0)
+            Height: =Parent.Height - 352 - 8 - If(Parent.Width < 1700, 48, 0)
             Fill: =RGBA(23, 28, 34, 1)
             BorderColor: =RGBA(224, 164, 58, 1)
             BorderThickness: =1
@@ -721,7 +760,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
-            Y: =360 + If(Parent.Width < 1000, 48, 0)
+            Y: =360 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =24
             Text: ="Step 5 annual rates, effective " & varPayYear & ". Edit them in the Pay Rates table."
@@ -733,7 +772,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.0
-            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Y: =392 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
             Height: =24
             Text: ="Grade"
@@ -746,7 +785,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
-            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Y: =392 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
             Height: =24
             Text: ="GS"
@@ -759,7 +798,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.5
-            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Y: =392 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
             Height: =24
             Text: ="GW"
@@ -772,7 +811,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.75
-            Y: =392 + If(Parent.Width < 1000, 48, 0)
+            Y: =392 + If(Parent.Width < 1700, 48, 0)
             Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 32) * 0.25
             Height: =24
             Text: ="WG*"
@@ -786,9 +825,9 @@ Screens:
           Variant: Vertical
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
-            Y: =418 + If(Parent.Width < 1000, 48, 0)
+            Y: =418 + If(Parent.Width < 1700, 48, 0)
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
-            Height: =Parent.Height - 418 - 64 - If(Parent.Width < 1000, 48, 0)
+            Height: =Parent.Height - 418 - 64 - If(Parent.Width < 1700, 48, 0)
             TemplateSize: =32
             TemplatePadding: =0
             Items: =colPay
