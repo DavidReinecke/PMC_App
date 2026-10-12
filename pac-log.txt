@@ -1,26 +1,26 @@
-2026-10-12 19:26:45.2570 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
-2026-10-12 19:26:45.2641 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
-2026-10-12 19:26:45.3504 | INF | bolt.Session :: End session. 
+2026-10-12 19:28:39.9735 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
+2026-10-12 19:28:39.9861 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
+2026-10-12 19:28:40.1537 | INF | bolt.Session :: End session. 
 
-2026-10-12 19:26:46.1560 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
-2026-10-12 19:26:46.1560 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
-2026-10-12 19:26:46.2528 | INF | bolt.Session :: End session. 
+2026-10-12 19:28:41.3775 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
+2026-10-12 19:28:41.3904 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
+2026-10-12 19:28:41.5689 | INF | bolt.Session :: End session. 
 
-2026-10-12 19:26:46.6906 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
-2026-10-12 19:26:46.6982 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
-2026-10-12 19:26:46.7926 | INF | bolt.cli.Verb :: Executing verb 'solution pack' (activityId 118c2c22-7e1b-4a08-b04b-e83e67955cc3) with arguments --zipfile,--folder,--packagetype.
-2026-10-12 19:26:46.7926 | INF | bolt.cli.CommandLine.VerbExecutor :: PerformAuthenticationAsync - Getting auth profile with following options: { AuthKind = , IsRequired = False, ShowProfileMessages = False, VerbDisableAutoOSLogin = False, SkipValidation = True }
-2026-10-12 19:26:46.7926 | INF | bolt.authentication.profiles.FileBasedAuthProfilesManager :: Auth profiles file not found
-2026-10-12 19:26:46.8080 | INF | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Attempting to create OperatingSystem profile
-2026-10-12 19:26:46.8080 | INF | bolt.authentication.store.AuthTokenStore :: CreateUniversalAuthProfile: Acquiring token for https://service.powerapps.com/ using authority https://login.microsoftonline.com/organizations for Public cloud
-2026-10-12 19:26:46.8742 | WRN | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:46Z] [MSAL:0001]	WARNING	TryEnqueueMsaDeviceCredentialAcquisitionAndContinue:1297	MsaDeviceOperationProvider is not available. Not attempting to register the device.
-2026-10-12 19:26:47.0976 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:47Z] [MSAL:0002]	ERROR  	ErrorInternalImpl:134	Created an error: 513z4, StatusInternal::InteractionRequired, InternalEvent::None, Error Code 3399548929, Context 'Need user interaction to continue.'
-2026-10-12 19:26:47.1046 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:47Z] [RuntimeBroker] failed_to_acquire_token_silently_from_broker WAM Error  
+2026-10-12 19:28:42.2658 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
+2026-10-12 19:28:42.2784 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
+2026-10-12 19:28:42.4600 | INF | bolt.cli.Verb :: Executing verb 'solution pack' (activityId 234011a1-e6f1-43d9-a60d-eaf3bba2c8f1) with arguments --zipfile,--folder,--packagetype.
+2026-10-12 19:28:42.4600 | INF | bolt.cli.CommandLine.VerbExecutor :: PerformAuthenticationAsync - Getting auth profile with following options: { AuthKind = , IsRequired = False, ShowProfileMessages = False, VerbDisableAutoOSLogin = False, SkipValidation = True }
+2026-10-12 19:28:42.4803 | INF | bolt.authentication.profiles.FileBasedAuthProfilesManager :: Auth profiles file not found
+2026-10-12 19:28:42.4803 | INF | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Attempting to create OperatingSystem profile
+2026-10-12 19:28:42.4918 | INF | bolt.authentication.store.AuthTokenStore :: CreateUniversalAuthProfile: Acquiring token for https://service.powerapps.com/ using authority https://login.microsoftonline.com/organizations for Public cloud
+2026-10-12 19:28:42.5942 | WRN | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:42Z] [MSAL:0001]	WARNING	TryEnqueueMsaDeviceCredentialAcquisitionAndContinue:1297	MsaDeviceOperationProvider is not available. Not attempting to register the device.
+2026-10-12 19:28:42.8637 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:42Z] [MSAL:0002]	ERROR  	ErrorInternalImpl:134	Created an error: 513z4, StatusInternal::InteractionRequired, InternalEvent::None, Error Code 3399548929, Context 'Need user interaction to continue.'
+2026-10-12 19:28:42.8742 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:42Z] [RuntimeBroker] failed_to_acquire_token_silently_from_broker WAM Error  
  Error Code: 3399548929 
  Error Message: Need user interaction to continue. 
  Internal Error Code: 527291998 
 
-2026-10-12 19:26:47.1246 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:47Z - 575e7d9b-e178-4116-aec2-b72a06f4a9eb] MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
+2026-10-12 19:28:42.9023 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:42Z - 6c4e695c-0e81-4784-bab5-e94a5eed10ee] MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
 	ErrorCode: failed_to_acquire_token_silently_from_broker
 Microsoft.Identity.Client.MsalUiRequiredException: WAM Error  
  Error Code: 3399548929 
@@ -34,7 +34,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at Microsoft.Identity.Client.Internal.Requests.RequestBase.RunAsync(CancellationToken cancellationToken)
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:47.1246 | ERR | bolt.authentication.store.AuthTokenStore :: Exception in CreateAuthProfile()|EXCEPTION: MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
+2026-10-12 19:28:42.9023 | ERR | bolt.authentication.store.AuthTokenStore :: Exception in CreateAuthProfile()|EXCEPTION: MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
 	ErrorCode: failed_to_acquire_token_silently_from_broker
 Microsoft.Identity.Client.MsalUiRequiredException: WAM Error  
  Error Code: 3399548929 
@@ -52,7 +52,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.authentication.store.AuthTokenStoreBase.CreateUniversalAuthProfile(AuthName profileName, AuthenticationFlow authFlow, CloudInstance cloudInstance, Nullable`1 tenantId, Uri environmentUrlHint) in C:\__w\1\s\src\cli\bolt.authentication\store\AuthTokenStoreBase.cs:line 99
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:47.1246 | WRN | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Failed to create OperatingSystem profile|EXCEPTION: bolt.system.VerbExecutionException: WAM Error  
+2026-10-12 19:28:42.9177 | WRN | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Failed to create OperatingSystem profile|EXCEPTION: bolt.system.VerbExecutionException: WAM Error  
  Error Code: 3399548929 
  Error Message: Need user interaction to continue. 
  Internal Error Code: 527291998 
@@ -96,40 +96,40 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.authentication.store.AuthTokenStoreBase.CreateUniversalAuthProfile(AuthName profileName, AuthenticationFlow authFlow, CloudInstance cloudInstance, Nullable`1 tenantId, Uri environmentUrlHint) in C:\__w\1\s\src\cli\bolt.authentication\store\AuthTokenStoreBase.cs:line 99
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: SolutionPackager for action Pack: Starting...
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: AllowDeletes: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: AllowWrites: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: Clobber: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: ErrorLevel: Info
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: Folder: D:\a\PMC_App\PMC_App\solution_source
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: LocaleTemplate: 
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: Localize: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: LogFile: 
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: MappingFile: 
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: PackageType: Unmanaged
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: SingleComponent: None
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: UseLcid: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: UseUnmanagedFileForManaged: False
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: ZipFile: D:\a\PMC_App\PMC_App\out\WorkforcePlanner_tables.zip
-2026-10-12 19:26:47.2764 | INF | bolt.module.solution.SolutionPackagerProvider :: DisablePluginRemap: False
-2026-10-12 19:26:47.4842 | INF | bolt.module.solution.SolutionPackagerProvider :: SolutionPackager for action Pack: Succeeded
-2026-10-12 19:26:47.5017 | INF | bolt.Session :: End session. 
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: SolutionPackager for action Pack: Starting...
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: AllowDeletes: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: AllowWrites: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: Clobber: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: ErrorLevel: Info
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: Folder: D:\a\PMC_App\PMC_App\solution_source
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: LocaleTemplate: 
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: Localize: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: LogFile: 
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: MappingFile: 
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: PackageType: Unmanaged
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: SingleComponent: None
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: UseLcid: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: UseUnmanagedFileForManaged: False
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: ZipFile: D:\a\PMC_App\PMC_App\out\WorkforcePlanner_tables.zip
+2026-10-12 19:28:43.2597 | INF | bolt.module.solution.SolutionPackagerProvider :: DisablePluginRemap: False
+2026-10-12 19:28:43.5461 | INF | bolt.module.solution.SolutionPackagerProvider :: SolutionPackager for action Pack: Succeeded
+2026-10-12 19:28:43.5919 | INF | bolt.Session :: End session. 
 
-2026-10-12 19:26:47.9946 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
-2026-10-12 19:26:47.9946 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
-2026-10-12 19:26:48.1040 | INF | bolt.cli.Verb :: Executing verb 'canvas pack' (activityId e058c4cb-26ab-4cd9-a54a-57653f7510f8) with arguments --sources,--msapp,--layout.
-2026-10-12 19:26:48.1040 | INF | bolt.cli.CommandLine.VerbExecutor :: PerformAuthenticationAsync - Getting auth profile with following options: { AuthKind = , IsRequired = False, ShowProfileMessages = False, VerbDisableAutoOSLogin = False, SkipValidation = True }
-2026-10-12 19:26:48.1040 | INF | bolt.authentication.profiles.FileBasedAuthProfilesManager :: Auth profiles file not found
-2026-10-12 19:26:48.1040 | INF | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Attempting to create OperatingSystem profile
-2026-10-12 19:26:48.1186 | INF | bolt.authentication.store.AuthTokenStore :: CreateUniversalAuthProfile: Acquiring token for https://service.powerapps.com/ using authority https://login.microsoftonline.com/organizations for Public cloud
-2026-10-12 19:26:48.1778 | WRN | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:48Z] [MSAL:0001]	WARNING	TryEnqueueMsaDeviceCredentialAcquisitionAndContinue:1297	MsaDeviceOperationProvider is not available. Not attempting to register the device.
-2026-10-12 19:26:48.2046 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:48Z] [MSAL:0002]	ERROR  	ErrorInternalImpl:134	Created an error: 513z4, StatusInternal::InteractionRequired, InternalEvent::None, Error Code 3399548929, Context 'Need user interaction to continue.'
-2026-10-12 19:26:48.2046 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:48Z] [RuntimeBroker] failed_to_acquire_token_silently_from_broker WAM Error  
+2026-10-12 19:28:44.4090 | INF | bolt.Session :: Product Version: 2.13.1+g251dee1; File Version: 2.13.1
+2026-10-12 19:28:44.4218 | INF | bolt.Session :: Start new session. nonInteractiveMode: False)
+2026-10-12 19:28:44.6026 | INF | bolt.cli.Verb :: Executing verb 'canvas pack' (activityId 39f5c164-da1a-4004-a929-4df07d69a341) with arguments --sources,--msapp,--layout.
+2026-10-12 19:28:44.6026 | INF | bolt.cli.CommandLine.VerbExecutor :: PerformAuthenticationAsync - Getting auth profile with following options: { AuthKind = , IsRequired = False, ShowProfileMessages = False, VerbDisableAutoOSLogin = False, SkipValidation = True }
+2026-10-12 19:28:44.6220 | INF | bolt.authentication.profiles.FileBasedAuthProfilesManager :: Auth profiles file not found
+2026-10-12 19:28:44.6220 | INF | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Attempting to create OperatingSystem profile
+2026-10-12 19:28:44.6335 | INF | bolt.authentication.store.AuthTokenStore :: CreateUniversalAuthProfile: Acquiring token for https://service.powerapps.com/ using authority https://login.microsoftonline.com/organizations for Public cloud
+2026-10-12 19:28:44.7275 | WRN | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:44Z] [MSAL:0001]	WARNING	TryEnqueueMsaDeviceCredentialAcquisitionAndContinue:1297	MsaDeviceOperationProvider is not available. Not attempting to register the device.
+2026-10-12 19:28:44.7712 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:44Z] [MSAL:0002]	ERROR  	ErrorInternalImpl:134	Created an error: 513z4, StatusInternal::InteractionRequired, InternalEvent::None, Error Code 3399548929, Context 'Need user interaction to continue.'
+2026-10-12 19:28:44.7712 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:44Z] [RuntimeBroker] failed_to_acquire_token_silently_from_broker WAM Error  
  Error Code: 3399548929 
  Error Message: Need user interaction to continue. 
  Internal Error Code: 527291998 
 
-2026-10-12 19:26:48.2214 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:26:48Z - 474acf5b-c5f6-4ea8-8fba-4840ad088b34] MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
+2026-10-12 19:28:44.7992 | ERR | Microsoft.Identity.Client.IPublicClientApplication :: True MSAL 4.90.1.0 MSAL.NetCore .NET 10.0.12 Microsoft Windows 10.0.26100 [2026-10-12 19:28:44Z - 7a308162-3744-40ed-91cb-fd05215b9985] MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
 	ErrorCode: failed_to_acquire_token_silently_from_broker
 Microsoft.Identity.Client.MsalUiRequiredException: WAM Error  
  Error Code: 3399548929 
@@ -143,7 +143,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at Microsoft.Identity.Client.Internal.Requests.RequestBase.RunAsync(CancellationToken cancellationToken)
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:48.2214 | ERR | bolt.authentication.store.AuthTokenStore :: Exception in CreateAuthProfile()|EXCEPTION: MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
+2026-10-12 19:28:44.8062 | ERR | bolt.authentication.store.AuthTokenStore :: Exception in CreateAuthProfile()|EXCEPTION: MSAL.NetCore.4.90.1.0.MsalUiRequiredException:
 	ErrorCode: failed_to_acquire_token_silently_from_broker
 Microsoft.Identity.Client.MsalUiRequiredException: WAM Error  
  Error Code: 3399548929 
@@ -161,7 +161,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.authentication.store.AuthTokenStoreBase.CreateUniversalAuthProfile(AuthName profileName, AuthenticationFlow authFlow, CloudInstance cloudInstance, Nullable`1 tenantId, Uri environmentUrlHint) in C:\__w\1\s\src\cli\bolt.authentication\store\AuthTokenStoreBase.cs:line 99
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:48.2214 | WRN | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Failed to create OperatingSystem profile|EXCEPTION: bolt.system.VerbExecutionException: WAM Error  
+2026-10-12 19:28:44.8062 | WRN | bolt.authentication.store.AuthTokenStore :: TryCreateAuthProfileFromOperatingSystemAsync: Failed to create OperatingSystem profile|EXCEPTION: bolt.system.VerbExecutionException: WAM Error  
  Error Code: 3399548929 
  Error Message: Need user interaction to continue. 
  Internal Error Code: 527291998 
@@ -205,7 +205,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.authentication.store.AuthTokenStoreBase.CreateUniversalAuthProfile(AuthName profileName, AuthenticationFlow authFlow, CloudInstance cloudInstance, Nullable`1 tenantId, Uri environmentUrlHint) in C:\__w\1\s\src\cli\bolt.authentication\store\AuthTokenStoreBase.cs:line 99
 	StatusCode: 0 
 	ResponseBody: 
-2026-10-12 19:26:48.3825 | ERR | bolt.cli.CommandLine.VerbExecutor :: Verb 'canvas pack' failed (activityId e058c4cb-26ab-4cd9-a54a-57653f7510f8)|EXCEPTION: System.FormatException: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.
+2026-10-12 19:28:45.1369 | ERR | bolt.cli.CommandLine.VerbExecutor :: Verb 'canvas pack' failed (activityId 39f5c164-da1a-4004-a929-4df07d69a341)|EXCEPTION: System.FormatException: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.
    at System.Text.ValueStringBuilder.AppendFormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.FormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.Format(IFormatProvider provider, String format, Object[] args)
@@ -217,7 +217,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.cli.CommandLine.VerbExecutor.<>c__DisplayClass8_1.<<ExecuteAsync>b__2>d.MoveNext() in C:\__w\1\s\src\cli\bolt.cli\CommandLine\VerbExecutor.cs:line 63
 --- End of stack trace from previous location ---
    at bolt.cli.CommandLine.VerbExecutor.ExecuteWithTelemetryAsync(VerbExecutionContext execContext, VerbBase verbInstance, Func`1 executeCoreFn) in C:\__w\1\s\src\cli\bolt.cli\CommandLine\VerbExecutor.cs:line 224
-2026-10-12 19:26:48.4951 | FTL | bolt.Session :: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.|EXCEPTION: System.FormatException: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.
+2026-10-12 19:28:45.2030 | FTL | bolt.Session :: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.|EXCEPTION: System.FormatException: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.
    at System.Text.ValueStringBuilder.AppendFormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.FormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.Format(IFormatProvider provider, String format, Object[] args)
@@ -237,7 +237,7 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.cli.CommandProcessor.LaunchCommand(IReadOnlyList`1 args, UserHelpText userHelpText, Boolean isNonInteractiveModeEnabled) in C:\__w\1\s\src\cli\bolt.cli\CommandProcessor.cs:line 87
    at bolt.cli.ModeManager.Dispatch(ProgramArguments args, Boolean checkForBlockedFiles) in C:\__w\1\s\src\cli\bolt.cli\ModeManager.cs:line 44
    at bolt.Session.Run(ProgramArguments args) in C:\__w\1\s\src\cli\bolt\Session.cs:line 152
-2026-10-12 19:26:48.4951 | ERR | bolt.Session ::    at System.Text.ValueStringBuilder.AppendFormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
+2026-10-12 19:28:45.2030 | ERR | bolt.Session ::    at System.Text.ValueStringBuilder.AppendFormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.FormatHelper(IFormatProvider provider, String format, ReadOnlySpan`1 args)
    at System.String.Format(IFormatProvider provider, String format, Object[] args)
    at bolt.system.LocalizedStrings`1.Format(TLocStringEnum locString, Object[] args) in C:\__w\1\s\src\cli\bolt.system\LocalizedStrings.cs:line 71
@@ -256,5 +256,5 @@ Microsoft.Identity.Client.MsalUiRequiredException: WAM Error
    at bolt.cli.CommandProcessor.LaunchCommand(IReadOnlyList`1 args, UserHelpText userHelpText, Boolean isNonInteractiveModeEnabled) in C:\__w\1\s\src\cli\bolt.cli\CommandProcessor.cs:line 87
    at bolt.cli.ModeManager.Dispatch(ProgramArguments args, Boolean checkForBlockedFiles) in C:\__w\1\s\src\cli\bolt.cli\ModeManager.cs:line 44
    at bolt.Session.Run(ProgramArguments args) in C:\__w\1\s\src\cli\bolt\Session.cs:line 152
-2026-10-12 19:26:48.4951 | INF | bolt.Session :: End session. 
+2026-10-12 19:28:45.2030 | INF | bolt.Session :: End session. 
 
