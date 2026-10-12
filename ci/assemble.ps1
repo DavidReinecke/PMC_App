@@ -34,7 +34,7 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.14</Version>')
+  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.15</Version>')
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
   # merge the Pay Rates and Labor Settings tables into this solution
   try {
