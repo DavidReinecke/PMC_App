@@ -515,7 +515,7 @@ Screens:
                               'Geographic area'.Name = varArea.Name,
                               ddLUnit.Selected.Name = "All units" || Unit.Name = ddLUnit.Selected.Name,
                               ddLStatus.Selected.Value = "All" || Text('Position status') = ddLStatus.Selected.Value),
-                          cBase, With({r: LookUp(colPay, g = ThisRecord.'Full performance grade')}, Switch(Text(ThisRecord.'Pay plan'), "GW", Coalesce(r.gw, 0), "WG", Coalesce(r.wg, 0), Coalesce(r.gs, 0)))),
+                          cBase, With({vGr: 'Full performance grade', vPlan: Text('Pay plan')}, With({r: LookUp(colPay, g = vGr)}, Switch(vPlan, "GW", Coalesce(r.gw, 0), "WG", Coalesce(r.wg, 0), Coalesce(r.gs, 0))))),
                       cLoaded, cBase * (1 + varPrem / 100)),
                   'Position ID', SortOrder.Ascending)
             Fill: =RGBA(15, 18, 22, 1)
