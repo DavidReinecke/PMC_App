@@ -4,7 +4,14 @@ Screens:
       Fill: =RGBA(15, 18, 22, 1)
       OnVisible: |-
         =Set(varNotice, ""); Set(varPanel, ""); Set(varErr, ""); Set(varShowPay, false);
-        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+        ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}));
+        // Pay rates come from the Pay Rates table. Step 5, latest effective year that has started.
+        ClearCollect(colPayRaw, ForAll(Filter(FirstN('Pay Rates', 5000), Step = 5), {plan: Text('Pay plan'), g: Grade, rate: 'Annual rate', yr: 'Effective year', wa: Coalesce('Wage area', "")}));
+        Set(varPayYear, Coalesce(Max(Filter(colPayRaw, yr <= Year(Today())), yr), Max(colPayRaw, yr), 0));
+        Set(varWgPlaceholder, CountRows(Filter(colPayRaw, plan = "WG" && yr = varPayYear && Lower(wa) = "placeholder")) > 0);
+        ClearCollect(colPay, ForAll(Sequence(15), With({n: Value}, {g: n, gs: Coalesce(LookUp(colPayRaw, plan = "GS" && g = n && yr = varPayYear).rate, 0), gw: Coalesce(LookUp(colPayRaw, plan = "GW" && g = n && yr = varPayYear).rate, 0), wg: Coalesce(LookUp(colPayRaw, plan = "WG" && g = n && yr = varPayYear).rate, 0)})));
+        // Premium percent is saved per geographic area
+        Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name).'Premium percent', 32))
     Children:
       - rctHeaderLabor:
           Control: Rectangle@2.3.0
@@ -127,7 +134,7 @@ Screens:
             Default: =varArea.Name
             Visible: =varCanSeeAll
             OnChange: |-
-              =Set(varArea, Self.Selected); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
+              =Set(varArea, Self.Selected); Set(varPrem, Coalesce(LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = Self.Selected.Name).'Premium percent', 32)); Set(varPanel, ""); ClearCollect(colUnitOpts, {Name: "All units"}, ForAll(Filter(FirstN(Units, 2000), 'Geographic area'.Name = varArea.Name), {Name: ThisRecord.Name}))
       - lblAreaFixedLabor:
           Control: Label@2.5.1
           Properties:
@@ -162,6 +169,17 @@ Screens:
             Color: =RGBA(230, 233, 238, 1)
             Size: =24
             FontWeight: =FontWeight.Bold
+      - lblLaborNotice:
+          Control: Label@2.5.1
+          Properties:
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width * 0.5 - 16
+            Height: =40
+            Text: =If(varPayYear = 0, "No pay rates found. Load them into the Pay Rates table.", varNotice)
+            Color: =RGBA(224, 164, 58, 1)
+            Size: =13
+            VerticalAlign: =VerticalAlign.Middle
       - lblLaborHelp:
           Control: Label@2.5.1
           Properties:
@@ -204,7 +222,7 @@ Screens:
             Text: ="−"
             Size: =12
             Visible: =varCanFund
-            OnSelect: =Set(varPrem, Max(0, varPrem - 1))
+            OnSelect: =Set(varPrem, Max(0, varPrem - 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, IfError(If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem})), Set(varNotice, "The premium could not be saved.")))
             Fill: =RGBA(29, 37, 46, 1)
             Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
@@ -235,7 +253,7 @@ Screens:
             Text: ="+"
             Size: =12
             Visible: =varCanFund
-            OnSelect: =Set(varPrem, Min(60, varPrem + 1))
+            OnSelect: =Set(varPrem, Min(60, varPrem + 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, IfError(If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem})), Set(varNotice, "The premium could not be saved.")))
             Fill: =RGBA(29, 37, 46, 1)
             Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
@@ -609,7 +627,7 @@ Screens:
                   Y: =0
                   Width: =Parent.TemplateWidth * 0.07 - 8
                   Height: =Parent.TemplateHeight
-                  Text: =Text(ThisItem.'Pay plan') & "-" & Text(ThisItem.'Full performance grade') & If(Text(ThisItem.'Pay plan') = "WG", "*", "")
+                  Text: =Text(ThisItem.'Pay plan') & "-" & Text(ThisItem.'Full performance grade') & If(Text(ThisItem.'Pay plan') = "WG" && varWgPlaceholder, "*", "")
                   Color: =RGBA(230, 233, 238, 1)
                   Size: =12
                   Align: =Align.Left
@@ -655,7 +673,7 @@ Screens:
             Y: =Parent.Height - 48
             Width: =(If(!varShowPay, Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))) * 0.6
             Height: =40
-            Text: ="Total for filter" & If(CountRows(Filter(galLabor.AllItems, Text('Pay plan') = "WG")) > 0, "   (* WG rates are placeholders until the WG table is loaded)", "")
+            Text: ="Total for filter" & If(varWgPlaceholder && CountRows(Filter(galLabor.AllItems, Text('Pay plan') = "WG")) > 0, "   (* WG rates are placeholders until the WG table is loaded)", "")
             Color: =RGBA(230, 233, 238, 1)
             Size: =12
             VerticalAlign: =VerticalAlign.Middle
@@ -704,7 +722,7 @@ Screens:
             Y: =360 + If(Parent.Width < 1000, 48, 0)
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =24
-            Text: ="Step 5 annual rates, Salary Table 2026-RUS, effective January 2026"
+            Text: ="Step 5 annual rates, effective " & varPayYear & ". Edit them in the Pay Rates table."
             Color: =RGBA(230, 233, 238, 1)
             Size: =12
             Visible: =varShowPay

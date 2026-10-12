@@ -34,9 +34,10 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.12</Version>')
+  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.13</Version>')
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
   Copy-Item flows/WorkforcePlanner_Import_Sample.xlsx out/
+  Copy-Item flows/WorkforcePlanner_PayRates_2026.xlsx out/
   # zip with forward slashes via .NET
   Add-Type -AssemblyName System.IO.Compression
   Add-Type -AssemblyName System.IO.Compression.FileSystem
