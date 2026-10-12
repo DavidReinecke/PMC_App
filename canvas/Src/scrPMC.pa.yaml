@@ -547,7 +547,6 @@ Screens:
       - txtReqTitle:
           Control: Classic/TextInput@2.3.2
           Properties:
-            Default: =""
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
             Y: =172 + If(Parent.Width < 1700, 48, 0) + 122
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
@@ -673,7 +672,6 @@ Screens:
       - txtReqFund:
           Control: Classic/TextInput@2.3.2
           Properties:
-            Default: =""
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
             Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 288, 176) + 18
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
@@ -699,7 +697,6 @@ Screens:
       - txtReqJust:
           Control: Classic/TextInput@2.3.2
           Properties:
-            Default: =""
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
             Y: =172 + If(Parent.Width < 1700, 48, 0) + If(ddReqType.Selected.Value = "Add position", 352, 240) + 18
             Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32

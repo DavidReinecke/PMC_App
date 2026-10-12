@@ -40,7 +40,7 @@ def dd(name, props, ind=6):
     return ctl(name, 'Classic/DropDown@2.3.1', props + [('Size', 12), ('Fill', BTN), ('Color', TXT), ('BorderColor', LINE)], ind)
 
 def txt(name, props, ind=6):
-    return ctl(name, 'Classic/TextInput@2.3.2', [('Default', '""')] + props + [('Size', 12), ('Color', TXT), ('Fill', BTN), ('BorderColor', LINE)], ind)
+    return ctl(name, 'Classic/TextInput@2.3.2', ([] if any(k == 'Default' for k, _ in props) else [('Default', '""')]) + props + [('Size', 12), ('Color', TXT), ('Fill', BTN), ('BorderColor', LINE)], ind)
 
 # ---- header (title bar and seven tabs) ----
 TABS = [  # key, screen, wide label, short label, width, visible

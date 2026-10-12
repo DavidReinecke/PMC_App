@@ -255,7 +255,7 @@ Set(varNotice, "Update withdrawn.")"""
     s += ctl('dpIncDate', 'Classic/DatePicker@2.6.0', [('X', panel_x()), ('Y', f'{T} + 302'), ('Width', FULLW), ('Height', 36), ('Visible', vis), ('DefaultDate', 'Today()')])
     s += lab('lblIReason', '"Reason"', f'{T} + 344', vis)
     s += txt('txtIncReason', [('X', panel_x()), ('Y', f'{T} + 362'), ('Width', FULLW), ('Height', 64), ('Visible', vis), ('Mode', 'TextMode.MultiLine')])
-    s += label('lblIncErr', [('X', panel_x()), ('Y', f'{T} + 430'), ('Width', FULLW), ('Height', 22), ('Visible', vis), ('Color', RED), ('Size', 12), ('Text', 'varErr')])
+    s += label('lblIncUpdErr', [('X', panel_x()), ('Y', f'{T} + 430'), ('Width', FULLW), ('Height', 22), ('Visible', vis), ('Color', RED), ('Size', 12), ('Text', 'varErr')])
     save_fx = f"""=With({{vPid: ddIncPos.Selected.pid, vType: ddIncType.Selected.Value}},
     If(IsBlank(vPid), Set(varErr, "Choose the position."),
     If(vType <> "Vacate" && IsBlank(txtIncNewName.Text), Set(varErr, "Enter the new incumbent's name."),
@@ -276,8 +276,8 @@ Set(varNotice, "Update withdrawn.")"""
                 'Update status': 'Update status (Incumbent Updates)'.Pending}});
         Set(varNotice, "Update submitted for " & vPid & ".");
         Set(varPanel, ""); Set(varErr, "")))))))"""
-    s += button('btnIncSave', [('X', panel_x()), ('Y', f'{T} + 456'), ('Width', HALF), ('Height', 40), ('Text', '"Submit update"'), ('Visible', vis), ('OnSelect', save_fx)], style='amber')
-    s += button('btnIncClose', [('X', panel_x(f'{HALF} + 12')), ('Y', f'{T} + 456'), ('Width', HALF), ('Height', 40), ('Text', '"Cancel"'), ('Visible', vis), ('OnSelect', 'Set(varPanel, ""); Set(varErr, "")')])
+    s += button('btnIncUpdSave', [('X', panel_x()), ('Y', f'{T} + 456'), ('Width', HALF), ('Height', 40), ('Text', '"Submit update"'), ('Visible', vis), ('OnSelect', save_fx)], style='amber')
+    s += button('btnIncUpdClose', [('X', panel_x(f'{HALF} + 12')), ('Y', f'{T} + 456'), ('Width', HALF), ('Height', 40), ('Text', '"Cancel"'), ('Visible', vis), ('OnSelect', 'Set(varPanel, ""); Set(varErr, "")')])
     return s
 
 if __name__ == '__main__':

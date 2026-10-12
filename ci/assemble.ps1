@@ -34,7 +34,7 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = ([regex]'<Version>[^<]*</Version>').Replace($sx, '<Version>1.0.0.22</Version>', 1)
+  $sx = ([regex]'<Version>[^<]*</Version>').Replace($sx, '<Version>1.0.0.23</Version>', 1)
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
   # merge the Position Requests and Incumbent Updates tables unless the base already has them
   try {

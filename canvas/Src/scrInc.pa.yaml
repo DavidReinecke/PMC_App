@@ -593,7 +593,7 @@ Screens:
             Color: =RGBA(230, 233, 238, 1)
             Fill: =RGBA(29, 37, 46, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
-      - lblIncErr:
+      - lblIncUpdErr:
           Control: Label@2.5.1
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
@@ -604,7 +604,7 @@ Screens:
             Color: =RGBA(244, 165, 138, 1)
             Size: =12
             Text: =varErr
-      - btnIncSave:
+      - btnIncUpdSave:
           Control: Classic/Button@2.2.0
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
@@ -642,7 +642,7 @@ Screens:
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
             Size: =12
-      - btnIncClose:
+      - btnIncUpdClose:
           Control: Classic/Button@2.2.0
           Properties:
             X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
