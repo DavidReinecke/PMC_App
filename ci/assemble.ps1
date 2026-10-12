@@ -34,8 +34,27 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.13</Version>')
+  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.14</Version>')
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
+  # merge the Pay Rates and Labor Settings tables into this solution
+  try {
+    Expand-Archive -Path out/WorkforcePlanner_PayTables.zip -DestinationPath work/pt -Force
+    $pt = New-Object System.Xml.XmlDocument; $pt.PreserveWhitespace = $true
+    $pt.Load((Resolve-Path work/pt/customizations.xml).Path)
+    $cxPath = (Resolve-Path work/sol/customizations.xml).Path
+    $cx = New-Object System.Xml.XmlDocument; $cx.PreserveWhitespace = $true
+    $cx.Load($cxPath)
+    $ents = $cx.SelectSingleNode('/ImportExportXml/Entities')
+    foreach ($e in $pt.SelectNodes('/ImportExportXml/Entities/Entity')) { [void]$ents.AppendChild($cx.ImportNode($e, $true)) }
+    $rels = $cx.SelectSingleNode('/ImportExportXml/EntityRelationships')
+    foreach ($r in $pt.SelectNodes('/ImportExportXml/EntityRelationships/EntityRelationship')) { [void]$rels.AppendChild($cx.ImportNode($r, $true)) }
+    [System.IO.File]::WriteAllText($cxPath, $cx.OuterXml, (New-Object System.Text.UTF8Encoding($false)))
+    $sx = Get-Content work/sol/solution.xml -Raw
+    $add = '<RootComponent type="1" schemaName="wfp_payrate" behavior="0" /><RootComponent type="1" schemaName="wfp_laborsetting" behavior="0" /></RootComponents>'
+    $sx = $sx.Replace('</RootComponents>', $add)
+    Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
+    Log "pay tables merged"
+  } catch { Log ("pay table merge failed: " + $_) }
   Copy-Item flows/WorkforcePlanner_Import_Sample.xlsx out/
   Copy-Item flows/WorkforcePlanner_PayRates_2026.xlsx out/
   # zip with forward slashes via .NET

@@ -2,13 +2,12 @@
 
 ## Part 1. One-time setup (do these in order)
 
-1. **Import the Pay Tables solution.** Power Apps > Solutions > Import solution > `WorkforcePlanner_PayTables.zip`. It adds two tables, Pay Rates and Labor Settings. It does not touch your other tables or the app. Choose Publish all customizations afterward.
+1. **Import the solution.** Power Apps > Solutions > Import solution > `WorkforcePlanner_full.zip` (version 1.0.0.14 or later). It adds two tables, Pay Rates and Labor Settings, plus the updated app. Publish all customizations afterward.
 2. **Load the pay rates.**
    - Upload `WorkforcePlanner_PayRates_2026.xlsx` to OneDrive for Business and open it once in Excel Online so the table `tblPayRates` is indexed.
    - In the Pay Rates table, choose Edit with Excel, or build the flow below once. The workbook holds 315 rows: GS and GW grades 1 to 15, steps 1 to 10, plus WG placeholder rows at step 5.
-3. **Import the app.** Import `WorkforcePlanner_full.zip` (version 1.0.0.13 or later) over the existing solution.
-4. **Add the two tables as data sources in the app.** Open the app for editing. In the Data panel choose Add data > Dataverse > pick **Pay Rates** and **Labor Settings** (the `wfp_` ones, not any `mt_` table). The names must show exactly as `Pay Rates` and `Labor Settings`. Formula errors on the Labor Estimate screen clear once both are added.
-5. **Save and publish.**
+3. **Add the two tables as data sources in the app.** Open the app for editing. In the Data panel choose Add data > Dataverse > pick **Pay Rates** and **Labor Settings** (the `wfp_` ones, not any `mt_` table). The names must show exactly as `Pay Rates` and `Labor Settings`. Formula errors on the Labor Estimate screen clear once both are added.
+4. **Save and publish.**
 
 ## Part 2. The Pay Rates flow (loads a workbook into the table)
 
