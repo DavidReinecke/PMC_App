@@ -62,13 +62,40 @@ Unmanaged Pack complete.
 Packed Solution.
 
 paytables exit: 0
+
+Packing Solution...
+
+Packing D:\a\PMC_App\PMC_App\newtables_source to D:\a\PMC_App\PMC_App\out\WorkforcePlanner_NewTables.zip
+
+Processing Component: Entities
+ - wfp_incumbentupdate
+ - wfp_positionrequest
+Processing Component: Roles
+Processing Component: Workflows
+Processing Component: FieldSecurityProfiles
+Processing Component: Templates
+Processing Component: EntityMaps
+Processing Component: EntityRelationships
+Processing Component: OrganizationSettings
+Processing Component: optionsets
+Processing Component: CustomControls
+Processing Component: EntityDataProviders
+Processing Sharded Component Files
+
+Unmanaged Pack complete.
+
+
+Packed Solution.
+
+newtables exit: 0
 === pac canvas pack ===
 Canvas apps packed using yaml SourceCode must be validated first by opening the app for edit within the Power Apps studio. For more information see https://aka.ms/paccanvas
-Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: 5ec7b37b-d255-4c57-95fc-53c66b69a04b, Exception Type: System.FormatException
+Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: 7611fd27-e4cc-43d6-bc4d-3417fa63fcfe, Exception Type: System.FormatException
 The diagnostic logs can be found at: C:\Users\runneradmin\.dotnet\tools\.store\microsoft.powerapps.cli.tool\2.13.1\microsoft.powerapps.cli.tool\2.13.1\tools\net10.0\any\logs\pac-log.txt
 
 exit code: 1
-build-log.txt  2345
-pac-log.txt  41769
+build-log.txt  3041
+pac-log.txt  53483
+WorkforcePlanner_NewTables.zip  6949
 WorkforcePlanner_PayTables.zip  4635
 WorkforcePlanner_tables.zip  11333
