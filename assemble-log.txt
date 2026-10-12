@@ -5,4 +5,5 @@ Packing succeeded.
 
 pack exit 0
 layout flags patched
+pay tables merged
 zip built
