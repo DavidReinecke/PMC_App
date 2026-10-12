@@ -223,7 +223,7 @@ Screens:
             Size: =12
             Visible: =varCanFund
             OnSelect: |-
-              =Set(varPrem, Max(0, varPrem - 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, IfError(If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem})), Set(varNotice, "The premium could not be saved.")))
+              =Set(varPrem, Max(0, varPrem - 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem}))); If(!IsEmpty(Errors('Labor Settings')), Set(varNotice, "The premium could not be saved."))
             Fill: =RGBA(29, 37, 46, 1)
             Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
@@ -255,7 +255,7 @@ Screens:
             Size: =12
             Visible: =varCanFund
             OnSelect: |-
-              =Set(varPrem, Min(60, varPrem + 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, IfError(If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem})), Set(varNotice, "The premium could not be saved.")))
+              =Set(varPrem, Min(60, varPrem + 1)); With({rec: LookUp(FirstN('Labor Settings', 2000), 'Geographic area'.Name = varArea.Name)}, If(IsBlank(rec), Patch('Labor Settings', Defaults('Labor Settings'), {Setting: varArea.Name & " labor settings", 'Geographic area': varArea, 'Premium percent': varPrem}), Patch('Labor Settings', rec, {'Premium percent': varPrem}))); If(!IsEmpty(Errors('Labor Settings')), Set(varNotice, "The premium could not be saved."))
             Fill: =RGBA(29, 37, 46, 1)
             Color: =RGBA(230, 233, 238, 1)
             BorderColor: =RGBA(56, 66, 78, 1)
