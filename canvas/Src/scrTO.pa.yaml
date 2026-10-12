@@ -29,6 +29,7 @@ Screens:
       - btnNavTOTO:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =270
             Y: =10
             Width: =190
@@ -46,6 +47,7 @@ Screens:
       - btnNavVacTO:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =468
             Y: =10
             Width: =170
@@ -63,6 +65,7 @@ Screens:
       - btnNavApprTO:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =646
             Y: =10
             Width: =170
@@ -80,6 +83,7 @@ Screens:
       - btnNavRolesTO:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =824
             Y: =10
             Width: =160
@@ -159,6 +163,7 @@ Screens:
       - txtSearch:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =480
             Y: =124
             Width: =320
@@ -307,6 +312,7 @@ Screens:
       - txtIncName:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =908
             Y: =260
             Width: =426
@@ -320,6 +326,7 @@ Screens:
       - txtIncEmail:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =908
             Y: =312
             Width: =426

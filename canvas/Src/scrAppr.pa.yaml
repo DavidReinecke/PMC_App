@@ -27,6 +27,7 @@ Screens:
       - btnNavTOAppr:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =270
             Y: =10
             Width: =190
@@ -44,6 +45,7 @@ Screens:
       - btnNavVacAppr:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =468
             Y: =10
             Width: =170
@@ -61,6 +63,7 @@ Screens:
       - btnNavApprAppr:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =646
             Y: =10
             Width: =170
@@ -78,6 +81,7 @@ Screens:
       - btnNavRolesAppr:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =824
             Y: =10
             Width: =160
@@ -163,6 +167,7 @@ Screens:
       - txtApprComment:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =16
             Y: =150
             Width: =1334

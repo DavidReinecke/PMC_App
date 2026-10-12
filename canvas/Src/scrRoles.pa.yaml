@@ -27,6 +27,7 @@ Screens:
       - btnNavTORoles:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =270
             Y: =10
             Width: =190
@@ -44,6 +45,7 @@ Screens:
       - btnNavVacRoles:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =468
             Y: =10
             Width: =170
@@ -61,6 +63,7 @@ Screens:
       - btnNavApprRoles:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =646
             Y: =10
             Width: =170
@@ -78,6 +81,7 @@ Screens:
       - btnNavRolesRoles:
           Control: Classic/Button@2.2.0
           Properties:
+            Size: =12
             X: =824
             Y: =10
             Width: =160
@@ -162,6 +166,7 @@ Screens:
       - txtRoleSearch:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =16
             Y: =160
             Width: =420
@@ -273,7 +278,7 @@ Screens:
             X: =892
             Y: =214
             Width: =458
-            Height: =360
+            Height: =470
             Fill: =RGBA(23, 28, 34, 1)
             BorderColor: =RGBA(224, 164, 58, 1)
             BorderThickness: =1
@@ -290,11 +295,67 @@ Screens:
             Size: =16
             FontWeight: =FontWeight.Bold
             Text: ="Assign a role"
+      - lblRHelp:
+          Control: Label@2.5.1
+          Properties:
+            X: =908
+            Y: =258
+            Width: =426
+            Height: =40
+            Visible: =varPanel = "role"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Give a person access. They sign in with the email below."
+      - lblRNameL:
+          Control: Label@2.5.1
+          Properties:
+            X: =908
+            Y: =302
+            Width: =426
+            Height: =22
+            Visible: =varPanel = "role"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Full name"
+      - lblREmailL:
+          Control: Label@2.5.1
+          Properties:
+            X: =908
+            Y: =376
+            Width: =426
+            Height: =22
+            Visible: =varPanel = "role"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Sign-in email (work email)"
+      - lblRRoleL:
+          Control: Label@2.5.1
+          Properties:
+            X: =908
+            Y: =450
+            Width: =426
+            Height: =22
+            Visible: =varPanel = "role"
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Role"
+      - lblRAreaL:
+          Control: Label@2.5.1
+          Properties:
+            X: =908
+            Y: =524
+            Width: =426
+            Height: =22
+            Visible: =varPanel = "role" && varIsDAAll
+            Color: =RGBA(154, 164, 178, 1)
+            Size: =12
+            Text: ="Area (Data administrator can be All areas)"
       - txtRName:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =908
-            Y: =266
+            Y: =326
             Width: =426
             Height: =44
             Visible: =varPanel = "role"
@@ -305,8 +366,9 @@ Screens:
       - txtREmail:
           Control: Classic/TextInput@2.3.2
           Properties:
+            Default: =""
             X: =908
-            Y: =318
+            Y: =400
             Width: =426
             Height: =44
             Visible: =varPanel = "role"
@@ -318,7 +380,7 @@ Screens:
           Control: Classic/DropDown@2.3.1
           Properties:
             X: =908
-            Y: =370
+            Y: =474
             Width: =426
             Height: =44
             Visible: =varPanel = "role"
@@ -327,7 +389,7 @@ Screens:
           Control: Classic/DropDown@2.3.1
           Properties:
             X: =908
-            Y: =422
+            Y: =548
             Width: =426
             Height: =44
             Visible: =varPanel = "role" && varIsDAAll
@@ -337,7 +399,7 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             X: =908
-            Y: =476
+            Y: =606
             Width: =206
             Height: =44
             Text: ="Save assignment"
@@ -361,7 +423,7 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             X: =1126
-            Y: =476
+            Y: =606
             Width: =208
             Height: =44
             Text: ="Cancel"
@@ -374,7 +436,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =908
-            Y: =528
+            Y: =658
             Width: =426
             Height: =36
             Visible: =varPanel = "role"
