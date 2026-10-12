@@ -11,11 +11,12 @@ Screens:
             X: =0
             Y: =0
             Width: =Parent.Width
-            Height: =64
+            Height: =If(Parent.Width < 1000, 112, 64)
             Fill: =RGBA(23, 28, 34, 1)
       - lblAppRoles:
           Control: Label@2.5.1
           Properties:
+            Visible: =Parent.Width >= 1200 || Parent.Width < 1000
             X: =16
             Y: =16
             Width: =240
@@ -28,9 +29,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =270
-            Y: =10
-            Width: =190
+            X: =If(Parent.Width >= 1200, 270, 16)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =If(Parent.Width >= 1200, 190, 170)
             Height: =44
             Text: ="Tables of Organization"
             Visible: =true
@@ -46,9 +47,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =468
-            Y: =10
-            Width: =170
+            X: =If(Parent.Width >= 1200, 468, 194)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =If(Parent.Width >= 1200, 170, 150)
             Height: =44
             Text: ="Vacancies & Hiring"
             Visible: =true
@@ -64,9 +65,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =646
-            Y: =10
-            Width: =170
+            X: =If(Parent.Width >= 1200, 646, 352)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =If(Parent.Width >= 1200, 170, 150)
             Height: =44
             Text: ="Selection Approvals"
             Visible: =true
@@ -82,9 +83,9 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Size: =12
-            X: =824
-            Y: =10
-            Width: =160
+            X: =If(Parent.Width >= 1200, 824, 510)
+            Y: =If(Parent.Width < 1000, 58, 10)
+            Width: =If(Parent.Width >= 1200, 160, 140)
             Height: =44
             Text: ="Role Assignments"
             Visible: =varIsDA
@@ -99,9 +100,9 @@ Screens:
       - ddAreaRoles:
           Control: Classic/DropDown@2.3.1
           Properties:
-            X: =1000
+            X: =If(Parent.Width >= 1200, Parent.Width - 366, If(Parent.Width >= 1000, Parent.Width - 336, 270))
             Y: =10
-            Width: =230
+            Width: =If(Parent.Width >= 1200, 230, If(Parent.Width >= 1000, 200, Parent.Width - 404))
             Height: =44
             Items: ='Geographic Areas'
             Default: =varArea.Name
@@ -111,9 +112,9 @@ Screens:
       - lblAreaFixedRoles:
           Control: Label@2.5.1
           Properties:
-            X: =1000
+            X: =If(Parent.Width >= 1200, Parent.Width - 366, If(Parent.Width >= 1000, Parent.Width - 336, 270))
             Y: =10
-            Width: =230
+            Width: =If(Parent.Width >= 1200, 230, If(Parent.Width >= 1000, 200, Parent.Width - 404))
             Height: =44
             Text: =varArea.Name & " · your area"
             Visible: =!varCanSeeAll
@@ -123,7 +124,7 @@ Screens:
       - lblMeRoles:
           Control: Label@2.5.1
           Properties:
-            X: =1240
+            X: =Parent.Width - 126
             Y: =10
             Width: =118
             Height: =44
@@ -135,8 +136,8 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16
-            Y: =76
-            Width: =500
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width * 0.5 - 24
             Height: =40
             Text: ="Role Assignments"
             Color: =RGBA(230, 233, 238, 1)
@@ -146,8 +147,8 @@ Screens:
           Control: Label@2.5.1
           Properties:
             X: =16
-            Y: =114
-            Width: =900
+            Y: =114 + If(Parent.Width < 1000, 48, 0)
+            Width: =Min(900, Parent.Width - 32)
             Height: =40
             Color: =RGBA(154, 164, 178, 1)
             Size: =12
@@ -155,9 +156,9 @@ Screens:
       - lblRoleNotice:
           Control: Label@2.5.1
           Properties:
-            X: =640
-            Y: =76
-            Width: =712
+            X: =Parent.Width * 0.5
+            Y: =76 + If(Parent.Width < 1000, 48, 0)
+            Width: =Parent.Width * 0.5 - 16
             Height: =40
             Text: =varNotice
             Color: =RGBA(224, 164, 58, 1)
@@ -168,7 +169,7 @@ Screens:
           Properties:
             Default: =""
             X: =16
-            Y: =160
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
             Width: =420
             Height: =44
             HintText: ="Search by name or role"
@@ -179,7 +180,7 @@ Screens:
           Control: Classic/Toggle@2.1.0
           Properties:
             X: =450
-            Y: =160
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
             Width: =190
             Height: =44
             Default: =false
@@ -189,8 +190,8 @@ Screens:
       - btnRoleAdd:
           Control: Classic/Button@2.2.0
           Properties:
-            X: =1150
-            Y: =160
+            X: =Parent.Width - 216
+            Y: =160 + If(Parent.Width < 1000, 48, 0)
             Width: =200
             Height: =44
             Text: ="Assign a role"
@@ -203,9 +204,9 @@ Screens:
           Variant: Vertical
           Properties:
             X: =16
-            Y: =214
-            Width: =If(varPanel = "", Parent.Width - 32, 860)
-            Height: =Parent.Height - 230
+            Y: =214 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(varPanel = "", Parent.Width - 32, If(Parent.Width < 1000, Parent.Width - 32, Parent.Width - 506))
+            Height: =Parent.Height - 230 - If(Parent.Width < 1000, 48, 0)
             TemplateSize: =72
             TemplatePadding: =6
             Items: |-
@@ -275,9 +276,9 @@ Screens:
       - rctRolePanel:
           Control: Rectangle@2.3.0
           Properties:
-            X: =892
-            Y: =214
-            Width: =458
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474)
+            Y: =214 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458)
             Height: =470
             Fill: =RGBA(23, 28, 34, 1)
             BorderColor: =RGBA(224, 164, 58, 1)
@@ -286,9 +287,9 @@ Screens:
       - lblRolePanelTitle:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =226
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =226 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =32
             Visible: =varPanel = "role"
             Color: =RGBA(230, 233, 238, 1)
@@ -298,9 +299,9 @@ Screens:
       - lblRHelp:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =258
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =258 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =40
             Visible: =varPanel = "role"
             Color: =RGBA(154, 164, 178, 1)
@@ -309,9 +310,9 @@ Screens:
       - lblRNameL:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =302
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =302 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =22
             Visible: =varPanel = "role"
             Color: =RGBA(154, 164, 178, 1)
@@ -320,9 +321,9 @@ Screens:
       - lblREmailL:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =376
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =376 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =22
             Visible: =varPanel = "role"
             Color: =RGBA(154, 164, 178, 1)
@@ -331,9 +332,9 @@ Screens:
       - lblRRoleL:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =450
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =450 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =22
             Visible: =varPanel = "role"
             Color: =RGBA(154, 164, 178, 1)
@@ -342,9 +343,9 @@ Screens:
       - lblRAreaL:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =524
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =524 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =22
             Visible: =varPanel = "role" && varIsDAAll
             Color: =RGBA(154, 164, 178, 1)
@@ -354,9 +355,9 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             Default: =""
-            X: =908
-            Y: =326
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =326 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =44
             Visible: =varPanel = "role"
             HintText: ="Person's name"
@@ -367,9 +368,9 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             Default: =""
-            X: =908
-            Y: =400
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =400 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =44
             Visible: =varPanel = "role"
             HintText: ="Sign-in email"
@@ -379,18 +380,18 @@ Screens:
       - ddRRole:
           Control: Classic/DropDown@2.3.1
           Properties:
-            X: =908
-            Y: =474
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =474 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =44
             Visible: =varPanel = "role"
             Items: =colChRole
       - ddRArea:
           Control: Classic/DropDown@2.3.1
           Properties:
-            X: =908
-            Y: =548
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =548 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =44
             Visible: =varPanel = "role" && varIsDAAll
             Items: |-
@@ -398,9 +399,9 @@ Screens:
       - btnRoleSave:
           Control: Classic/Button@2.2.0
           Properties:
-            X: =908
-            Y: =606
-            Width: =206
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =606 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
             Height: =44
             Text: ="Save assignment"
             Visible: =varPanel = "role"
@@ -422,9 +423,9 @@ Screens:
       - btnRoleClose:
           Control: Classic/Button@2.2.0
           Properties:
-            X: =1126
-            Y: =606
-            Width: =208
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16 + (If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2 + 12
+            Y: =606 + If(Parent.Width < 1000, 48, 0)
+            Width: =(If(Parent.Width < 1000, Parent.Width - 32, 458) - 44) / 2
             Height: =44
             Text: ="Cancel"
             Visible: =varPanel = "role"
@@ -435,9 +436,9 @@ Screens:
       - lblRoleErr:
           Control: Label@2.5.1
           Properties:
-            X: =908
-            Y: =658
-            Width: =426
+            X: =If(Parent.Width < 1000, 16, Parent.Width - 474) + 16
+            Y: =658 + If(Parent.Width < 1000, 48, 0)
+            Width: =If(Parent.Width < 1000, Parent.Width - 32, 458) - 32
             Height: =36
             Visible: =varPanel = "role"
             Color: =RGBA(244, 165, 138, 1)

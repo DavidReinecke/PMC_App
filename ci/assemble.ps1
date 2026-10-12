@@ -9,6 +9,24 @@ Set-Content work/src/Src/_EditorState.pa.yaml $hdr -Encoding utf8
 Log (pac canvas pack --sources work/src --msapp out/WorkforcePlanner.msapp 2>&1 | Out-String)
 Log ("pack exit " + $LASTEXITCODE)
 if (Test-Path out/WorkforcePlanner.msapp) {
+  try {
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $mp = (Resolve-Path out/WorkforcePlanner.msapp).Path
+    $z = [System.IO.Compression.ZipFile]::Open($mp,'Update')
+    $e = $z.Entries | Where-Object { $_.FullName -eq 'Properties.json' } | Select-Object -First 1
+    if ($e) {
+      $sr = New-Object System.IO.StreamReader($e.Open()); $t = $sr.ReadToEnd(); $sr.Close()
+      $t = $t -replace '"DocumentLayoutScaleToFit"\s*:\s*[Tt]rue','"DocumentLayoutScaleToFit":false' -replace '"DocumentLayoutMaintainAspectRatio"\s*:\s*[Tt]rue','"DocumentLayoutMaintainAspectRatio":false'
+      $e.Delete()
+      $ne = $z.CreateEntry('Properties.json')
+      $sw = New-Object System.IO.StreamWriter($ne.Open(), (New-Object System.Text.UTF8Encoding($false))); $sw.Write($t); $sw.Close()
+      Log "layout flags patched"
+    } else { Log "Properties.json not found in msapp" }
+    $z.Dispose()
+  } catch { Log ("layout patch failed: " + $_) }
+}
+if (Test-Path out/WorkforcePlanner.msapp) {
   $dst = (Get-ChildItem work/sol/CanvasApps -Filter *.msapp | Select-Object -First 1).FullName
   Copy-Item out/WorkforcePlanner.msapp $dst -Force
   $sx = Get-Content work/sol/solution.xml -Raw
@@ -16,7 +34,7 @@ if (Test-Path out/WorkforcePlanner.msapp) {
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
 
   $sx = Get-Content work/sol/solution.xml -Raw
-  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.9</Version>')
+  $sx = $sx.Replace('<Version>1.0.0.2</Version>','<Version>1.0.0.10</Version>')
   Set-Content work/sol/solution.xml $sx -Encoding utf8 -NoNewline
   Copy-Item flows/WorkforcePlanner_Import_Sample.xlsx out/
   # zip with forward slashes via .NET
