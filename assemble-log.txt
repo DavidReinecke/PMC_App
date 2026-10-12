@@ -4,4 +4,5 @@ Pack from D:\a\PMC_App\PMC_App\work\src --> D:\a\PMC_App\PMC_App\out\WorkforcePl
 Packing succeeded.
 
 pack exit 0
+layout flags patched
 zip built
