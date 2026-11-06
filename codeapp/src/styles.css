@@ -153,3 +153,15 @@ td.empty { text-align: center; color: var(--mute); padding: 28px; }
 .step.approved { border-left-color: var(--fill-bar); } .step.pending { border-left-color: var(--amber); } .step.returned { border-left-color: var(--vac-bar); }
 .sn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 600; } .sb { flex: 1; min-width: 0; }
 .hist { margin-top: 10px; font-size: 12.5px; } .hist summary { cursor: pointer; color: var(--mute); }
+
+/* ---- labor ---- */
+.inl { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; } th.num { text-align: right; }
+.splitbar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--card); border: 1px solid var(--line); margin-bottom: 6px; }
+.splitbar i, .legend2 i { display: block; height: 100%; } .pp { background: var(--sel); } .ff { background: var(--fill-bar); }
+.legend2 { display: flex; gap: 14px; font-size: 12px; color: var(--mute); margin-bottom: 12px; } .legend2 i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.assump { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; } .assump summary { cursor: pointer; font-weight: 600; font-size: 13px; }
+.formgrid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 14px; align-items: end; margin-top: 12px; }
+.totrow td { font-weight: 700; border-top: 2px solid var(--line); }
+.roster tr.unfunded td { color: var(--vac); } .roster tr.excluded td { opacity: .5; }
+.pctbox { width: 64px; text-align: right; padding: 4px 6px; } .pctbox.dflt { color: var(--mute); }

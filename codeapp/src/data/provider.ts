@@ -49,5 +49,5 @@ export interface DataProvider {
 
   listPayRates(): Promise<PayRate[]>
   listLaborSettings(): Promise<LaborSetting[]>
-  saveLaborSetting(areaId: string, premium: number): Promise<LaborSetting>
+  saveLaborSetting(areaId: string, patch: Partial<Omit<LaborSetting, 'id' | 'areaId'>>): Promise<LaborSetting>
 }

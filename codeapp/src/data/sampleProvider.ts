@@ -1,7 +1,7 @@
 import type { DataProvider } from './provider'
 import type { Person, Position, RoleAssignment } from './types'
 import { AREAS, POSITIONS, UNITS } from './sample'
-import { DETAILS, EVENTS, HIRING, LABOR, PAY_RATES, REQUESTS, ROLE_ROWS, STEPS, UPDATES } from './sampleSeed'
+import { DEMO_SPLITS, DETAILS, EVENTS, HIRING, LABOR, PAY_RATES, REQUESTS, ROLE_ROWS, STEPS, UPDATES } from './sampleSeed'
 
 const copy = <T,>(rows: T[]) => rows.map((r) => ({ ...r }))
 const delay = <T,>(v: T) => new Promise<T>((r) => setTimeout(() => r(v), 40))
@@ -10,7 +10,7 @@ const nid = (p: string) => `${p}-${++seq}`
 
 // In-memory provider for local development and demos. Changes last until the page reloads.
 export function createSampleProvider(user: Person, roles: RoleAssignment[]): DataProvider {
-  const positions: Position[] = copy(POSITIONS)
+  const positions: Position[] = copy(POSITIONS).map((p) => ({ prepPercent: null, premiumOverride: null, ...p, ...DEMO_SPLITS[p.id] }))
   const hiring = copy(HIRING), steps = copy(STEPS), events = copy(EVENTS), details = copy(DETAILS)
   const requests = copy(REQUESTS), updates = copy(UPDATES), roleRows = copy(ROLE_ROWS), labor = copy(LABOR)
 
@@ -67,10 +67,10 @@ export function createSampleProvider(user: Person, roles: RoleAssignment[]): Dat
 
     listPayRates: () => delay(copy(PAY_RATES)),
     listLaborSettings: () => delay(copy(labor)),
-    async saveLaborSetting(areaId, premium) {
+    async saveLaborSetting(areaId, patch) {
       const row = labor.find((l) => l.areaId === areaId)
-      if (row) { row.premium = premium; return delay({ ...row }) }
-      return create(labor, 'L', { areaId, premium })
+      if (row) { Object.assign(row, patch); return delay({ ...row }) }
+      return create(labor, 'L', { areaId, premium: 32, payStep: 5, tempPercent: 50, defaultPrep: 100, ...patch })
     },
   }
 }

@@ -40,7 +40,12 @@ export const ROLE_ROWS: RoleRow[] = [
 
 export const EVENTS: HiringEvent[] = []
 export const DETAILS: Detail[] = []
-export const LABOR: LaborSetting[] = [{ id: 'L-1', areaId: A, premium: 32 }]
+export const LABOR: LaborSetting[] = [{ id: 'L-1', areaId: A, premium: 32, payStep: 5, tempPercent: 50, defaultPrep: 100 }]
+
+// A few sample splits so the Preparedness / Fuels columns have something to show.
+export const DEMO_SPLITS: Record<string, { prepPercent?: number; premiumOverride?: number }> = {
+  'P-0019': { prepPercent: 60 }, 'P-0020': { prepPercent: 100 }, 'P-0021': { prepPercent: 40 }, 'P-0022': { prepPercent: 0 }, 'P-0026': { prepPercent: 50, premiumOverride: 28 },
+}
 
 // Placeholder pay table. Real rates come from the Pay Rates table in Dataverse.
 export const PAY_RATES: PayRate[] = [

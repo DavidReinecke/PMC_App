@@ -2,7 +2,7 @@
 // against sample data and Dataverse. Each function throws an Error with a plain message when a rule is broken.
 import type { DataProvider } from './provider'
 import type {
-  ApproverGroup, EventType, HiringAction, IncumbentUpdate, PayPlan, PayRate, Priority, Position, PositionRequest,
+  ApproverGroup, EventType, HiringAction, IncumbentUpdate, LaborSetting, PayPlan, PayRate, Priority, Position, PositionRequest,
   RoleName, RoleRow, SelectionStep, Stage,
 } from './types'
 
@@ -218,9 +218,43 @@ export async function assignRole(p: DataProvider, d: { person: string; email: st
 export const endRole = (p: DataProvider, r: RoleRow) => p.updateRoleRow(r.id, { status: 'Ended' })
 
 // ---------- labor ----------
-/** Pay for one position: full performance grade, step 5, latest rate year not after this year, plus the area premium. */
-export function laborFor(pos: Pick<Position, 'payPlan' | 'grade'>, rates: PayRate[], premium: number, year = new Date().getFullYear()): { base: number; total: number; found: boolean } {
-  const cand = rates.filter((r) => r.plan === pos.payPlan && r.grade === pos.grade && r.step === 5 && r.year <= year).sort((a, b) => b.year - a.year)[0]
-  if (!cand) return { base: 0, total: 0, found: false }
-  return { base: cand.rate, total: Math.round(cand.rate * (1 + premium / 100)), found: true }
+export const DEFAULT_LABOR = { premium: 32, payStep: 5, tempPercent: 50, defaultPrep: 100 }
+export type LaborAssumptions = Pick<LaborSetting, 'premium' | 'payStep' | 'tempPercent' | 'defaultPrep'>
+
+export interface PositionCost {
+  found: boolean; salary: number; premiumPct: number; total: number
+  prepPct: number; fuelsPct: number; prepCost: number; fuelsCost: number
+  funded: boolean   // false for a vacancy without approved funding. It never counts toward the budget.
+}
+
+/**
+ * Same rules as the Excel workbook. Salary is the pay table rate at the pay step for the position's full performance grade
+ * (latest rate year not after this year). Seasonal positions cost the temp percent of a year. Premium defaults to the area
+ * premium unless the position overrides it. The Preparedness share is clamped to 0-100 and Fuels is always the remainder,
+ * so the two can never exceed 100%.
+ */
+export function costPosition(pos: Position, rates: PayRate[], a: LaborAssumptions, year = new Date().getFullYear()): PositionCost {
+  const rate = rates.filter((r) => r.plan === pos.payPlan && r.grade === pos.grade && r.step === a.payStep && r.year <= year).sort((x, y) => y.year - x.year)[0]
+  const premiumPct = Number.isFinite(pos.premiumOverride as number) && pos.premiumOverride !== null ? Math.max(0, pos.premiumOverride as number) : a.premium
+  const rawPrep = pos.prepPercent === null || pos.prepPercent === undefined || !Number.isFinite(pos.prepPercent) ? a.defaultPrep : pos.prepPercent
+  const prepPct = Math.min(100, Math.max(0, rawPrep))
+  const funded = pos.status === 'Filled' || pos.fundingStatus === 'Approved'
+  if (!rate) return { found: false, salary: 0, premiumPct, total: 0, prepPct, fuelsPct: 100 - prepPct, prepCost: 0, fuelsCost: 0, funded }
+  const salary = Math.round(rate.rate * (pos.employmentType === 'Seasonal' ? a.tempPercent / 100 : 1))
+  const total = Math.round(salary * (1 + premiumPct / 100))
+  const prepCost = Math.round(total * prepPct / 100)
+  return { found: true, salary, premiumPct, total, prepPct, fuelsPct: 100 - prepPct, prepCost, fuelsCost: total - prepCost, funded }
+}
+
+export function setSplit(p: DataProvider, pos: Position, patch: { prepPercent?: number | null; premiumOverride?: number | null }) {
+  if (patch.prepPercent !== undefined && patch.prepPercent !== null) need(patch.prepPercent >= 0 && patch.prepPercent <= 100, 'Preparedness % must be from 0 to 100.')
+  if (patch.premiumOverride !== undefined && patch.premiumOverride !== null) need(patch.premiumOverride >= 0 && patch.premiumOverride <= 100, 'Premium % must be from 0 to 100.')
+  return p.updatePosition(pos.id, patch)
+}
+
+export function validateAssumptions(a: LaborAssumptions) {
+  need(a.premium >= 0 && a.premium <= 100, 'Premium must be from 0 to 100%.')
+  need(a.defaultPrep >= 0 && a.defaultPrep <= 100, 'Default Preparedness % must be from 0 to 100.')
+  need(a.tempPercent > 0 && a.tempPercent <= 100, 'Temp percent must be from 1 to 100.')
+  need(Number.isInteger(a.payStep) && a.payStep >= 1 && a.payStep <= 10, 'Pay step must be a whole number from 1 to 10.')
 }

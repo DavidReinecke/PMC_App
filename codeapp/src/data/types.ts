@@ -25,6 +25,8 @@ export interface Position {
   supervisorId: string | null   // Position.id of the supervisor position
   fundingStatus: FundingStatus
   vacantSince: string | null    // ISO date. Needs a new column on Positions.
+  prepPercent?: number | null      // 0-100 share funded by Preparedness. null uses the area default. Needs a new column.
+  premiumOverride?: number | null  // per-position premium %. null uses the area premium. Needs a new column.
 }
 
 export type RoleName =
@@ -86,4 +88,4 @@ export interface IncumbentUpdate {
 export type AssignmentStatus = 'Active' | 'Ended'
 export interface RoleRow { id: string; person: string; email: string; role: RoleName; status: AssignmentStatus; areaId: string | null; allAreas: boolean; startDate: string | null }
 export interface PayRate { plan: PayPlan; grade: number; step: number; rate: number; year: number; wageArea: string }
-export interface LaborSetting { id: string; areaId: string; premium: number }
+export interface LaborSetting { id: string; areaId: string; premium: number; payStep: number; tempPercent: number; defaultPrep: number }
