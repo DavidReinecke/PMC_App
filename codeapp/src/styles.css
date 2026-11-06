@@ -165,3 +165,5 @@ td.empty { text-align: center; color: var(--mute); padding: 28px; }
 .totrow td { font-weight: 700; border-top: 2px solid var(--line); }
 .roster tr.unfunded td { color: var(--vac); } .roster tr.excluded td { opacity: .5; }
 .pctbox { width: 64px; text-align: right; padding: 4px 6px; } .pctbox.dflt { color: var(--mute); }
+
+.node.ctx { opacity: .6; border-style: dashed; }

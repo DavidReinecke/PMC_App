@@ -124,7 +124,7 @@ export default function App() {
       {notice && <div className="toast" role="status">{notice}</div>}
       <main className={'stage' + (showDrawer ? ' with-drawer' : '')}>
         <section className="main">
-          {tab === 'chart' && <OrgChart positions={positions} selectedId={selectedId} onSelect={setSelectedId} />}
+          {tab === 'chart' && <OrgChart positions={positions} unitNames={[...new Set(positions.map((p) => p.unitName))].sort()} selectedId={selectedId} onSelect={setSelectedId} />}
           {tab === 'toe' && <TableOfOrg positions={positions} units={units} selectedId={selectedId} onSelect={setSelectedId} />}
           {tab === 'vac' && <Vacancies {...ctx} />}
           {tab === 'appr' && <Approvals {...ctx} />}

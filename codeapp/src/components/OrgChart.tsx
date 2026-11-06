@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import type { Position } from '@/data/types'
 import { NH, NW, buildTree, computeLayout, linkPaths } from './orgLayout'
 
-interface Props { positions: Position[]; selectedId: string | null; onSelect: (id: string | null) => void }
+interface Props { positions: Position[]; unitNames: string[]; selectedId: string | null; onSelect: (id: string | null) => void }
 interface View { s: number; x: number; y: number }
 
 function daysSince(iso: string | null) {
@@ -11,7 +11,34 @@ function daysSince(iso: string | null) {
 }
 const initials = (name: string) => name.split(' ').map((w) => w[0]).slice(0, 2).join('')
 
-export default function OrgChart({ positions, selectedId, onSelect }: Props) {
+const ALL_UNITS = 'All units'
+const UNIT_TOP = '__unit_top__'
+
+/**
+ * One unit's chart. The unit's top positions usually report to someone outside the unit, so that supervisor is added
+ * as a dimmed context card at the top. If the unit's top positions report to different people, a plain "unit" card
+ * stands in as the root instead.
+ */
+function scopeToUnit(all: Position[], unit: string): { positions: Position[]; ctx: Set<string> } {
+  if (unit === ALL_UNITS) return { positions: all, ctx: new Set() }
+  const inUnit = all.filter((p) => p.unitName === unit)
+  const ids = new Set(inUnit.map((p) => p.id))
+  const outside = [...new Set(inUnit.filter((p) => p.supervisorId && !ids.has(p.supervisorId)).map((p) => p.supervisorId!))]
+  const tops = inUnit.filter((p) => !p.supervisorId || !ids.has(p.supervisorId))
+  if (outside.length === 1 && tops.every((p) => p.supervisorId === outside[0])) {
+    const boss = all.find((p) => p.id === outside[0])
+    if (boss) return { positions: [{ ...boss, supervisorId: null }, ...inUnit], ctx: new Set([boss.id]) }
+  }
+  if (tops.length > 1) {
+    const stub: Position = { ...inUnit[0], id: UNIT_TOP, positionId: '', title: unit, incumbent: 'Top positions in this unit', incumbentEmail: '', status: 'Filled', supervisorId: null, previousIncumbent: '', vacantSince: null }
+    return { positions: [stub, ...inUnit.map((p) => (tops.includes(p) ? { ...p, supervisorId: UNIT_TOP } : p))], ctx: new Set([UNIT_TOP]) }
+  }
+  return { positions: inUnit, ctx: new Set() }
+}
+
+export default function OrgChart({ positions: allPositions, unitNames, selectedId, onSelect }: Props) {
+  const [unit, setUnit] = useState(ALL_UNITS)
+  const { positions, ctx } = useMemo(() => scopeToUnit(allPositions, unit), [allPositions, unit])
   const { byId, kids, roots } = useMemo(() => buildTree(positions), [positions])
   const rootId = roots[0]
   const [open, setOpen] = useState<Set<string>>(() => new Set())
@@ -83,16 +110,18 @@ export default function OrgChart({ positions, selectedId, onSelect }: Props) {
 
   const toggle = (id: string) => setOpen((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n })
   const visibleCount = Object.keys(layout.pos).length
-  const vacant = positions.filter((p) => p.status === 'Vacant').length
+  const counted = positions.filter((p) => !ctx.has(p.id))
+  const vacant = counted.filter((p) => p.status === 'Vacant').length
 
   return (
     <div className="chart-wrap">
       <div className="chart-bar">
+        <label className="inl">Unit <select value={unit} onChange={(e) => setUnit(e.target.value)}>{[ALL_UNITS, ...unitNames].map((u) => <option key={u}>{u}</option>)}</select></label>
         <button className="btn" onClick={() => { openToDepth(99) ; setTimeout(() => fit(true), 0) }}>Expand all</button>
         <button className="btn" onClick={() => { openToDepth(2); setTimeout(() => fit(true), 0) }}>Collapse to 2 levels</button>
         <button className="btn" onClick={() => fit(true)}>Fit to screen</button>
         <div className="stats">
-          <span>Positions <b>{positions.length}</b></span><span>Filled <b>{positions.length - vacant}</b></span>
+          <span>Positions <b>{counted.length}</b></span><span>Filled <b>{counted.length - vacant}</b></span>
           <span className="v">Vacant <b>{vacant}</b></span><span>Showing <b>{visibleCount}</b></span>
         </div>
       </div>
@@ -117,7 +146,7 @@ export default function OrgChart({ positions, selectedId, onSelect }: Props) {
               <div key={id}>
                 <button
                   type="button"
-                  className={`node ${vac ? 'vac' : 'fil'}${selectedId === id ? ' sel' : ''}`}
+                  className={`node ${vac ? 'vac' : 'fil'}${selectedId === id ? ' sel' : ''}${ctx.has(id) ? ' ctx' : ''}`}
                   style={{ left: q.x, top: q.y }}
                   aria-label={`${p.title}, ${vac ? 'vacant' : p.incumbent}`}
                   onClick={() => onSelect(id)}
