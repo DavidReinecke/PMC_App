@@ -1,0 +1,66 @@
+name: Deploy Workforce Planner code app
+
+# Run this by hand: Actions tab, "Deploy Workforce Planner code app", Run workflow.
+# It signs in to your Power Platform environment with a service account, builds the app and publishes it.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: codeapp
+    env:
+      PP_TENANT_ID: ${{ secrets.PP_TENANT_ID }}
+      PP_CLIENT_ID: ${{ secrets.PP_CLIENT_ID }}
+      PP_CLIENT_SECRET: ${{ secrets.PP_CLIENT_SECRET }}
+      PP_ENVIRONMENT_URL: ${{ vars.PP_ENVIRONMENT_URL }}
+      PP_CLOUD: ${{ vars.PP_CLOUD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Power Platform CLI
+        run: |
+          dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+          pac help | Select-Object -First 3
+
+      - name: Sign in to the environment
+        run: |
+          $cloud = if ($env:PP_CLOUD) { $env:PP_CLOUD } else { 'UsGov' }
+          pac auth create --name deploy --applicationId $env:PP_CLIENT_ID --clientSecret $env:PP_CLIENT_SECRET --tenant $env:PP_TENANT_ID --cloud $cloud --environment $env:PP_ENVIRONMENT_URL
+          pac auth who
+
+      - name: Register the app (first run only)
+        run: |
+          if (-not (Test-Path power.config.json)) { pac code init --displayName "Workforce Planner" }
+
+      - name: Add Dataverse tables as data sources (first run only)
+        run: |
+          if (-not (Test-Path src/generated)) {
+            $tables = 'wfp_geographicarea','wfp_unit','wfp_position','wfp_hiringaction','wfp_selectionstep','wfp_roleassignment','wfp_detail','wfp_hiringevent','wfp_payrate','wfp_laborsetting','wfp_positionrequest','wfp_incumbentupdate'
+            foreach ($t in $tables) { pac code add-data-source -a dataverse -t $t }
+          }
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Publish to Power Apps
+        run: pac code push
+
+      - name: Save generated files for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-app-generated
+          path: |
+            codeapp/power.config.json
+            codeapp/src/generated
+          if-no-files-found: warn
