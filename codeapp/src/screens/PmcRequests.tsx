@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import type { PayPlan, EmploymentType, PositionRequest, RequestType } from '@/data/types'
+import { PRIORITIES, type PayPlan, type EmploymentType, type Priority, type PositionRequest, type RequestType } from '@/data/types'
 import { clearRequest, returnRequest, submitRequest, withdrawRequest, type RequestDraft } from '@/data/services'
-import { Field, Modal, Stat, Tag, daysSince, fmtDate, useAction, useLoad, type Ctx } from '@/ui/kit'
+import { Field, Modal, PriorityTag, Stat, Tag, daysSince, fmtDate, useAction, useLoad, type Ctx } from '@/ui/kit'
 
 const STATUS_TONE = { Submitted: 'info', Cleared: 'ok', Returned: 'warn', Withdrawn: 'mute' } as const
-const blank: RequestDraft = { type: 'Advertise vacancy', positionId: null, unitId: null, proposedTitle: '', payPlan: 'GS', grade: 11, employmentType: 'Full time', justification: '', fundingSource: '' }
+const blank: RequestDraft = { type: 'Advertise vacancy', positionId: null, unitId: null, proposedTitle: '', priority: 'Medium', payPlan: 'GS', grade: 11, employmentType: 'Full time', justification: '', fundingSource: '' }
 
 export default function PmcRequests(c: Ctx) {
   const { data: rows, reload } = useLoad(() => c.provider.listRequests(c.areaId), [c.areaId], [] as PositionRequest[])
@@ -33,20 +33,20 @@ export default function PmcRequests(c: Ctx) {
       </div>
       <div className="tablewrap">
         <table>
-          <thead><tr><th>Request</th><th>Type</th><th>Position</th><th>Requested by</th><th>Date</th><th>Status</th></tr></thead>
+          <thead><tr><th>Request</th><th>Type</th><th>Position</th><th>Priority</th><th>Requested by</th><th>Date</th><th>Status</th></tr></thead>
           <tbody>
             {shown.map((r) => (
               <tr key={r.id} tabIndex={0} onClick={() => setSel(r)} onKeyDown={(e) => e.key === 'Enter' && setSel(r)}>
                 <td className="mono">{r.requestId}</td><td>{r.type}</td>
                 <td>{r.type === 'Add position' ? `New: ${r.proposedTitle}` : posName(r.positionId)}</td>
-                <td>{r.requestedBy}</td><td>{fmtDate(r.requestDate)}</td><td><Tag tone={STATUS_TONE[r.status]}>{r.status}</Tag></td>
+                <td><PriorityTag approved={null} requested={r.priority} /></td><td>{r.requestedBy}</td><td>{fmtDate(r.requestDate)}</td><td><Tag tone={STATUS_TONE[r.status]}>{r.status}</Tag></td>
               </tr>
             ))}
-            {!shown.length && <tr><td colSpan={6} className="empty">No requests to show.</td></tr>}
+            {!shown.length && <tr><td colSpan={7} className="empty">No requests to show.</td></tr>}
           </tbody>
         </table>
       </div>
-      {sel && <Detail c={c} r={sel} mine={mine(sel)} posName={posName} onClose={() => setSel(null)} onDone={done} onEdit={() => { setForm({ existing: sel, draft: { type: sel.type, positionId: sel.positionId, unitId: sel.unitId, proposedTitle: sel.proposedTitle, payPlan: sel.payPlan, grade: sel.grade, employmentType: sel.employmentType, justification: sel.justification, fundingSource: sel.fundingSource } }); setSel(null) }} />}
+      {sel && <Detail c={c} r={sel} mine={mine(sel)} posName={posName} onClose={() => setSel(null)} onDone={done} onEdit={() => { setForm({ existing: sel, draft: { type: sel.type, positionId: sel.positionId, unitId: sel.unitId, proposedTitle: sel.proposedTitle, priority: sel.priority, payPlan: sel.payPlan, grade: sel.grade, employmentType: sel.employmentType, justification: sel.justification, fundingSource: sel.fundingSource } }); setSel(null) }} />}
       {form && <RequestForm c={c} init={form.draft} existing={form.existing} onClose={() => setForm(null)} onDone={done} />}
     </div>
   )
@@ -54,6 +54,7 @@ export default function PmcRequests(c: Ctx) {
 
 function Detail({ c, r, mine, posName, onClose, onDone, onEdit }: { c: Ctx; r: PositionRequest; mine: boolean; posName: (id: string | null) => string; onClose: () => void; onDone: (m: string) => void; onEdit: () => void }) {
   const [comment, setComment] = useState('')
+  const [approved, setApproved] = useState<Priority>(r.priority)
   const a = useAction()
   const actor = { name: c.user.name, email: c.user.email }
   const open = r.status === 'Submitted'
@@ -64,6 +65,7 @@ function Detail({ c, r, mine, posName, onClose, onDone, onEdit }: { c: Ctx; r: P
         <div><dt>Requested by</dt><dd>{r.requestedBy}<div className="mute small">{r.requestedByEmail}</div></dd></div>
         <div><dt>{r.type === 'Add position' ? 'Proposed title' : 'Position'}</dt><dd>{r.type === 'Add position' ? r.proposedTitle : posName(r.positionId)}</dd></div>
         {r.type === 'Add position' && <div><dt>Unit</dt><dd>{c.units.find((u) => u.id === r.unitId)?.name ?? '—'}</dd></div>}
+        <div><dt>Requested priority</dt><dd><PriorityTag approved={null} requested={r.priority} plain /></dd></div>
         <div><dt>Grade</dt><dd>{r.payPlan}-{r.grade}</dd></div>
         <div><dt>Employment type</dt><dd>{r.employmentType}</dd></div>
         <div><dt>Funding source</dt><dd>{r.fundingSource}</dd></div>
@@ -73,10 +75,11 @@ function Detail({ c, r, mine, posName, onClose, onDone, onEdit }: { c: Ctx; r: P
       {r.pmcComment && <><h3 className="h3">PMC comment{r.decidedBy ? ` · ${r.decidedBy}, ${fmtDate(r.decidedOn)}` : ''}</h3><p className="memo">{r.pmcComment}</p></>}
       {open && c.access.canPMC && (
         <>
+          <Field label="Approved priority (used when you clear)"><select value={approved} onChange={(e) => setApproved(e.target.value as Priority)}>{PRIORITIES.map((x) => <option key={x}>{x}</option>)}</select></Field>
           <Field label="PMC comment (required to return)" wide><textarea rows={3} value={comment} onChange={(e) => setComment(e.target.value)} /></Field>
           {a.err && <div className="err">{a.err}</div>}
           <div className="row">
-            <button className="btn pri" disabled={a.busy} onClick={async () => { if (await a.run(() => clearRequest(c.provider, r, comment, actor))) onDone(`${r.requestId} cleared. A hiring action was opened.`) }}>Clear</button>
+            <button className="btn pri" disabled={a.busy} onClick={async () => { if (await a.run(() => clearRequest(c.provider, r, comment, approved, actor))) onDone(`${r.requestId} cleared. A hiring action was opened.`) }}>Clear</button>
             <button className="btn" disabled={a.busy} onClick={async () => { if (await a.run(() => returnRequest(c.provider, r, comment, actor))) onDone(`${r.requestId} returned to ${r.requestedBy}.`) }}>Return</button>
           </div>
         </>
@@ -112,6 +115,7 @@ function RequestForm({ c, init, existing, onClose, onDone }: { c: Ctx; init: Req
         <Field label="Pay plan"><select value={d.payPlan} onChange={(e) => set('payPlan', e.target.value as PayPlan)}><option>GS</option><option>GW</option><option>WG</option></select></Field>
         <Field label="Full performance grade"><input type="number" min={1} max={15} value={d.grade} onChange={(e) => set('grade', Number(e.target.value))} /></Field>
         <Field label="Employment type"><select value={d.employmentType} onChange={(e) => set('employmentType', e.target.value as EmploymentType)}><option>Full time</option><option>Career seasonal</option><option>Seasonal</option></select></Field>
+        <Field label="Hiring priority"><select value={d.priority} onChange={(e) => set('priority', e.target.value as Priority)}>{PRIORITIES.map((x) => <option key={x}>{x}</option>)}</select></Field>
         <Field label="Funding source"><input value={d.fundingSource} onChange={(e) => set('fundingSource', e.target.value)} /></Field>
         <Field label="Justification memo" wide><textarea rows={4} value={d.justification} onChange={(e) => set('justification', e.target.value)} /></Field>
       </div>

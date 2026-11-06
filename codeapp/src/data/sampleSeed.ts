@@ -5,11 +5,11 @@ const day = (n: number) => new Date(Date.now() + n * 86400000).toISOString().sli
 const A = 'area-nr'
 
 export const HIRING: HiringAction[] = [
-  { id: 'HA-0001', actionId: 'HA-0001', positionId: 'P-0007', areaId: A, stage: 'Cleared to advertise', candidate: '', proposedGrade: '', entryOnDuty: null },
-  { id: 'HA-0002', actionId: 'HA-0002', positionId: 'P-0010', areaId: A, stage: 'Announced', candidate: '', proposedGrade: '', entryOnDuty: null },
-  { id: 'HA-0003', actionId: 'HA-0003', positionId: 'P-0008', areaId: A, stage: 'Interviews', candidate: '', proposedGrade: '', entryOnDuty: null },
-  { id: 'HA-0004', actionId: 'HA-0004', positionId: 'P-0009', areaId: A, stage: 'Selection approval', candidate: 'Jamie Foster', proposedGrade: 'GS-13 Step 2', entryOnDuty: null },
-  { id: 'HA-0005', actionId: 'HA-0005', positionId: 'P-0015', areaId: A, stage: 'Offer', candidate: 'Avery Lindqvist', proposedGrade: 'GS-13 Step 1', entryOnDuty: day(21) },
+  { id: 'HA-0001', actionId: 'HA-0001', positionId: 'P-0007', areaId: A, stage: 'Cleared to advertise', candidate: '', proposedGrade: '', entryOnDuty: null, requestedPriority: 'High', approvedPriority: 'High', priorityBy: 'Riley Quinn' },
+  { id: 'HA-0002', actionId: 'HA-0002', positionId: 'P-0010', areaId: A, stage: 'Announced', candidate: '', proposedGrade: '', entryOnDuty: null, requestedPriority: 'Medium', approvedPriority: 'High', priorityBy: 'Riley Quinn' },
+  { id: 'HA-0003', actionId: 'HA-0003', positionId: 'P-0008', areaId: A, stage: 'Interviews', candidate: '', proposedGrade: '', entryOnDuty: null, requestedPriority: 'Critical', approvedPriority: 'Critical', priorityBy: 'Riley Quinn' },
+  { id: 'HA-0004', actionId: 'HA-0004', positionId: 'P-0009', areaId: A, stage: 'Selection approval', candidate: 'Jamie Foster', proposedGrade: 'GS-13 Step 2', entryOnDuty: null, requestedPriority: 'Medium', approvedPriority: 'Medium', priorityBy: 'Riley Quinn' },
+  { id: 'HA-0005', actionId: 'HA-0005', positionId: 'P-0015', areaId: A, stage: 'Offer', candidate: 'Avery Lindqvist', proposedGrade: 'GS-13 Step 1', entryOnDuty: day(21), requestedPriority: 'Low', approvedPriority: null, priorityBy: '' },
 ]
 
 export const STEPS: SelectionStep[] = [
@@ -19,9 +19,9 @@ export const STEPS: SelectionStep[] = [
 ]
 
 export const REQUESTS: PositionRequest[] = [
-  { id: 'R-1', requestId: 'REQ-0001', type: 'Advertise vacancy', positionId: 'P-0012', unitId: null, areaId: A, proposedTitle: '', payPlan: 'GS', grade: 13, employmentType: 'Full time', justification: 'Unit has no chief for the coming season.', fundingSource: 'Base 2610', requestedBy: 'Sam Delgado', requestedByEmail: 'sam.delgado@example.gov', requestDate: day(-5), status: 'Submitted', decidedBy: '', decidedOn: null, pmcComment: '' },
-  { id: 'R-2', requestId: 'REQ-0002', type: 'Add position', positionId: null, unitId: 'unit-yellowstone-unit', areaId: A, proposedTitle: 'Fuels Technician', payPlan: 'GS', grade: 5, employmentType: 'Seasonal', justification: 'New prescribed fire module.', fundingSource: 'Fuels program', requestedBy: 'Hannah Okafor', requestedByEmail: 'hannah.okafor@example.gov', requestDate: day(-2), status: 'Submitted', decidedBy: '', decidedOn: null, pmcComment: '' },
-  { id: 'R-3', requestId: 'REQ-0003', type: 'Advertise vacancy', positionId: 'P-0018', unitId: null, areaId: A, proposedTitle: '', payPlan: 'GS', grade: 11, employmentType: 'Full time', justification: 'Backlog of contract actions.', fundingSource: 'Base 2610', requestedBy: 'Priya Nandakumar', requestedByEmail: 'priya.nandakumar@example.gov', requestDate: day(-14), status: 'Returned', decidedBy: 'Riley Quinn', decidedOn: day(-10), pmcComment: 'Funding is still pending. Resubmit once approved.' },
+  { id: 'R-1', requestId: 'REQ-0001', type: 'Advertise vacancy', positionId: 'P-0012', unitId: null, areaId: A, proposedTitle: '', payPlan: 'GS', grade: 13, employmentType: 'Full time', priority: 'Critical', justification: 'Unit has no chief for the coming season.', fundingSource: 'Base 2610', requestedBy: 'Sam Delgado', requestedByEmail: 'sam.delgado@example.gov', requestDate: day(-5), status: 'Submitted', decidedBy: '', decidedOn: null, pmcComment: '' },
+  { id: 'R-2', requestId: 'REQ-0002', type: 'Add position', positionId: null, unitId: 'unit-yellowstone-unit', areaId: A, proposedTitle: 'Fuels Technician', payPlan: 'GS', grade: 5, employmentType: 'Seasonal', priority: 'Medium', justification: 'New prescribed fire module.', fundingSource: 'Fuels program', requestedBy: 'Hannah Okafor', requestedByEmail: 'hannah.okafor@example.gov', requestDate: day(-2), status: 'Submitted', decidedBy: '', decidedOn: null, pmcComment: '' },
+  { id: 'R-3', requestId: 'REQ-0003', type: 'Advertise vacancy', positionId: 'P-0018', unitId: null, areaId: A, proposedTitle: '', payPlan: 'GS', grade: 11, employmentType: 'Full time', priority: 'Low', justification: 'Backlog of contract actions.', fundingSource: 'Base 2610', requestedBy: 'Priya Nandakumar', requestedByEmail: 'priya.nandakumar@example.gov', requestDate: day(-14), status: 'Returned', decidedBy: 'Riley Quinn', decidedOn: day(-10), pmcComment: 'Funding is still pending. Resubmit once approved.' },
 ]
 
 export const UPDATES: IncumbentUpdate[] = [

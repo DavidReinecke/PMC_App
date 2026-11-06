@@ -63,3 +63,11 @@ export function Tag({ tone, children }: { tone: 'ok' | 'warn' | 'bad' | 'info' |
 export const fmtDate = (iso: string | null) => (iso ? new Date(iso + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—')
 export const money = (n: number) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 export const daysSince = (iso: string | null) => (iso ? Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 86400000)) : 0)
+
+export function PriorityTag({ approved, requested, plain }: { approved: string | null; requested: string | null; plain?: boolean }) {
+  const v = approved ?? requested
+  if (!v) return <span className="mute">Not rated</span>
+  const tone = v === 'Critical' ? 'bad' : v === 'High' ? 'warn' : v === 'Medium' ? 'info' : 'mute'
+  const differs = approved && requested && approved !== requested
+  return <span title={differs ? `Requested as ${requested}` : approved ? 'Approved priority' : 'Requested priority, not yet approved'}><Tag tone={tone}>{v}{!approved && !plain ? ' (req.)' : ''}</Tag></span>
+}

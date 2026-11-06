@@ -39,9 +39,15 @@ export interface Person { name: string; email: string }
 export const STAGES = ['Draft', 'PMC review', 'Cleared to advertise', 'Announced', 'Certificate issued', 'Interviews', 'Selection approval', 'Selection approved', 'Offer'] as const
 export type Stage = (typeof STAGES)[number]
 
+export const PRIORITIES = ['Critical', 'High', 'Medium', 'Low'] as const
+export type Priority = (typeof PRIORITIES)[number]
+
 export interface HiringAction {
   id: string; actionId: string; positionId: string; areaId: string; stage: Stage
   candidate: string; proposedGrade: string; entryOnDuty: string | null   // ISO date
+  requestedPriority: Priority | null   // rated by the requestor
+  approvedPriority: Priority | null    // rated by PMC, a chief or a data administrator
+  priorityBy: string
 }
 
 export type ApproverGroup = 'Supervisor' | 'Budget' | 'Assistant Chief Operations' | 'Assistant Chief Support Services' | 'Area chief or deputy'
@@ -63,7 +69,7 @@ export type RequestStatus = 'Submitted' | 'Cleared' | 'Returned' | 'Withdrawn'
 export interface PositionRequest {
   id: string; requestId: string; type: RequestType; positionId: string | null; unitId: string | null; areaId: string
   proposedTitle: string; payPlan: PayPlan; grade: number; employmentType: EmploymentType
-  justification: string; fundingSource: string; requestedBy: string; requestedByEmail: string; requestDate: string
+  priority: Priority; justification: string; fundingSource: string; requestedBy: string; requestedByEmail: string; requestDate: string
   status: RequestStatus; decidedBy: string; decidedOn: string | null; pmcComment: string
 }
 

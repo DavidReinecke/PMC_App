@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import type { FundingStatus, HiringAction, Stage } from '@/data/types'
-import { ADVANCE_STAGES, recordDetail, setEntryOnDuty, setFunding, setStage, submitSelection, today } from '@/data/services'
-import { Field, Modal, Tag, daysSince, fmtDate, useAction, useLoad, type Ctx } from '@/ui/kit'
+import { PRIORITIES, type FundingStatus, type HiringAction, type Priority, type Stage } from '@/data/types'
+import { ADVANCE_STAGES, PRIORITY_RANK, effectivePriority, recordDetail, setApprovedPriority, setEntryOnDuty, setFunding, setStage, submitSelection, today } from '@/data/services'
+import { Field, Modal, PriorityTag, Tag, daysSince, fmtDate, useAction, useLoad, type Ctx } from '@/ui/kit'
 
 const STAGE_TONE: Record<Stage, 'info' | 'warn' | 'ok' | 'mute'> = {
   Draft: 'mute', 'PMC review': 'mute', 'Cleared to advertise': 'info', Announced: 'info', 'Certificate issued': 'info',
@@ -15,12 +15,13 @@ export default function Vacancies(c: Ctx) {
   }, [c.areaId, c.positions], { h: [] as HiringAction[], d: [] })
   const [q, setQ] = useState('')
   const [stage, setStageFilter] = useState('All stages')
+  const [prio, setPrio] = useState('All priorities')
   const [selId, setSelId] = useState<string | null>(null)
   const pos = (id: string) => c.positions.find((p) => p.id === id)
   const rows = useMemo(() => data.h.filter((h) => {
     const p = pos(h.positionId)
-    return (stage === 'All stages' || h.stage === stage) && (!q || `${h.actionId} ${p?.title} ${p?.unitName} ${h.candidate}`.toLowerCase().includes(q.toLowerCase()))
-  }).sort((a, b) => (pos(b.positionId)?.vacantSince ?? '').localeCompare(pos(a.positionId)?.vacantSince ?? '')), [data.h, q, stage, c.positions]) // eslint-disable-line react-hooks/exhaustive-deps
+    return (stage === 'All stages' || h.stage === stage) && (prio === 'All priorities' || effectivePriority(h) === prio) && (!q || `${h.actionId} ${p?.title} ${p?.unitName} ${h.candidate}`.toLowerCase().includes(q.toLowerCase()))
+  }).sort((a, b) => (PRIORITY_RANK[effectivePriority(a) ?? 'Low'] - PRIORITY_RANK[effectivePriority(b) ?? 'Low']) || (pos(a.positionId)?.vacantSince ?? '').localeCompare(pos(b.positionId)?.vacantSince ?? '')), [data.h, q, stage, prio, c.positions]) // eslint-disable-line react-hooks/exhaustive-deps
   const sel = data.h.find((h) => h.id === selId) ?? null
   const detailedIn = (positionId: string) => data.d.filter((d) => d.homePositionId === positionId).map((d) => pos(d.detailedToId)?.incumbent).filter(Boolean)
   const withoutAction = c.positions.filter((p) => p.status === 'Vacant' && !data.h.some((h) => h.positionId === p.id && h.stage !== 'Offer'))
@@ -31,20 +32,21 @@ export default function Vacancies(c: Ctx) {
       <div className="filters">
         <input className="search" placeholder="Search action, position, unit or candidate" value={q} onChange={(e) => setQ(e.target.value)} />
         <select value={stage} onChange={(e) => setStageFilter(e.target.value)}>{['All stages', 'Cleared to advertise', 'Announced', 'Certificate issued', 'Interviews', 'Selection approval', 'Selection approved', 'Offer'].map((s) => <option key={s}>{s}</option>)}</select>
+        <select value={prio} onChange={(e) => setPrio(e.target.value)}>{['All priorities', ...PRIORITIES].map((s) => <option key={s}>{s}</option>)}</select>
         <span className="mute">{rows.length} hiring actions · {withoutAction.length} vacancies not yet cleared</span>
       </div>
       <div className="tablewrap">
         <table>
-          <thead><tr><th>Action</th><th>Position</th><th>Unit</th><th>Grade</th><th>Stage</th><th>Candidate</th><th>Vacant</th><th>Funding</th><th>Detail</th></tr></thead>
+          <thead><tr><th>Priority</th><th>Action</th><th>Position</th><th>Unit</th><th>Grade</th><th>Stage</th><th>Candidate</th><th>Vacant</th><th>Funding</th><th>Detail</th></tr></thead>
           <tbody>
             {rows.map((h) => { const p = pos(h.positionId); const dt = detailedIn(h.positionId); return (
               <tr key={h.id} tabIndex={0} className={selId === h.id ? 'sel' : ''} onClick={() => setSelId(h.id)} onKeyDown={(e) => e.key === 'Enter' && setSelId(h.id)}>
-                <td className="mono">{h.actionId}</td><td>{p?.title}</td><td>{p?.unitName}</td><td>{p ? `${p.payPlan}-${p.grade}` : ''}</td>
+                <td><PriorityTag approved={h.approvedPriority} requested={h.requestedPriority} /></td><td className="mono">{h.actionId}</td><td>{p?.title}</td><td>{p?.unitName}</td><td>{p ? `${p.payPlan}-${p.grade}` : ''}</td>
                 <td><Tag tone={STAGE_TONE[h.stage]}>{h.stage}</Tag></td><td>{h.candidate || '—'}</td>
                 <td>{p?.status === 'Vacant' ? `${daysSince(p.vacantSince)} d` : '—'}</td><td>{p?.status === 'Vacant' ? p.fundingStatus : '—'}</td>
                 <td>{dt.length ? <Tag tone="info">Detailed in: {dt.join(', ')}</Tag> : ''}</td>
               </tr>) })}
-            {!rows.length && <tr><td colSpan={9} className="empty">No hiring actions yet. Clear a PMC request to open one.</td></tr>}
+            {!rows.length && <tr><td colSpan={10} className="empty">No hiring actions yet. Clear a PMC request to open one.</td></tr>}
           </tbody>
         </table>
       </div>
@@ -78,10 +80,21 @@ function ActionModal({ c, h, details, onClose, onChanged }: { c: Ctx; h: HiringA
       </dl>
       {a.err && <div className="err top">{a.err}</div>}
 
+      <div className="blk"><h3 className="h3">Hiring priority</h3>
+        <div className="row">
+          <span>Requested: <PriorityTag approved={null} requested={h.requestedPriority} plain /></span>
+          <select value={h.approvedPriority ?? ''} disabled={!c.access.canPMC || a.busy} onChange={async (e) => { const v = e.target.value as Priority; if (await a.run(() => setApprovedPriority(c.provider, h, v, actor))) await onChanged(`${h.actionId} priority: ${v}.`) }}>
+            <option value="" disabled>Approved: not set</option>{PRIORITIES.map((x) => <option key={x}>{x}</option>)}
+          </select>
+          {!c.access.canPMC && <span className="mute small">PMC members, chiefs and data administrators set the approved priority.</span>}
+        </div>
+        {h.priorityBy && h.approvedPriority && <p className="mute small">Set by {h.priorityBy}.</p>}
+      </div>
+
       {p.status === 'Vacant' && (
         <div className="blk"><h3 className="h3">Funding</h3>
           <div className="row">
-            <select value={p.fundingStatus} disabled={!c.access.canFund || a.busy} onChange={async (e) => { if (await a.run(() => setFunding(c.provider, p, e.target.value as FundingStatus))) await onChanged(`Funding for ${p.positionId}: ${e.target.value}.`) }}>
+            <select value={p.fundingStatus} disabled={!c.access.canFund || a.busy} onChange={async (e) => { const v = e.target.value as FundingStatus; if (await a.run(() => setFunding(c.provider, p, v))) await onChanged(`Funding for ${p.positionId}: ${v}.`) }}>
               {['Approved', 'Pending', 'Not approved'].map((f) => <option key={f}>{f}</option>)}
             </select>
             {!c.access.canFund && <span className="mute small">Only Budget or a data administrator can change funding.</span>}

@@ -2,7 +2,7 @@
 // against sample data and Dataverse. Each function throws an Error with a plain message when a rule is broken.
 import type { DataProvider } from './provider'
 import type {
-  ApproverGroup, EventType, HiringAction, IncumbentUpdate, PayPlan, PayRate, Position, PositionRequest,
+  ApproverGroup, EventType, HiringAction, IncumbentUpdate, PayPlan, PayRate, Priority, Position, PositionRequest,
   RoleName, RoleRow, SelectionStep, Stage,
 } from './types'
 
@@ -51,7 +51,7 @@ export async function decideIncumbentUpdate(p: DataProvider, u: IncumbentUpdate,
 
 // ---------- PMC requests ----------
 export interface RequestDraft {
-  type: PositionRequest['type']; positionId: string | null; unitId: string | null; proposedTitle: string
+  type: PositionRequest['type']; positionId: string | null; unitId: string | null; proposedTitle: string; priority: Priority
   payPlan: PayPlan; grade: number; employmentType: PositionRequest['employmentType']; justification: string; fundingSource: string
 }
 export function validateRequest(d: RequestDraft) {
@@ -74,7 +74,7 @@ export const withdrawRequest = (p: DataProvider, r: PositionRequest) => {
   need(r.status === 'Submitted' || r.status === 'Returned', 'Only an open request can be withdrawn.')
   return p.updateRequest(r.id, { status: 'Withdrawn' })
 }
-export async function clearRequest(p: DataProvider, r: PositionRequest, comment: string, actor: Actor) {
+export async function clearRequest(p: DataProvider, r: PositionRequest, comment: string, approved: Priority, actor: Actor) {
   need(r.status === 'Submitted', 'This request was already decided.')
   let positionId = r.positionId
   if (r.type === 'Add position') {
@@ -90,9 +90,10 @@ export async function clearRequest(p: DataProvider, r: PositionRequest, comment:
   const existing = (await p.listHiringActions(r.areaId)).find((h) => h.positionId === positionId && h.stage !== 'Offer')
   if (!existing) {
     const n = (await p.listHiringActions(r.areaId)).length + 1
-    await p.createHiringAction({ actionId: `HA-${String(n).padStart(4, '0')}`, positionId: positionId!, areaId: r.areaId, stage: 'Cleared to advertise', candidate: '', proposedGrade: '', entryOnDuty: null })
+    await p.createHiringAction({ actionId: `HA-${String(n).padStart(4, '0')}`, positionId: positionId!, areaId: r.areaId, stage: 'Cleared to advertise', candidate: '', proposedGrade: '', entryOnDuty: null, requestedPriority: r.priority, approvedPriority: approved, priorityBy: actor.name })
     await log(p, r.areaId, 'Stage change', `${r.requestId} cleared. Hiring action opened at Cleared to advertise`, actor.name, comment)
   }
+  if (existing) await p.updateHiringAction(existing.id, { requestedPriority: r.priority, approvedPriority: approved, priorityBy: actor.name })
   return p.updateRequest(r.id, { status: 'Cleared', decidedBy: actor.name, decidedOn: today(), pmcComment: comment.trim(), positionId })
 }
 export function returnRequest(p: DataProvider, r: PositionRequest, comment: string, actor: Actor) {
@@ -181,6 +182,16 @@ export async function setEntryOnDuty(p: DataProvider, h: HiringAction, pos: Posi
     return { filled: true }
   }
   return { filled: false }
+}
+
+export const PRIORITY_RANK: Record<Priority, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
+/** Approved rating wins; until someone approves one, the requestor's rating is used. */
+export const effectivePriority = (h: Pick<HiringAction, 'requestedPriority' | 'approvedPriority'>): Priority | null => h.approvedPriority ?? h.requestedPriority
+
+export async function setApprovedPriority(p: DataProvider, h: HiringAction, v: Priority, actor: Actor) {
+  const updated = await p.updateHiringAction(h.id, { approvedPriority: v, priorityBy: actor.name })
+  await log(p, h.areaId, 'Stage change', `${h.actionId}: priority set to ${v}`, actor.name)
+  return updated
 }
 
 export const setFunding = (p: DataProvider, pos: Position, v: Position['fundingStatus']) => p.updatePosition(pos.id, { fundingStatus: v })
