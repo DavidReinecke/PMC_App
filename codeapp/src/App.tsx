@@ -7,7 +7,14 @@ import { getHostUser } from './host'
 import OrgChart from './components/OrgChart'
 import PositionDrawer from './components/PositionDrawer'
 import TableOfOrg from './screens/TableOfOrg'
-import ComingNext from './screens/ComingNext'
+import PmcRequests from './screens/PmcRequests'
+import Incumbents from './screens/Incumbents'
+import Vacancies from './screens/Vacancies'
+import Approvals from './screens/Approvals'
+import Labor from './screens/Labor'
+import Roles from './screens/Roles'
+import { applyIncumbent } from './data/services'
+import type { Ctx } from './ui/kit'
 
 type Tab = 'chart' | 'toe' | 'vac' | 'appr' | 'labor' | 'pmc' | 'inc' | 'roles'
 const TABS: { id: Tab; label: string }[] = [
@@ -77,12 +84,14 @@ export default function App() {
   const selected = positions.find((p) => p.id === selectedId) ?? null
 
   async function setIncumbent(p: Position, name: string | null, email: string) {
-    const updated = await provider.setIncumbent(p.id, name ? { name, email } : null, user.name)
+    const updated = await applyIncumbent(provider, p, name ? { name, email } : null, { name: user.name, email: user.email })
     setPositions((prev) => prev.map((x) => (x.id === updated.id ? updated : x)))
     setNotice(name ? `${p.positionId} is now filled by ${name}.` : `${p.positionId} is now vacant.`)
     setTimeout(() => setNotice(''), 5000)
   }
 
+  const notify = useCallback((m: string) => { setNotice(m); setTimeout(() => setNotice(''), 5000) }, [])
+  const ctx: Ctx = { provider, areaId, user, access, roles, positions, units, reload: load, notify }
   const showDrawer = (tab === 'chart' || tab === 'toe') && selected
 
   return (
@@ -117,12 +126,12 @@ export default function App() {
         <section className="main">
           {tab === 'chart' && <OrgChart positions={positions} selectedId={selectedId} onSelect={setSelectedId} />}
           {tab === 'toe' && <TableOfOrg positions={positions} units={units} selectedId={selectedId} onSelect={setSelectedId} />}
-          {tab === 'vac' && <ComingNext title="Vacancies & Hiring" note="Hiring actions by stage, selection submission and entry on duty." />}
-          {tab === 'appr' && <ComingNext title="Selection Approvals" note="Supervisor, budget and final approver steps, with the approval record." />}
-          {tab === 'labor' && <ComingNext title="Labor Estimate" note="Step 5 pay from the Pay Rates table plus the area's premium percent." />}
-          {tab === 'pmc' && <ComingNext title="PMC Requests" note="Requests to advertise a vacancy or add a position, with the PMC dashboard." />}
-          {tab === 'inc' && <ComingNext title="Incumbent Updates" note="Supervisor requests to fill, change or vacate, applied by a chief or data administrator." />}
-          {tab === 'roles' && <ComingNext title="Role Assignments" note="Assign and end roles, search a person to see all their roles." />}
+          {tab === 'vac' && <Vacancies {...ctx} />}
+          {tab === 'appr' && <Approvals {...ctx} />}
+          {tab === 'labor' && <Labor {...ctx} />}
+          {tab === 'pmc' && <PmcRequests {...ctx} />}
+          {tab === 'inc' && <Incumbents {...ctx} />}
+          {tab === 'roles' && <Roles {...ctx} />}
         </section>
         {showDrawer && selected && (
           <PositionDrawer position={selected} all={positions} access={access} onSelect={setSelectedId} onClose={() => setSelectedId(null)} onSetIncumbent={setIncumbent} />

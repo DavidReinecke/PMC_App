@@ -9,8 +9,13 @@ The code app is a React and TypeScript project in `codeapp/`. It replaces the ca
 | Org Chart (pyramid layout, click for direct reports, pan and zoom, collapse and expand) | Built |
 | Tables of Organization (search, unit and status filters, position panel, fill, change or vacate an incumbent) | Built |
 | Role-based access (same rules as the canvas app) | Built |
-| Vacancies & Hiring, Selection Approvals, Labor Estimate, PMC Requests, Incumbents, Role Assignments | Placeholder tabs, next in line |
-| Dataverse connection | Not connected yet. The app runs on sample data (see below) |
+| PMC Requests (dashboard, submit, edit and resubmit, withdraw, clear, return) | Built, on sample data |
+| Incumbents (request fill, change or vacate; apply or reject) | Built, on sample data |
+| Vacancies & Hiring (stage, funding, route selection, entry on duty, detail marker) | Built, on sample data |
+| Selection Approvals (3-step routing, approve or return with comment, earlier rounds) | Built, on sample data |
+| Labor Estimate (step 5 pay plus area premium, by unit and position) | Built, on sample data |
+| Role Assignments (assign, end, search) | Built, on sample data |
+| Dataverse connection | Not connected yet. The app runs on sample data (see below). Next step: a Dataverse provider written against your generated services |
 
 ## Run it on your computer
 
@@ -68,3 +73,12 @@ The "days vacant" badge needs a date column on Positions. Add a Date Only column
 - `src/data/provider.ts` is the one interface the screens use for data. `sampleProvider.ts` implements it with in-memory data. A `dataverseProvider.ts` will implement the same interface.
 - `src/data/access.ts` holds the role rules.
 - `src/components/orgLayout.ts` is the org chart layout. A supervisor with more than six direct reports gets two columns with a line between them. Change `SPLIT` to move that cutoff.
+
+
+## How the code is split
+
+- `src/data/provider.ts` is the list of plain create, read and update operations. `sampleProvider.ts` implements it in memory. The Dataverse provider will implement the same interface.
+- `src/data/services.ts` holds every business rule (what Clear, Approve, Return, Apply and entry on duty do, final approver by grade, labor math). It only uses the provider interface, so rules behave the same on sample data and Dataverse.
+- `src/screens/` has one file per tab. `src/ui/kit.tsx` has the shared form, modal and loading helpers.
+
+Choices made without a canvas equivalent, worth reviewing: clearing an "Add position" request creates a vacant position with Pending funding and no supervisor; approving or returning a selection is limited to the step's group (or a data administrator); entry on duty now asks for the candidate's sign-in email so the person can see their position.

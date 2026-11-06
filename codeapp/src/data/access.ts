@@ -30,3 +30,14 @@ export function computeAccess(roles: RoleAssignment[], myPositions: Position[], 
     canRequest: isSup || canPMC,
   }
 }
+
+/** Position ids at or below any of the given positions in the reporting line. */
+export function descendantIds(rootIds: Set<string>, all: Position[]): Set<string> {
+  const out = new Set(rootIds)
+  let grew = true
+  while (grew) {
+    grew = false
+    for (const p of all) if (p.supervisorId && out.has(p.supervisorId) && !out.has(p.id)) { out.add(p.id); grew = true }
+  }
+  return out
+}
