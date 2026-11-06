@@ -1,6 +1,6 @@
 pac version:
 Microsoft PowerPlatform CLI
-Version: 2.13.1+g251dee1 (.NET 10.0.12)
+Version: 2.14.1+g6f517e5 (.NET 10.0.14)
 Online documentation: https://aka.ms/PowerPlatformCLI
 
 === pac solution pack (tables) ===
@@ -90,12 +90,11 @@ Packed Solution.
 newtables exit: 0
 === pac canvas pack ===
 Canvas apps packed using yaml SourceCode must be validated first by opening the app for edit within the Power Apps studio. For more information see https://aka.ms/paccanvas
-Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: 445a1d96-720e-4029-ac5c-8a3bf2c7b0eb, Exception Type: System.FormatException
-The diagnostic logs can be found at: C:\Users\runneradmin\.dotnet\tools\.store\microsoft.powerapps.cli.tool\2.13.1\microsoft.powerapps.cli.tool\2.13.1\tools\net10.0\any\logs\pac-log.txt
+Sorry, the app encountered a non-recoverable error and will need to terminate. The exception details have been captured and will be forwarded to the development team, if telemetry has been enabled. Session Id: df4b759c-2da2-479e-a8e8-11784ea76272, Exception Type: System.FormatException
+The diagnostic logs can be found at: C:\Users\runneradmin\.dotnet\tools\.store\microsoft.powerapps.cli.tool\2.14.1\microsoft.powerapps.cli.tool\2.14.1\tools\net10.0\any\logs\pac-log.txt
 
 exit code: 1
 build-log.txt  3041
-pac-log.txt  53483
 WorkforcePlanner_NewTables.zip  6949
 WorkforcePlanner_PayTables.zip  4635
 WorkforcePlanner_tables.zip  11333
