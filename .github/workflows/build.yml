@@ -1,8 +1,7 @@
 name: Build Workforce Planner solution
 
+# Run by hand (Actions tab, Run workflow). It rebuilds the canvas app solution zip.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
