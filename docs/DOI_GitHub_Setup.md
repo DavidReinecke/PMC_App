@@ -28,7 +28,7 @@ Send this:
 
 The secret expires (often 6 or 12 months), so put a reminder on your calendar.
 
-**If your agency does not allow service accounts or secrets:** skip steps 1, 3 and 4 below, and run the same commands yourself from a laptop (see "Option B").
+**If your agency does not allow service accounts or secrets:** skip the service-account steps and run the same commands yourself from a laptop (see "Option B").
 
 ## 2. Move the code into a DOI repository
 
