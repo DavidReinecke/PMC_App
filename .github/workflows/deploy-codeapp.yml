@@ -2,6 +2,7 @@ name: Deploy Workforce Planner code app
 
 # Run this by hand: Actions tab, "Deploy Workforce Planner code app", Run workflow.
 # It signs in to your Power Platform environment with a service account, builds the app and publishes it.
+# Set the PP_SOLUTION_NAME variable to put the code app inside your Workforce Planner solution.
 on:
   workflow_dispatch:
 
@@ -18,6 +19,7 @@ jobs:
       PP_CLIENT_SECRET: ${{ secrets.PP_CLIENT_SECRET }}
       PP_ENVIRONMENT_URL: ${{ vars.PP_ENVIRONMENT_URL }}
       PP_CLOUD: ${{ vars.PP_CLOUD }}
+      PP_SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +55,9 @@ jobs:
           npm run build
 
       - name: Publish to Power Apps
-        run: pac code push
+        run: |
+          # With a solution name, the code app is added to that solution (the unique name, not the display name).
+          if ($env:PP_SOLUTION_NAME) { pac code push --solutionName $env:PP_SOLUTION_NAME } else { pac code push }
 
       - name: Save generated files for review
         if: always()
