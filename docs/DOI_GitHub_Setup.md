@@ -17,6 +17,32 @@ The workflow can sign in as you. When you run it, choose **device-code** (the de
 
 Your account needs rights to create and publish apps in the environment (Environment Maker) and read the `wfp_` tables. Some tenants block device-code sign-in with a conditional access policy. If the run fails at the sign-in step with a message about that, you need either the service account (step 1) or Option B.
 
+## If sign-in is blocked ("You don't have access to this")
+
+Some agencies use a Conditional Access policy that rejects sign-ins made through GitHub's computers. The device-code sign-in then ends with "Your sign-in was successful but does not meet the criteria to access this resource." Retrying does not help. You have two ways forward.
+
+**Route 1: a service account.** Ask your admin for it (step 1 below). Policies that block people often do not apply to app registrations, but your admin has to confirm that.
+
+**Route 2: build in GitHub, publish from your government computer.** Choose **build-only** when you run the workflow. It makes no sign-in. It builds the app and saves the finished files as a download named **code-app-build**.
+1. Run the workflow with sign-in set to build-only. Open the finished run and download **code-app-build** (a zip).
+2. On your government computer, install the Power Platform CLI. The VS Code "Power Platform Tools" extension does this without Node. Sign in from there, which uses your normal managed-device sign-in:
+   ```
+   pac auth create --cloud UsGov --environment <environment URL>
+   ```
+3. Get the repository's `codeapp` folder onto the computer (clone it, or download the repository zip). Unzip the code-app-build download into `codeapp/dist`.
+4. In a terminal in the `codeapp` folder:
+   ```
+   pac code init --displayName "Workforce Planner" --buildPath dist
+   pac code add-data-source -a dataverse -t wfp_geographicarea
+   ```
+   Repeat the second line for each table listed under Option B below. Then publish:
+   ```
+   pac code push --solutionName <unique name>
+   ```
+5. Commit `power.config.json` and `src/generated` to the repository, as in step 4 of the run instructions.
+
+I have not tested Route 2 end to end. It uses only commands Microsoft documents, but `pac code push` may expect to find the Node tools. If it complains, send me the exact message.
+
 ## 1. Service account (ask your Power Platform admin)
 
 Send this:

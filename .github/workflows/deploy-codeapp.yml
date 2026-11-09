@@ -13,6 +13,7 @@ on:
         options:
           - device-code      # you sign in as yourself in a browser while the run waits. No service account needed.
           - service-account  # uses the PP_TENANT_ID, PP_CLIENT_ID and PP_CLIENT_SECRET secrets
+          - build-only       # no sign-in. Builds the app and gives you the finished files to publish from your own computer.
 
 jobs:
   deploy:
@@ -36,6 +37,7 @@ jobs:
           node-version: 22
 
       - name: Install Power Platform CLI
+        if: ${{ inputs.sign_in != 'build-only' }}
         run: |
           dotnet tool install --global Microsoft.PowerApps.CLI.Tool
           pac help | Select-Object -First 3
@@ -56,10 +58,12 @@ jobs:
           pac auth who
 
       - name: Register the app (first run only)
+        if: ${{ inputs.sign_in != 'build-only' }}
         run: |
           if (-not (Test-Path power.config.json)) { pac code init --displayName "Workforce Planner" }
 
       - name: Add Dataverse tables as data sources (first run only)
+        if: ${{ inputs.sign_in != 'build-only' }}
         run: |
           if (-not (Test-Path src/generated)) {
             $tables = 'wfp_geographicarea','wfp_unit','wfp_position','wfp_hiringaction','wfp_selectionstep','wfp_roleassignment','wfp_detail','wfp_hiringevent','wfp_payrate','wfp_laborsetting','wfp_positionrequest','wfp_incumbentupdate'
@@ -72,12 +76,21 @@ jobs:
           npm run build
 
       - name: Publish to Power Apps
+        if: ${{ inputs.sign_in != 'build-only' }}
         run: |
           # With a solution name, the code app is added to that solution (the unique name, not the display name).
           if ($env:PP_SOLUTION_NAME) { pac code push --solutionName $env:PP_SOLUTION_NAME } else { pac code push }
 
+      - name: Save the built app (build-only)
+        if: ${{ inputs.sign_in == 'build-only' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-app-build
+          path: codeapp/dist
+          if-no-files-found: error
+
       - name: Save generated files for review
-        if: always()
+        if: ${{ always() && inputs.sign_in != 'build-only' }}
         uses: actions/upload-artifact@v4
         with:
           name: code-app-generated
