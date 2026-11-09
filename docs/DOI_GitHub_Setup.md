@@ -11,6 +11,12 @@ Claude cannot reach your DOI GitHub, so the code moves by zip and you commit it 
 3. **Find the solution's unique name.** In make.powerapps.com, open Solutions, select Workforce Planner, and look at the details panel (or the Properties pane). Copy the **Name** (unique name, usually no spaces, like `WorkforcePlanner`). Not the display name.
 4. **Add one column the app expects** on the Positions table: `Vacant since`, logical name `wfp_vacantsince`, type Date Only. The other new columns (priority, Preparedness %, premium override, labor settings) are listed in `docs/CodeApp.md`. They are needed when the Dataverse connection is written, not for the first deployment.
 
+## Fastest start: no service account and nothing installed on your computer
+
+The workflow can sign in as you. When you run it, choose **device-code** (the default). The run pauses and prints a line in its log telling you to open https://microsoft.com/devicelogin and type a code. You do that in your normal browser, signed in as yourself, and the run continues. Steps 1 and the three `PP_` secrets in step 3 are then not needed. You still need the `PP_ENVIRONMENT_URL`, `PP_CLOUD` and `PP_SOLUTION_NAME` variables.
+
+Your account needs rights to create and publish apps in the environment (Environment Maker) and read the `wfp_` tables. Some tenants block device-code sign-in with a conditional access policy. If the run fails at the sign-in step with a message about that, you need either the service account (step 1) or Option B.
+
 ## 1. Service account (ask your Power Platform admin)
 
 Send this:
@@ -42,6 +48,8 @@ The secret expires (often 6 or 12 months), so put a reminder on your calendar.
 
 ## 3. Add the secrets and variables
 
+Using device-code sign-in? Only add the three variables. The secrets are for the service account.
+
 Repository, Settings, "Secrets and variables", Actions.
 
 | Where | Name | Value |
@@ -55,7 +63,7 @@ Repository, Settings, "Secrets and variables", Actions.
 
 ## 4. Run the deployment
 
-1. Actions, "Deploy Workforce Planner code app", Run workflow.
+1. Actions, "Deploy Workforce Planner code app", Run workflow. Choose **device-code** (or **service-account** if you set that up). Open the run and watch its log while it works through the sign-in step.
 2. The first run signs in, registers the app, adds the 12 tables as data sources, builds, and publishes the app into your solution. A few minutes.
 3. When it finishes, download the **code-app-generated** artifact from the run page. It holds `power.config.json` and the `src/generated` folder.
 4. Commit both back into the repository: `codeapp/power.config.json` and `codeapp/src/generated/`. **This matters.** Without `power.config.json`, every run creates a brand new copy of the app instead of updating this one.

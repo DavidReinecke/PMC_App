@@ -5,6 +5,14 @@ name: Deploy Workforce Planner code app
 # Set the PP_SOLUTION_NAME variable to put the code app inside your Workforce Planner solution.
 on:
   workflow_dispatch:
+    inputs:
+      sign_in:
+        description: 'How to sign in to Power Platform'
+        type: choice
+        default: device-code
+        options:
+          - device-code      # you sign in as yourself in a browser while the run waits. No service account needed.
+          - service-account  # uses the PP_TENANT_ID, PP_CLIENT_ID and PP_CLIENT_SECRET secrets
 
 jobs:
   deploy:
@@ -32,7 +40,16 @@ jobs:
           dotnet tool install --global Microsoft.PowerApps.CLI.Tool
           pac help | Select-Object -First 3
 
-      - name: Sign in to the environment
+      - name: Sign in with a device code (you sign in as yourself)
+        if: ${{ inputs.sign_in == 'device-code' }}
+        run: |
+          $cloud = if ($env:PP_CLOUD) { $env:PP_CLOUD } else { 'UsGov' }
+          Write-Host "WATCH THIS LOG: a line below will say to open https://microsoft.com/devicelogin and enter a code. Do that within a few minutes."
+          pac auth create --name deploy --deviceCode --cloud $cloud --environment $env:PP_ENVIRONMENT_URL
+          pac auth who
+
+      - name: Sign in with the service account
+        if: ${{ inputs.sign_in == 'service-account' }}
         run: |
           $cloud = if ($env:PP_CLOUD) { $env:PP_CLOUD } else { 'UsGov' }
           pac auth create --name deploy --applicationId $env:PP_CLIENT_ID --clientSecret $env:PP_CLIENT_SECRET --tenant $env:PP_TENANT_ID --cloud $cloud --environment $env:PP_ENVIRONMENT_URL
