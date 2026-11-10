@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Area, Person, Position, RoleAssignment, Unit } from './data/types'
+import type { Area, Detail, Person, Position, RoleAssignment, Unit } from './data/types'
 import type { DataProvider } from './data/provider'
 import { createSampleProvider } from './data/sampleProvider'
 import { createDataverseProvider } from './data/dataverseProvider'
@@ -48,6 +48,7 @@ export default function App() {
   const [areaId, setAreaId] = useState('')
   const [units, setUnits] = useState<Unit[]>([])
   const [positions, setPositions] = useState<Position[]>([])
+  const [details, setDetails] = useState<Detail[]>([])
   const [allForMe, setAllForMe] = useState<Position[]>([])
   const [roles, setRoles] = useState<RoleAssignment[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -99,8 +100,8 @@ export default function App() {
   const load = useCallback(async () => {
     if (!areaId) return
     try {
-      const [p, u] = await Promise.all([provider.listPositions(areaId), provider.listUnits(areaId)])
-      setPositions(p); setUnits(u); setAllForMe(p); setLoadError('')
+      const [p, u, d] = await Promise.all([provider.listPositions(areaId), provider.listUnits(areaId), provider.listDetails(areaId)])
+      setPositions(p); setUnits(u); setDetails(d); setAllForMe(p); setLoadError('')
     } catch (e) { setLoadError(String((e as Error)?.message ?? e)) }
   }, [provider, areaId])
   useEffect(() => { load() }, [load])
@@ -163,7 +164,7 @@ export default function App() {
       <main className={'stage' + (showDrawer ? ' with-drawer' : '')}>
         <section className="main">
           {tab === 'chart' && <OrgChart positions={positions} unitNames={[...new Set(positions.map((p) => p.unitName))].sort()} selectedId={selectedId} onSelect={setSelectedId} />}
-          {tab === 'toe' && <TableOfOrg positions={positions} units={units} selectedId={selectedId} onSelect={setSelectedId} />}
+          {tab === 'toe' && <TableOfOrg positions={positions} units={units} details={details} selectedId={selectedId} onSelect={setSelectedId} />}
           {tab === 'vac' && <Vacancies {...ctx} />}
           {tab === 'appr' && <Approvals {...ctx} />}
           {tab === 'labor' && <Labor {...ctx} />}
