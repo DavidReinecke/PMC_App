@@ -3,7 +3,7 @@ import { PRIORITIES, type FundingStatus, type HiringAction, type Priority, type 
 import { ADVANCE_STAGES, PRIORITY_RANK, effectivePriority, recordDetail, setApprovedPriority, setEntryOnDuty, setFunding, setStage, submitSelection, today } from '@/data/services'
 import { Field, Modal, PriorityTag, Tag, daysSince, fmtDate, useAction, useLoad, type Ctx } from '@/ui/kit'
 
-const STAGE_TONE: Record<Stage, 'info' | 'warn' | 'ok' | 'mute'> = {
+export const STAGE_TONE: Record<Stage, 'info' | 'warn' | 'ok' | 'mute'> = {
   Draft: 'mute', 'PMC review': 'mute', 'Cleared to advertise': 'info', Announced: 'info', 'Certificate issued': 'info',
   Interviews: 'warn', 'Selection approval': 'warn', 'Selection approved': 'ok', Offer: 'ok',
 }

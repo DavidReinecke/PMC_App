@@ -170,3 +170,6 @@ td.empty { text-align: center; color: var(--mute); padding: 28px; }
 
 .banner.test { background: color-mix(in srgb, var(--accent, #4c8bf5) 14%, var(--bg)); }
 .banner.err { background: color-mix(in srgb, #d9534f 18%, var(--bg)); }
+
+.detailer { color: var(--sel); font-weight: 600; }
+.stage-line { margin-top: 4px; }
