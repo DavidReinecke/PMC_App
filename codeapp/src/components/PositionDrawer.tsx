@@ -58,7 +58,7 @@ export default function PositionDrawer({ position: p, all, access, onSelect, onC
             <div><dt>Position ID</dt><dd className="mono">{p.positionId}</dd></div>
             <div><dt>Unit</dt><dd>{p.unitName}</dd></div>
             <div><dt>Pay plan and grade</dt><dd>{p.payPlan}-{p.grade}</dd></div>
-            <div><dt>Series</dt><dd>{p.series}</dd></div>
+            {p.series && <div><dt>Series</dt><dd>{p.series}</dd></div>}
             <div><dt>Employment type</dt><dd>{p.employmentType}</dd></div>
             <div><dt>Funding</dt><dd>{p.fundingStatus}</dd></div>
             <div><dt>Reports to</dt><dd>{boss ? boss.title : '—'}</dd></div>

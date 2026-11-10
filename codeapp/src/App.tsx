@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Area, Person, Position, RoleAssignment, Unit } from './data/types'
 import type { DataProvider } from './data/provider'
 import { createSampleProvider } from './data/sampleProvider'
+import { createDataverseProvider } from './data/dataverseProvider'
 import { computeAccess } from './data/access'
 import { getHostUser } from './host'
 import OrgChart from './components/OrgChart'
@@ -13,10 +14,11 @@ import Vacancies from './screens/Vacancies'
 import Approvals from './screens/Approvals'
 import Labor from './screens/Labor'
 import Roles from './screens/Roles'
+import Demo from './screens/Demo'
 import { applyIncumbent } from './data/services'
 import type { Ctx } from './ui/kit'
 
-type Tab = 'chart' | 'toe' | 'vac' | 'appr' | 'labor' | 'pmc' | 'inc' | 'roles'
+type Tab = 'chart' | 'toe' | 'vac' | 'appr' | 'labor' | 'pmc' | 'inc' | 'roles' | 'demo'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'chart', label: 'Org Chart' },
   { id: 'toe', label: 'Tables of Organization' },
@@ -26,6 +28,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'pmc', label: 'PMC Requests' },
   { id: 'inc', label: 'Incumbents' },
   { id: 'roles', label: 'Role Assignments' },
+  { id: 'demo', label: 'Demo data' },
 ]
 
 // "Preview as" choices, shown only with sample data so every role's view can be tried
@@ -55,27 +58,50 @@ export default function App() {
   useEffect(() => { document.documentElement.dataset.theme = dark ? 'dark' : 'light' }, [dark])
 
   const user = host ?? PREVIEWS[preview].person
-  // Hosted in Power Apps: the Dataverse provider replaces this once the tables are connected (docs/CodeApp.md).
+  // Hosted in Power Apps the app reads and writes Dataverse. On a laptop, or when src/generated is
+  // not there, it runs on sample data.
+  const [dv, setDv] = useState<DataProvider | null | undefined>(undefined)
+  const [loadError, setLoadError] = useState('')
+  const [setupMode, setSetupMode] = useState(false)
+  useEffect(() => {
+    if (!host) { setDv(host === null ? null : undefined); return }
+    let live = true
+    createDataverseProvider(host).then((p) => { if (live) setDv(p) }).catch((e) => { if (live) { setLoadError(String(e?.message ?? e)); setDv(null) } })
+    return () => { live = false }
+  }, [host])
+
   const provider: DataProvider = useMemo(
-    () => createSampleProvider(user, host ? [{ role: 'Data administrator', areaId: null, allAreas: true }] : PREVIEWS[preview].roles),
-    [user, host, preview],
+    () => dv ?? createSampleProvider(user, host ? [{ role: 'Data administrator', areaId: null, allAreas: true }] : PREVIEWS[preview].roles),
+    [dv, user, host, preview],
   )
+  const ready = host === null || (host !== undefined && dv !== undefined)
 
   useEffect(() => {
-    if (host === undefined) return
+    if (!ready) return
     let live = true
     ;(async () => {
-      const [a, r] = await Promise.all([provider.listAreas(), provider.getRoles(user.email)])
-      if (!live) return
-      setAreas(a); setRoles(r); setAreaId((cur) => cur || a[0]?.id || '')
+      try {
+        const [a, r] = await Promise.all([provider.listAreas(), provider.getRoles(user.email)])
+        let roles = r
+        let setup = false
+        // Before anyone has a role, the first person in acts as setup administrator so they can add themselves.
+        if (provider.kind === 'dataverse' && r.length === 0) {
+          const rows = await provider.listRoleRows(null)
+          if (!rows.some((x) => x.status === 'Active')) { roles = [{ role: 'Data administrator', areaId: null, allAreas: true }]; setup = true }
+        }
+        if (!live) return
+        setAreas(a); setRoles(roles); setSetupMode(setup); setAreaId((cur) => cur || a[0]?.id || '')
+      } catch (e) { if (live) setLoadError(String((e as Error)?.message ?? e)) }
     })()
     return () => { live = false }
-  }, [provider, host, user.email])
+  }, [provider, ready, user.email])
 
   const load = useCallback(async () => {
     if (!areaId) return
-    const [p, u] = await Promise.all([provider.listPositions(areaId), provider.listUnits(areaId)])
-    setPositions(p); setUnits(u); setAllForMe(p)
+    try {
+      const [p, u] = await Promise.all([provider.listPositions(areaId), provider.listUnits(areaId)])
+      setPositions(p); setUnits(u); setAllForMe(p); setLoadError('')
+    } catch (e) { setLoadError(String((e as Error)?.message ?? e)) }
   }, [provider, areaId])
   useEffect(() => { load() }, [load])
 
@@ -99,7 +125,7 @@ export default function App() {
       <header className="top">
         <div className="brand">Workforce Planner</div>
         <nav className="tabs" aria-label="Sections">
-          {TABS.filter((t) => t.id !== 'roles' || access.isDA).map((t) => (
+          {TABS.filter((t) => (t.id !== 'roles' && t.id !== 'demo') || access.isDA).map((t) => (
             <button key={t.id} className={tab === t.id ? 'on' : ''} onClick={() => setTab(t.id)}>{t.label}</button>
           ))}
         </nav>
@@ -111,9 +137,21 @@ export default function App() {
           <button className="btn small" onClick={() => setDark(!dark)} aria-label="Toggle theme">{dark ? 'Light' : 'Dark'}</button>
         </div>
       </header>
+      {provider.kind === 'dataverse' && (
+        <div className="banner test">
+          <span><b>Test version.</b> Changes are saved to Dataverse. Use only information you are comfortable having in the test environment.</span>
+        </div>
+      )}
+      {setupMode && (
+        <div className="banner">
+          <span><b>Setup.</b> No role assignments exist yet, so you are acting as the data administrator. Open Role Assignments and add yourself (all areas) to keep access.</span>
+        </div>
+      )}
+      {!ready && <div className="banner"><span>Connecting to Dataverse…</span></div>}
+      {loadError && <div className="banner err"><span><b>Could not load data.</b> {loadError}</span></div>}
       {provider.kind === 'sample' && (
         <div className="banner">
-          <span><b>Sample data.</b> {host ? `Signed in as ${host.name}. ` : ''}Changes are not saved after you reload.</span>
+          <span><b>Sample data.</b> {host ? `Signed in as ${host.name}. Dataverse tables are not connected, so ` : ''}{host ? 'c' : 'C'}hanges are not saved after you reload.</span>
           {!host && (
             <label>Preview as <select value={preview} onChange={(e) => { setPreview(Number(e.target.value)); setSelectedId(null) }}>
               {PREVIEWS.map((p, i) => <option key={p.label} value={i}>{p.label}</option>)}
@@ -132,6 +170,7 @@ export default function App() {
           {tab === 'pmc' && <PmcRequests {...ctx} />}
           {tab === 'inc' && <Incumbents {...ctx} />}
           {tab === 'roles' && <Roles {...ctx} />}
+          {tab === 'demo' && <Demo {...ctx} />}
         </section>
         {showDrawer && selected && (
           <PositionDrawer position={selected} all={positions} access={access} onSelect={setSelectedId} onClose={() => setSelectedId(null)} onSetIncumbent={setIncumbent} />

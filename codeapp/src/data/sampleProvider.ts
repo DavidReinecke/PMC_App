@@ -65,6 +65,11 @@ export function createSampleProvider(user: Person, roles: RoleAssignment[]): Dat
     createRoleRow: (r) => create(roleRows, 'RR', r),
     updateRoleRow: (id, patch) => update(roleRows, id, patch),
 
+    async deleteRows(kind, ids) {
+      const t = { step: steps, hiringAction: hiring, request: requests, incumbentUpdate: updates, position: positions }[kind] as { id: string }[]
+      for (const id of ids) { const i = t.findIndex((r) => r.id === id); if (i >= 0) t.splice(i, 1) }
+    },
+
     listPayRates: () => delay(copy(PAY_RATES)),
     listLaborSettings: () => delay(copy(labor)),
     async saveLaborSetting(areaId, patch) {

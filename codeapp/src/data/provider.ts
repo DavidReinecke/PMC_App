@@ -47,6 +47,9 @@ export interface DataProvider {
   createRoleRow(r: New<RoleRow>): Promise<RoleRow>
   updateRoleRow(id: string, patch: Partial<RoleRow>): Promise<RoleRow>
 
+  /** Remove rows by id. Used only to clear the demo data. */
+  deleteRows(kind: 'step' | 'hiringAction' | 'request' | 'incumbentUpdate' | 'position', ids: string[]): Promise<void>
+
   listPayRates(): Promise<PayRate[]>
   listLaborSettings(): Promise<LaborSetting[]>
   saveLaborSetting(areaId: string, patch: Partial<Omit<LaborSetting, 'id' | 'areaId'>>): Promise<LaborSetting>

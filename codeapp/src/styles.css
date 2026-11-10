@@ -167,3 +167,6 @@ td.empty { text-align: center; color: var(--mute); padding: 28px; }
 .pctbox { width: 64px; text-align: right; padding: 4px 6px; } .pctbox.dflt { color: var(--mute); }
 
 .node.ctx { opacity: .6; border-style: dashed; }
+
+.banner.test { background: color-mix(in srgb, var(--accent, #4c8bf5) 14%, var(--bg)); }
+.banner.err { background: color-mix(in srgb, #d9534f 18%, var(--bg)); }

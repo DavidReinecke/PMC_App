@@ -15,7 +15,7 @@ The code app is a React and TypeScript project in `codeapp/`. It replaces the ca
 | Selection Approvals (3-step routing, approve or return with comment, earlier rounds) | Built, on sample data |
 | Labor Estimate (step 5 pay plus area premium, by unit and position) | Built, on sample data |
 | Role Assignments (assign, end, search) | Built, on sample data |
-| Dataverse connection | Not connected yet. The app runs on sample data (see below). Next step: a Dataverse provider written against your generated services |
+| Dataverse connection | Built. When hosted in Power Apps and `src/generated` is present, the app reads and writes Dataverse and shows a Test version banner. On a laptop it still runs on sample data |
 
 ## Run it on your computer
 
@@ -70,15 +70,23 @@ The "days vacant" badge needs a date column on Positions. Add a Date Only column
 
 ## How the code is organised
 
-- `src/data/provider.ts` is the one interface the screens use for data. `sampleProvider.ts` implements it with in-memory data. A `dataverseProvider.ts` will implement the same interface.
+- `src/data/provider.ts` is the one interface the screens use for data. `sampleProvider.ts` implements it with in-memory data. `dataverseProvider.ts` implements the same interface against the generated services, which it loads on demand.
 - `src/data/access.ts` holds the role rules.
 - `src/components/orgLayout.ts` is the org chart layout. A supervisor with more than six direct reports gets two columns with a line between them. Change `SPLIT` to move that cutoff.
 
 
 ## How the code is split
 
-- `src/data/provider.ts` is the list of plain create, read and update operations. `sampleProvider.ts` implements it in memory. The Dataverse provider will implement the same interface.
+- `src/data/provider.ts` is the list of plain create, read and update operations. `sampleProvider.ts` implements it in memory. `dataverseProvider.ts` implements the same interface on Dataverse.
 - `src/data/services.ts` holds every business rule (what Clear, Approve, Return, Apply and entry on duty do, final approver by grade, labor math). It only uses the provider interface, so rules behave the same on sample data and Dataverse.
 - `src/screens/` has one file per tab. `src/ui/kit.tsx` has the shared form, modal and loading helpers.
 
 Choices made without a canvas equivalent, worth reviewing: clearing an "Add position" request creates a vacant position with Pending funding and no supervisor; approving or returning a selection is limited to the step's group (or a data administrator); entry on duty now asks for the candidate's sign-in email so the person can see their position.
+
+## Test version notes
+
+- The first person to open the app before any Role Assignment rows exist acts as a setup administrator and should add themselves (Data administrator, all areas) on the Role Assignments tab. After one active row exists, access follows the roles.
+- Dataverse security still decides who can read and write each table. Give testers a security role with Create, Read and Write on the `wfp_` tables (Hiring Event: Create and Read only).
+- There is no series column in Dataverse, so the Series line is hidden in the position panel.
+- Grade is stored in Full performance grade (`wfp_topgrade`). The Grade range text column is filled with, for example, GS-12 when a position is created from a request.
+- Publish loop from `codeapp`: `npm.cmd run build`, then `pa.cmd app push --solution-id <GUID>`.
